@@ -24,7 +24,7 @@ function getAllStudentsReviewData() {
 
 function getAllReviewYearInformation() {
   var ss = SpreadsheetApp.openByUrl(url_review_year_information);
-  var ws = ss.getSheetByName("Sheet1");
+  var ws = ss.getSheetByName("review_years");
   
   var review_year_records = ws.getRange(2, 1, ws.getRange("A1").getDataRegion().getLastRow() - 1, ws.getRange("A1").getDataRegion().getLastColumn()).getValues();
   Logger.log(review_year_records);
@@ -180,21 +180,23 @@ function updateStudentReviewDetails(studentReviewDetails) {
   var dataExists = false;
   
   for (var i = 0; i < values.length; i++) {
-    if (values[i][0] == studentReviewDetails.uin && values[i][1] == studentReviewDetails.reviewYear && values[i][2] == getUser()) {
+    if (values[i][0] == studentReviewDetails.uin && values[i][1] == studentReviewDetails.reviewYear && values[i][3] == getFacultyEmail()) {
       dataExists = true;
       Logger.log("data exists");
-      
-      ws.getRange(i + 1,3 + 1).setValue(studentReviewDetails.rating);
-      ws.getRange(i + 1,8 + 1).setValue(studentReviewDetails.commentsForStudents);
-      ws.getRange(i + 1,10 + 1).setValue(studentReviewDetails.needsToImproveGrade);
-      ws.getRange(i + 1,11 + 1).setValue(studentReviewDetails.noStudentReportAvailable);
-      ws.getRange(i + 1,12 + 1).setValue(studentReviewDetails.misconduct);
-      ws.getRange(i + 1,13 + 1).setValue(studentReviewDetails.needsToPassQualiferExam);
-      ws.getRange(i + 1,14 + 1).setValue(studentReviewDetails.needsToFindAdvisor);
-      ws.getRange(i + 1,15 + 1).setValue(studentReviewDetails.needsToFileDegreePlan);
-      ws.getRange(i + 1,16 + 1).setValue(studentReviewDetails.needsToDoPrelim);
-      ws.getRange(i + 1,17 + 1).setValue(studentReviewDetails.needsToSubmitProposal);
-      ws.getRange(i + 1,18 + 1).setValue(studentReviewDetails.needsToFinishSoon);
+      //ws.getRange(i + 1, 3).setValue("Dummy Name");
+      //Adding column for Faculty Name
+      ws.getRange(i + 1,3).setValue(getFacultyName());
+      ws.getRange(i + 1,3 + 2).setValue(studentReviewDetails.rating);
+      ws.getRange(i + 1,8 + 2).setValue(studentReviewDetails.commentsForStudents);
+      ws.getRange(i + 1,10 + 2).setValue(studentReviewDetails.needsToImproveGrade);
+      ws.getRange(i + 1,11 + 2).setValue(studentReviewDetails.noStudentReportAvailable);
+      ws.getRange(i + 1,12 + 2).setValue(studentReviewDetails.misconduct);
+      ws.getRange(i + 1,13 + 2).setValue(studentReviewDetails.needsToPassQualiferExam);
+      ws.getRange(i + 1,14 + 2).setValue(studentReviewDetails.needsToFindAdvisor);
+      ws.getRange(i + 1,15 + 2).setValue(studentReviewDetails.needsToFileDegreePlan);
+      ws.getRange(i + 1,16 + 2).setValue(studentReviewDetails.needsToDoPrelim);
+      ws.getRange(i + 1,17 + 2).setValue(studentReviewDetails.needsToSubmitProposal);
+      ws.getRange(i + 1,18 + 2).setValue(studentReviewDetails.needsToFinishSoon);
       
       break;  
     } 
@@ -202,7 +204,7 @@ function updateStudentReviewDetails(studentReviewDetails) {
   
   if (!dataExists){ 
     Logger.log("adding new row");
-    ws.appendRow([studentReviewDetails.uin, studentReviewDetails.reviewYear, getUser(), studentReviewDetails.rating, "", "", "", "",
+    ws.appendRow([studentReviewDetails.uin, studentReviewDetails.reviewYear,getFacultyName(), getFacultyEmail(), studentReviewDetails.rating, "", "", "", "",
                   studentReviewDetails.commentsForStudents, "", studentReviewDetails.needsToImproveGrade,
                   studentReviewDetails.noStudentReportAvailable, studentReviewDetails.misconduct, studentReviewDetails.needsToPassQualiferExam,
                   studentReviewDetails.needsToFindAdvisor, studentReviewDetails.needsToFileDegreePlan, studentReviewDetails.needsToDoPrelim,
@@ -217,6 +219,34 @@ function getUser() {
     return "admin";
   }
   return user;
+}
+//Function to fetch Faculty Name
+function getFacultyName() {
+  var email = getFacultyEmail();
+  var name = "";
+  if(email == "walker@tamu.edu" || email == "karrie@tamu.edu")
+    name = "Department";
+  else {
+  var ss = SpreadsheetApp.openByUrl(login_sheet);
+  var ws = ss.getSheetByName("Faculty");
+  var data = ws.getRange(1, 1, ws.getLastRow(), 1).getValues();
+  
+  var values = ws.getDataRange().getValues();
+  
+  
+  for (var i = 1; i < values.length; i++) {
+    if (rowValue(values, i, "Email") == email) {
+      name = rowValue(values, i, "Faculty Name");
+      break;
+      }
+  }
+  }
+  return name;
+}
+
+function getFacultyEmail() {
+  var email = Session.getActiveUser().getEmail();
+  return email;
 }
 
 function getStudentInfo(uin){
@@ -240,25 +270,27 @@ function getThatStudentInfo(uin){
 }
 
 function getStudentReviews(uin){
+  Logger.log("In getStudentReviews()");
   var ss = SpreadsheetApp.openByUrl(url_student_review_details);
   var ws = ss.getSheetByName("Sheet1");
 
   var student_reviews = ws.getRange(2, 1, ws.getRange("A1").getDataRegion().getLastRow() - 1, ws.getRange("A1").getDataRegion().getLastColumn()).getValues();
+  Logger.log("Raw student_reviews " + student_reviews);
   var filtered_student_reviews = ArrayLib.filterByText(student_reviews, 0, uin);
-
+  Logger.log("Filtered student reviews \n" + filtered_student_reviews);
   return filtered_student_reviews;
 }
 
 function convertFilteredStudentReviewsDataToHTMLTable(filtered_student_reviews){
   var tableDataHtml = "";
   for(var i = 0; i < filtered_student_reviews.length; i++){
-    var reviewer = (filtered_student_reviews[i][2] == "admin") ? "Admin" : "Faculty";
+    //var reviewer = (filtered_student_reviews[i][2] == "admin") ? "Admin" : "Faculty";
     
     tableDataHtml = tableDataHtml + "<tr>" + 
-                                        "<td>" + reviewer + "</td>" +
-                                        "<td>" + filtered_student_reviews[i][3] + "</td>" + 
+                                        "<td>" + filtered_student_reviews[i][2] + "</td>" +
+                                        "<td>" + filtered_student_reviews[i][4] + "</td>" + 
                                         "<td>" + filtered_student_reviews[i][1] + "</td>" + 
-                                        "<td>" + filtered_student_reviews[i][8] + "</td>" + 
+                                        "<td>" + filtered_student_reviews[i][9] + "</td>" + 
                                     "</tr>";
   }
   return tableDataHtml;
