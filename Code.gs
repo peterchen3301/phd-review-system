@@ -160,16 +160,65 @@ function loadStudentDetails(e){
 
 function loadAllStudentReviews(e){
   var uin = e.parameters.uin;
+  
   var filtered_student_reviews = getStudentReviews(uin);
   var tableDataHtml = convertFilteredStudentReviewsDataToHTMLTable(filtered_student_reviews);
   var tmp = HtmlService.createTemplateFromFile("see_reviews");
+  //tmp.tableDataHtml = tableDataHtml;
+  
+  
+  //Adding first name and last name
+  var ss = SpreadsheetApp.openByUrl(student_info_sheet_url);
+  var ws = ss.getSheetByName("Sheet1");
+  var data = ws.getRange(1, 1, ws.getLastRow(), 1).getValues();
+  
+  var values = ws.getDataRange().getValues();
+  var headers = values[0];
+  
+  for (var i = 1; i < values.length; i++) {
+    if (rowValue(values, i, "uin") == uin) {
+      
+      //Logger.log("Email"+userInfo.email);
+      tmp.firstName = rowValue(values, i, "first_name");
+      tmp.lastName = rowValue(values, i, "last_name");
+      break;
+      }
+  }
+  var ss1 = SpreadsheetApp.openByUrl(url_review_year_information);
+  var ws1 = ss1.getSheetByName("review_years");
+  var years = ws1.getRange(2,1,ws.getRange("A1").getDataRegion().getLastRow()-3,1).getValues();
+  Logger.log(years);
+ 
+  //var tmp = HtmlService.createTemplateFromFile("see_reviews");
+  tmp.uin = uin;
+  tmp.years = years.map(function(r){return r[0];});
   tmp.tableDataHtml = tableDataHtml;
+  
   return tmp.evaluate();
 }
+
 
 function loadAddReview(e){
   var args = {};
   args.uinValue = e.parameters.uin;
+  //Getting first name and last name
+  var ss = SpreadsheetApp.openByUrl(student_info_sheet_url);
+  var ws = ss.getSheetByName("Sheet1");
+  var data = ws.getRange(1, 1, ws.getLastRow(), 1).getValues();
+  
+  var values = ws.getDataRange().getValues();
+  var headers = values[0];
+  
+  for (var i = 1; i < values.length; i++) {
+    if (rowValue(values, i, "uin") == args.uinValue) {
+      
+      //Logger.log("Email"+userInfo.email);
+      args.firstName = rowValue(values, i, "first_name");
+      args.lastName = rowValue(values, i, "last_name");
+      break;
+      }
+  }
+      
   Logger.log("args are ----- " + args)
   return render("add_student_review", args);
 }
@@ -664,3 +713,4 @@ function getMyScriptUrl(){
   var newUrlString = urlString.substring(0, 25) + "/a/tamu.edu" + urlString.substring(25);
   return newUrlString;
 }
+
