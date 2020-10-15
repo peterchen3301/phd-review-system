@@ -10,6 +10,8 @@
 
       <!--Let browser know website is optimized for mobile-->
       <?!= include('css'); ?>
+      <meta charset="utf-8"/>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   </head>
   <body>
   <div class="navbar-fixed" style="height: 110px">
@@ -19,6 +21,7 @@
             <ul id="nav-mobile" class="right hide-on-med-and-down">
               <li id="admin-view"><a href="<?= getScriptUrl();?>?v=admin_view">Admin</a></li>
               <li ><a href="<?= getScriptUrl();?>?v=faculty_view">Student Search</a></li>
+              <li ><a href="<?= getScriptUrl();?>?v=add_student">Add Student</a></li>
               <li><a href="<?= getScriptUrl();?>?v=index">Logout</a></li>
             </ul>
           </div>
@@ -29,13 +32,29 @@
     </div>
         </nav>
   </div>
+
   <div class="container">
     <h3>
       Reviews for the Student
     </h3>
-
+    <!-- Displaying Student UIN and Name-->
+    <h5 id= "uin">Review for UIN: <?=uin?></h5>
+    <h5>First Name: <?=firstName?></h5>
+    <h5>Last Name: <?=lastName?></h5>
+    <label visible="false" class = "hide" id = "uinForThisPage" ><?=uin?></label>
+    <br>
+    <!--Adding dropdown for selecting review year-->
+    <div>
+      <label>Review Year</label>
+          <select style="display: block;" id = "year" onchange="onChangeReviewYear()">
+              <option>Choose Review Year</option>
+              <?for(var i = years.length - 1; i >= 0; i--) { ?>
+              <option><?= years[i]?></option>
+              <? } ?>
+          </select>
+    </div>
     <div id="see_reviews-student">
-      <table class="striped">
+      <table class="striped" id ="myTable">
       <thead>
       <tr>
       <th>Reviewer</th>
@@ -45,29 +64,52 @@
       </tr>
       </thead>
 
-      <tbody>
-      <?!= tableDataHtml ?>
-      <!--tr>
-      <td>Alvin</td>
-      <td>Eclair</td>
-      <td>$0.87</td>
-      </tr>
-      <tr>
-      <td>Alan</td>
-      <td>Jellybean</td>
-      <td>$3.76</td>
-      </tr>
-      <tr>
-      <td>Jonathan</td>
-      <td>Lollipop</td>
-      <td>$7.00</td>
-      </tr-->
+      <tbody id = "table-body"><?!=tableDataHtml?>
       </tbody>
       </table>
     </div>
+ 
     <script>
     document.getElementById("admin-view").style.visibility = "hidden";
     google.script.run.withSuccessHandler(hideAdminView).isAdmin();
+    
+
+    function onChangeReviewYear() {
+     var input, filter, table, tr, td, i, txtValue;
+     var selectElement = document.getElementById("year");
+     var filter = selectElement.options[selectElement.selectedIndex].value;
+     console.log(filter);
+     input = document.getElementById("year");
+     if(filter == "Choose Review Year")
+      filter = "";
+     table = document.getElementById("myTable");
+     tr = table.getElementsByTagName("tr");
+     for (i = 0; i < tr.length; i++) {
+     td = tr[i].getElementsByTagName("td")[2];
+     if (td) {
+      txtValue = td.textContent || td.innerText;
+      //console.log(txtValue);
+      console.log(txtValue.indexOf(filter) > -1);
+      if (txtValue.indexOf(filter) > -1) {
+        tr[i].style.display = "";
+      } 
+      else {
+        tr[i].style.display = "none";
+      }
+    }       
+  }
+}
+    
+
+    
+    function getReview() {
+      var year = document.getElementById("review_year").value;
+      console.log("Year = "+year);
+      
+      var uin = document.getElementByID("uin").value;
+     
+      google.script.run.loadReview(uin,year);
+    }
 
     function hideAdminView(result) {
       if (result == true)  {
@@ -75,10 +117,23 @@
         document.getElementById("view-name").innerHTML = "Admin View";
       }
     }
+    function loadTable(table) {
+       document.getElementById("review_table").value = table;
+    }
+    
+    function loadReviews() {
+    
+        //var year = document.getElementById("year").value;
+        var uin = document.getElementById("uin").value;
+        Logger.log("In HTML loadReview");
+        console.log("In HTL loadReview");
+        //const url = window.location.search;
+        google.script.run.loadReview(uin,year);
+        }
 
-    </script>
-    <script type = "text/javascript" src = "https://code.jquery.com/jquery-2.1.1.min.js"></script>
+  </script>
+      <script type = "text/javascript" src = "https://code.jquery.com/jquery-2.1.1.min.js"></script>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
-  </div>
-  </body>
+</div>
+</body>
 </html>
