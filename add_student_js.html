@@ -1,4 +1,43 @@
 <script>
+// Function to reset fields to empty if Discard button is pressed
+  function resetFields() {
+   //document.getElementById('VCV').disabled = false;
+   document.getElementById('fn').value = "";
+   document.getElementById('ln').value = "";
+   document.getElementById('uin_').value = "";
+   document.getElementById('email').value = "";
+   
+   document.getElementById('prelim-date').value = "";
+   document.getElementById('proposal-date').value = "";
+   document.getElementById('defense-date').value = "";
+   
+    var a  = document.getElementById("start-semester");
+    a.value = "";
+    M.FormSelect.init(a);
+    
+    
+    var a  = document.getElementById("qual");
+    a.value = "";
+    M.FormSelect.init(a);
+    
+    var a  = document.getElementById("attempts");
+    a.value = "";
+    M.FormSelect.init(a);
+    
+    var a  = document.getElementById("advisor");
+    a.value = "";
+    M.FormSelect.init(a);
+    
+    var a  = document.getElementById("co-advisor");
+    a.value = "";
+    M.FormSelect.init(a);
+    
+    var a  = document.getElementById("degree-plan");
+    a.value = "";
+    M.FormSelect.init(a);
+    
+   
+   }
   function resetProfileFields() {  
   
      document.getElementById('VCV').disabled = false;
@@ -60,23 +99,24 @@
     }else{
       userInfo.defense_date  = c;
     }
-    
+
+    google.script.run.updateLoginSheet(userInfo); // call function to add student to the login sheet
     google.script.run.submitProfile(userInfo);
   
-  var cv = document.getElementById("cv").files[0];
+//    var cv = document.getElementById("cv").files[0];
 ////    console.log(cv);
-    if (cv){
-    
-      document.getElementById('filename').value = "";
-      document.getElementById('VCV').disabled = true;
-      var d = document.getElementById('cv_url');
-      d.removeAttribute("href");
-      
-      uploadFile(userInfo,cv,"cv");
-    }else{
+//    if (cv){
+//    
+//      document.getElementById('filename').value = "";
+//      document.getElementById('VCV').disabled = true;
+//      var d = document.getElementById('cv_url');
+//      d.removeAttribute("href");
+//      
+//      uploadFile(userInfo,cv,"cv");
+//    }else{
 ////      setTimeout(resetProfileFields, 5000);
 ////      resetProfileFields();
-   }
+//    }
 
     alert("Data Updated");
   }

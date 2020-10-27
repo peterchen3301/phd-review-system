@@ -34,45 +34,35 @@
   </div>
 
   <div class="container">
-    <h3>
+    <!--h3>
       Reviews for the Student
-    </h3>
+    </h3-->
     <!-- Displaying Student UIN and Name-->
-    <h5 id= "uin">Review for UIN: <?=uin?></h5>
+    <h5 id= "uin">UIN: <?=uin?></h5>
     <h5>First Name: <?=firstName?></h5>
     <h5>Last Name: <?=lastName?></h5>
-    <label visible="false" class = "hide" id = "uinForThisPage" ><?=uin?></label>
+    <label visible="false" class = "hide" id = "uinValue" ><?=uin?></label>
     <br>
-    <!--Adding dropdown for selecting review year-->
-    <div>
-      <label>Review Year</label>
-          <select style="display: block;" id = "year" onchange="onChangeReviewYear()">
-              <option>Choose Review Year</option>
-              <?for(var i = years.length - 1; i >= 0; i--) { ?>
-              <option><?= years[i]?></option>
-              <? } ?>
-          </select>
-    </div>
-    <div id="see_reviews-student">
-      <table class="striped" id ="myTable">
-      <thead>
-      <tr>
-      <th>Reviewer</th>
-      <th>Rating</th>
-      <th>Review Year</th>
-      <th>Review</th>
-      </tr>
-      </thead>
-
-      <tbody id = "table-body"><?!=tableDataHtml?>
-      </tbody>
-      </table>
-    </div>
+    
+        <div class="row">
+          <div class="center">
+           <h6> Are you sure you want to remove this student from the PhD program?</h6>
+          </div>
+        </div>
+   
+        <div class="row">
+          <div class="center">
+            <button class="btn waves-effect waves-light cancel" onclick="removeStudent()" id = "remove"> Remove
+            </button>
+          </div>
+        </div>
+   
  
     <script>
     document.getElementById("admin-view").style.visibility = "hidden";
     google.script.run.withSuccessHandler(hideAdminView).isAdmin();
     
+
 
     function onChangeReviewYear() {
      var input, filter, table, tr, td, i, txtValue;
@@ -134,6 +124,7 @@
   </script>
       <script type = "text/javascript" src = "https://code.jquery.com/jquery-2.1.1.min.js"></script>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+      <?!= include('remove_student_js'); ?>
 </div>
 </body>
 </html>

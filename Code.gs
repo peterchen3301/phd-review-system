@@ -37,6 +37,8 @@ function doGet(e){
   Route.path("profile", loadProfile);
   Route.path("index", loadHome);
   Route.path("see_reviews", loadAllStudentReviews);
+  Route.path("add_student", loadAddStudent);
+  Route.path("remove_student", loadRemoveStudent);
   
   Logger.log(e.parameters.v);
   if(Route[cls]){
@@ -142,15 +144,42 @@ function loadProfile(){
 function loadStudentReview(){
   return render("student_review");
 }
+//Function for loading Add Student Page
+
+function loadAddStudent() {
+  return render("add_student");
+}
+
+//Function for loading Remove Student Page
+
+function loadRemoveStudent(e) {
+  var uin = e.parameters.uin;
+  var tmp = HtmlService.createTemplateFromFile("remove_student");
+  tmp.uin = uin;
+  var ss = SpreadsheetApp.openByUrl(student_info_sheet_url);
+  var ws = ss.getSheetByName("Sheet1");
+  var data = ws.getRange(1, 1, ws.getLastRow(), 1).getValues();
+  
+  var values = ws.getDataRange().getValues();
+  var headers = values[0];
+  
+  for (var i = 1; i < values.length; i++) {
+    if (rowValue(values, i, "uin") == uin) {
+      
+      //Logger.log("Email"+userInfo.email);
+      tmp.firstName = rowValue(values, i, "first_name");
+      tmp.lastName = rowValue(values, i, "last_name");
+      break;
+      }
+  }
+  
+  //var filtered_student_reviews = getStudentReviews(uin);
+  //var tableDataHtml = convertFilteredStudentReviewsDataToHTMLTable(filtered_student_reviews);
+
+  return tmp.evaluate();
+}
 
 function loadStudentDetails(e){
-  /*
-  var uin = e.parameters.uin;
-  var args = {};
-  args.record = getStudentInfo(uin)[0];
-  return render("student_details", args);
-  */
-
   var uin = e.parameters.uin;
   var filtered_student_record = getThatStudentInfo(uin);
   var tmp = HtmlService.createTemplateFromFile("student_details");
@@ -160,19 +189,85 @@ function loadStudentDetails(e){
 
 function loadAllStudentReviews(e){
   var uin = e.parameters.uin;
+  
   var filtered_student_reviews = getStudentReviews(uin);
   var tableDataHtml = convertFilteredStudentReviewsDataToHTMLTable(filtered_student_reviews);
   var tmp = HtmlService.createTemplateFromFile("see_reviews");
+  //tmp.tableDataHtml = tableDataHtml;
+  
+  
+  //Adding first name and last name
+  var ss = SpreadsheetApp.openByUrl(student_info_sheet_url);
+  var ws = ss.getSheetByName("Sheet1");
+  var data = ws.getRange(1, 1, ws.getLastRow(), 1).getValues();
+  
+  var values = ws.getDataRange().getValues();
+  var headers = values[0];
+  
+  for (var i = 1; i < values.length; i++) {
+    if (rowValue(values, i, "uin") == uin) {
+      
+      //Logger.log("Email"+userInfo.email);
+      tmp.firstName = rowValue(values, i, "first_name");
+      tmp.lastName = rowValue(values, i, "last_name");
+      break;
+      }
+  }
+  var ss1 = SpreadsheetApp.openByUrl(url_review_year_information);
+  var ws1 = ss1.getSheetByName("review_years");
+  var years = ws1.getRange(2,1,ws.getRange("A1").getDataRegion().getLastRow()-1,1).getValues().filter(String);
+  Logger.log(years);
+ 
+  //var tmp = HtmlService.createTemplateFromFile("see_reviews");
+  tmp.uin = uin;
+  tmp.years = years.map(function(r){return r[0];});
   tmp.tableDataHtml = tableDataHtml;
+  
   return tmp.evaluate();
 }
+
 
 function loadAddReview(e){
   var args = {};
   args.uinValue = e.parameters.uin;
+  //Getting first name and last name
+  var ss = SpreadsheetApp.openByUrl(student_info_sheet_url);
+  var ws = ss.getSheetByName("Sheet1");
+  var data = ws.getRange(1, 1, ws.getLastRow(), 1).getValues();
+  
+  var values = ws.getDataRange().getValues();
+  var headers = values[0];
+  
+  for (var i = 1; i < values.length; i++) {
+    if (rowValue(values, i, "uin") == args.uinValue) {
+      
+      //Logger.log("Email"+userInfo.email);
+      args.firstName = rowValue(values, i, "first_name");
+      args.lastName = rowValue(values, i, "last_name");
+      break;
+      }
+  }
+      
   Logger.log("args are ----- " + args)
   return render("add_student_review", args);
 }
+
+//Function to mark student as removed
+function markStudentAsRemoved(uin) {
+  Logger.log("Marked",uin);
+  var ss = SpreadsheetApp.openByUrl(student_info_sheet_url);
+  var ws = ss.getSheetByName("Sheet1");
+  var values = ws.getDataRange().getValues();
+  var i = 1;
+  while(i < values.length ) {
+    if (rowValue(values, i, "uin") == uin) {
+      setRowValue(ws, values, i, "is_current_student", 0); 
+      break;  
+    }
+    i++;
+  }
+}
+
 
 function getAllReviewYears() {
   var review_year_records = getAllReviewYearInformation();
@@ -280,6 +375,34 @@ function setRowValue(ws, values, rowIdx, headerLabel, value) {
   var headers = values[0];
   ws.getRange(rowIdx+1, headers.indexOf(headerLabel)+1).setValue(value);
 }
+
+//Function to add student to the Login sheet
+function updateLoginSheet(userInfo) {
+  var ss = SpreadsheetApp.openByUrl(account_sheet_url);
+  var ws = ss.getSheetByName("Student");
+  var values = ws.getDataRange().getValues();
+  var studentExists = false;
+
+  var full_name = userInfo.firstname + " " + userInfo.lastname;
+  var i = 1;
+  while(i < values.length ) {
+    if (rowValue(values, i, "EMAIL_PREFERRED_ADDRESS") == userInfo.email) {
+      studentExists = true;
+      setRowValue(ws, values, i, "FULL_NAME_LFMI", full_name);
+      setRowValue(ws, values, i, "LAST_NAME", userInfo.lastname);
+      setRowValue(ws, values, i, "FIRST_NAME", userInfo.firstname);    
+      break;  
+    }
+    i++;
+  }
+  
+  if (!studentExists){ 
+    ws.appendRow([userInfo.email,full_name,userInfo.lastname,userInfo.firstname
+                 ]);
+  } 
+}
+  
+  
 
 function submitProfile(userInfo){
   var ss = SpreadsheetApp.openByUrl(student_info_sheet_url);
@@ -636,9 +759,11 @@ function getReviewDetails(year){
 
 function get_advisor_list(){
   
-  var ss = SpreadsheetApp.openByUrl(faculty_data_sheet_url);
-  var ws = ss.getSheetByName("f_data");
-  var list = ws.getRange(2,1, ws.getRange("A2").getDataRegion().getLastRow(),1).getValues();
+  var ss = SpreadsheetApp.openByUrl(account_sheet_url);
+  var ws = ss.getSheetByName("Faculty");
+  var list = ws.getRange(2,2, ws.getRange("A2").getDataRegion().getLastRow(),1).getValues();
+  
+  Logger.log("Faculty list ",list);
   
   var advisorlist = list.map(function(r){return '<option value="'+r[0]+'">'+r[0]+'</option>';}).join('');
   Logger.log(advisorlist)
@@ -664,3 +789,4 @@ function getMyScriptUrl(){
   var newUrlString = urlString.substring(0, 25) + "/a/tamu.edu" + urlString.substring(25);
   return newUrlString;
 }
+

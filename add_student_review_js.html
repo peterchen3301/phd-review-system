@@ -99,6 +99,7 @@ document.getElementById("reviewSubmitButton").addEventListener("click", reviewSu
     var needsToFinishSoon = !adminMode ? 0 : (document.getElementById("needsToFinishSoon").checked == true ? 1 : 0);
         
     studentReviewDetails.uin = uin;
+    studentReviewDetails.facultyName = "";
     studentReviewDetails.reviewYear = reviewYear;
     studentReviewDetails.rating = rating;
     studentReviewDetails.commentsForStudents = commentsForStudents;

@@ -23,6 +23,7 @@
             <ul id="nav-mobile" class="right hide-on-med-and-down">
               <li id="admin-view"><a href="<?= getScriptUrl();?>?v=admin_view">Admin</a></li>
               <li ><a href="<?= getScriptUrl();?>?v=faculty_view">Student Search</a></li>
+              <li ><a href="<?= getScriptUrl();?>?v=add_student">Add Student</a></li>
               <li><a href="<?= getScriptUrl();?>?v=index">Logout</a></li>
             </ul>
           </div>
@@ -38,7 +39,9 @@
     <div class="container">
     <div id="upload-review">
           <div>
-            <h4>Review for UIN: <?=uinValue?></h4>
+            <h5>Review for UIN: <?=uinValue?></h5>
+            <h5>First Name: <?=firstName?></h5>
+            <h5>Last Name: <?=lastName?></h5>
             <label visible="false" class = "hide" id = "uinForThisPage" ><?=uinValue?></label>
             <br>
             <form class="col s12" >
@@ -189,5 +192,3 @@
     
   </body>
 </html>
-
-
