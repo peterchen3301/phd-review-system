@@ -1,0 +1,52 @@
+
+<script>
+function onLoadAdmin() {
+    google.script.run.withSuccessHandler(onSuccessToGetActiveReviewYear).getActiveReviewYear();
+}
+
+function onSuccessToGetActiveReviewYear(result) {
+    if(result == "None") {
+        document.getElementById("end_current_review_year").classList.add('disabled');
+    }
+    else {
+        document.getElementById("review_year").disabled = true;
+        $('#review_year').prop("disabled", true);
+        document.getElementById("begin_review_year").classList.add('disabled');
+    }
+}
+
+document.getElementById("add_new_review_year").addEventListener("click", addNewReviewYearClicked);
+
+function addNewReviewYearClicked() {
+    var newReviewYear = document.getElementById("new_review_year").value;
+    //window.location.reload(true);
+    //window.location.href=window.location.href;
+    google.script.run.withSuccessHandler(onSuccessAddNewReviewYear).addNewReviewYear(newReviewYear);
+}
+
+function onSuccessAddNewReviewYear(result) {
+    alert(result);
+}
+
+document.getElementById("end_current_review_year").addEventListener("click", endReviewYearClicked);
+
+function endReviewYearClicked() {
+    google.script.run.withSuccessHandler(onSuccessEndReviewYear).endCurrentReviewYear();
+}
+
+function onSuccessEndReviewYear(result) {
+    alert(result);
+}
+
+document.getElementById("begin_review_year").addEventListener("click", beginReviewYearClicked);
+
+function beginReviewYearClicked() {
+    var selectReviewYearElement = document.getElementById("review_year");
+    var reviewYear = selectReviewYearElement.options[selectReviewYearElement.selectedIndex].value;
+    google.script.run.withSuccessHandler(onSuccessBeginReviewYear).beginThisReviewYear(reviewYear);
+}
+
+function onSuccessBeginReviewYear(result) {
+    alert(result);
+}
+</script>

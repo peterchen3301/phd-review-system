@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <!--Import Google Icon Font-->
+      <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+      
+      <!--Import materialize.css-->
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+      
+      <!--Let browser know website is optimized for mobile-->
+      <!--link rel="stylesheet" href="css/app.css"-->
+      
+      <?!= include('css'); ?>
+      <meta charset="utf-8"/>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  </head>
+  <body onload = "onLoadAddStudentReview()">
+  <div class="navbar-fixed" style="height: 110px">
+        <nav class="nav-extended tamu-navbar">
+          <div class="nav-wrapper tamu-navbar">
+            <a href="javascript:void(0)" class="brand-logo">Ph.D. Review System</a>
+            <ul id="nav-mobile" class="right hide-on-med-and-down">
+              <li id="admin-view"><a href="<?= getScriptUrl();?>?v=admin_view">Admin</a></li>
+              <li id="add-student"><a href="<?= getScriptUrl();?>?v=add_student">Add Student</a></li>
+              <li ><a href="<?= getScriptUrl();?>?v=faculty_view">Student Search</a></li>
+              <li><a href="<?= getScriptUrl();?>?v=index">Logout</a></li>
+            </ul>
+          </div>
+          <div class="nav-content">
+            <ul class="tabs tabs-transparent">
+             <li class="tab"><a href="javascript:void(0)" id="view-name" class="active">Faculty View</a></li>
+          </ul>
+          </div>
+          
+        </nav>
+  </div>
+    
+    <div class="container">
+    <div id="upload-review">
+          <div>
+            <h5>Review for UIN: <?=uinValue?></h5>
+            <h5>First Name: <?=firstName?></h5>
+            <h5>Last Name: <?=lastName?></h5>
+            <label visible="false" class = "hide" id = "uinForThisPage" ><?=uinValue?></label>
+            <br>
+            <form class="col s12" >
+            
+              <div class="row">
+
+                <div class="input-field col s3">
+                  <select id = "reviewYear" onchange = "onChangeReviewYear()">
+                    <option value = "2020">2020</option>
+                    <option value = "2019">2019</option>
+                    <option value = "2018">2018</option>
+                    <option value = "2017">2017</option>
+                  </select>
+                  <label>Review Year</label>
+                </div>
+
+              </div>
+
+              <div class="row">
+
+                <div class="col s12">
+                  <h6>Comments For Student</h6>
+                  <textarea id="commentsForStudent" class="materialize-textarea"></textarea>
+                </div>
+
+              </div>
+
+              <div class="row">
+
+                <div class="input-field col s3">
+                  <select id = "reviewSelect">
+                    <option disabled selected value = "">Choose your option</option>
+                    <option value = "X">Not Rated (X)</option>
+                    <option value = "U">Unsatisfactory (U)</option>
+                    <option value = "N">Needs Improvement (N)</option>
+                    <option value = "S">Satisfactory (S)</option>
+                  </select>
+                  <label>Rating</label>
+                </div>
+
+              </div>
+
+              <div class="row adminOnly" id="adminOnlyNotes">
+                <div class="col s6">
+                  <h6>Notes (select all that apply) </h6>
+                </div>
+              </div>
+              <div class="row adminOnly" id="adminOnlyCheckboxes" >
+
+                <div class="col s4">
+                  <p align="left">
+                    <label>
+                      <input type="checkbox" id = "needsToImproveGrade"/>
+                      <span>Needs to improve grade</span>
+                    </label>
+                  </p>
+                </div>
+
+                <div class="col s4">
+                  <p align="left">
+                    <label>
+                      <input type="checkbox" id = "noStudentReportAvailable"/>
+                      <span>No student report available</span>
+                    </label>
+                  </p>
+                </div>
+
+                <div class="col s4">
+                  <p align="left">
+                    <label>
+                      <input type="checkbox" id = "misconduct" />
+                      <span>Misconduct</span>
+                    </label>
+                  </p>
+                </div>
+
+                <div class="col s4">
+                  <p align="left">
+                    <label>
+                      <input type="checkbox" id = "needsToPassQualiferExam"/>
+                      <span>Needs to pass qualifer exam</span>
+                    </label>
+                  </p>
+                </div>
+
+
+                <div class="col s4">
+                  <p align="left">
+                    <label>
+                      <input type="checkbox" id = "needsToFindAdvisor"/>
+                      <span>Needs to find advisor</span>
+                    </label>
+                  </p>
+                </div>
+
+                <div class="col s4">
+                  <p align="left">
+                    <label>
+                      <input type="checkbox" id = "needsToFileDegreePlan"/>
+                      <span>Needs to file degree plan</span>
+                    </label>
+                  </p>
+                </div>
+
+                <div class="col s4">
+                  <p align="left">
+                    <label>
+                      <input type="checkbox" id = "needsToDoPrelim"/>
+                      <span>Needs to do prelim</span>
+                    </label>
+                  </p>
+                </div>
+
+                <div class="col s4">
+                  <p align="left">
+                    <label>
+                      <input type="checkbox" id = "needsToSubmitProposal"/>
+                      <span>Needs to submit proposal</span>
+                    </label>
+                  </p>
+                </div>
+
+                <div class="col s4">
+                  <p align="left">
+                    <label>
+                      <input type="checkbox" id = "needsToFinishSoon"/>
+                      <span>Needs to finish soon</span>
+                    </label>
+                  </p>
+                </div>
+
+              </div>
+              <a id="reviewSubmitButton" class="waves-effect waves-light btn">Submit</a>
+              <a id="viewStudentReport" class="waves-effect waves-light btn">View Student Report</a>
+              <a id="viewImprovementPlan" class="waves-effect waves-light btn">View Improvement Plan</a>
+            </form>
+          </div>
+        </div>
+        
+        </div>
+        
+        <script type = "text/javascript" src = "https://code.jquery.com/jquery-2.1.1.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+      
+      <?!= include("student_info_javascript") ?>
+      <?!= include("add_student_review_js") ?>
+    
+    
+  </body>
+</html>

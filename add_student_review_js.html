@@ -1,0 +1,161 @@
+
+<script>
+
+var adminMode = false;
+document.getElementById("adminOnlyNotes").style.display = 'none';
+document.getElementById("adminOnlyCheckboxes").style.display = 'none';
+document.getElementById("admin-view").style.visibility = "hidden";
+document.getElementById("add-student").style.visibility = "hidden";
+google.script.run.withSuccessHandler(setUser).isAdmin();
+function setUser(result) {
+  if (result == true) {//is Admin!
+    document.getElementById("admin-view").style.visibility = "visible";
+    document.getElementById("add-student").style.visibility = "visible";
+    adminMode = true;
+    document.getElementById("adminOnlyNotes").style.display = 'inline';
+    document.getElementById("adminOnlyCheckboxes").style.display = 'inline';
+    document.getElementById("view-name").innerHTML = "Admin View";
+  }
+}
+function onLoadAddStudentReview() {
+    // set current review year here
+    /*document.getElementById("reviewYear").value = "2019";
+    var elems = document.querySelectorAll('select');
+    var instances = M.FormSelect.init(elems, {});*/
+   
+    onChangeReviewYear();
+}
+
+
+function onChangeReviewYear() {
+    var studentInfo = {};
+    var uinElement = document.getElementById("uinForThisPage");
+    console.log(uinElement);
+    var uin = uinElement.innerHTML;
+    var selectElement = document.getElementById("reviewYear");
+    var reviewYear = selectElement.options[selectElement.selectedIndex].value;
+    console.log(reviewYear + " " + uin);
+    
+    google.script.run.withSuccessHandler(onSuccessToGetStudentReviewInformation).getReviewInformationForUinAndYear(uin, reviewYear);
+    
+}
+
+function onSuccessToGetStudentReviewInformation(result) {
+    console.log("student review info:" + result);
+    document.getElementById("commentsForStudent").value = result[9];
+    document.getElementById("reviewSelect").value = result[4];
+    var elems = document.querySelectorAll('select');
+    var instances = M.FormSelect.init(elems, {});
+    document.getElementById("needsToImproveGrade").checked = result[11] == 1 ? true : false;
+    document.getElementById("noStudentReportAvailable").checked = result[12] == 1 ? true : false;
+    document.getElementById("misconduct").checked = result[13] == 1 ? true : false;
+    document.getElementById("needsToPassQualiferExam").checked = result[14] == 1 ? true : false;
+    document.getElementById("needsToFindAdvisor").checked = result[15] == 1 ? true : false;
+    document.getElementById("needsToFileDegreePlan").checked = result[16] == 1 ? true : false;
+    document.getElementById("needsToDoPrelim").checked = result[17] == 1 ? true : false;
+    document.getElementById("needsToSubmitProposal").checked = result[18] == 1 ? true : false;
+    document.getElementById("needsToFinishSoon").checked = result[19] == 1 ? true : false;
+    
+    
+    //Code for fetching Student Report and IP links
+    var uinElement = document.getElementById("uinForThisPage");
+    var uin = uinElement.innerHTML;
+    var selectElement = document.getElementById("reviewYear");
+    var uin = uinElement.innerHTML;
+    var year = selectElement.options[selectElement.selectedIndex].value;
+    google.script.run.withSuccessHandler(onSuccess).get_urls(uin,year);
+//    var viewStudentReport = document.getElementById('viewStudentReport');
+//    viewStudentReport.href = result[7];
+//    var viewImprovementPlan = document.getElementById('viewImprovementPlan');
+//    viewImprovementPlan.href = result[8];
+    
+}
+
+//Function for setting href of the html a tags
+function onSuccess(urls){
+  console.log("In function onSuccess");
+  
+  var a = document.getElementById('viewStudentReport');
+  var b = document.getElementById('viewImprovementPlan');
+  
+  if (urls.report!=""){
+    console.log("ipurl"+urls.report);
+    a.href = urls.report;
+  }
+  
+  if (urls.improvement!=""){
+    console.log("ipurl"+urls.improvement);
+    b.href = urls.improvement;
+  }
+  console.log(a.href);
+  console.log(b.href);
+}
+
+
+var reviewSubmitButtonElement = document.getElementById("reviewSubmitButton");
+console.log(reviewSubmitButtonElement);
+
+
+
+document.getElementById("reviewSubmitButton").addEventListener("click", reviewSubmitButtonClicked);
+
+  function reviewSubmitButtonClicked(){
+    console.log("submit button clicked!!!!!!!");
+    var studentReviewDetails = {}
+    
+    var uin = document.getElementById("uinForThisPage").innerHTML;
+    
+    var selectReviewYearElement = document.getElementById("reviewYear");
+    var reviewYear = selectReviewYearElement.options[selectReviewYearElement.selectedIndex].value;
+    
+    var selectReviewElement = document.getElementById("reviewSelect");
+    var rating = selectReviewElement.options[selectReviewElement.selectedIndex].value;
+    
+    var commentsForStudents = document.getElementById("commentsForStudent").value;
+    /*if(firstName.length > 0){
+      userInfo.firstName = firstName;
+    }*/
+    
+    /*if(lastName.length > 0){
+      userInfo.lastName = lastName;
+    }*/
+    
+    var needsToImproveGrade = !adminMode ? 0 : (document.getElementById("needsToImproveGrade").checked == true ? 1 : 0);
+    var noStudentReportAvailable = !adminMode ? 0 : (document.getElementById("noStudentReportAvailable").checked == true ? 1 : 0);
+    var misconduct = !adminMode ? 0 : (document.getElementById("misconduct").checked == true ? 1 : 0);
+    var needsToPassQualiferExam = !adminMode ? 0 : (document.getElementById("needsToPassQualiferExam").checked == true ? 1 : 0);
+    var needsToFindAdvisor = !adminMode ? 0 : (document.getElementById("needsToFindAdvisor").checked == true ? 1 : 0);
+    var needsToFileDegreePlan = !adminMode ? 0 : (document.getElementById("needsToFileDegreePlan").checked == true ? 1 : 0);
+    var needsToDoPrelim = !adminMode ? 0 : (document.getElementById("needsToDoPrelim").checked == true ? 1 : 0);
+    var needsToSubmitProposal = !adminMode ? 0 : (document.getElementById("needsToSubmitProposal").checked == true ? 1 : 0);
+    var needsToFinishSoon = !adminMode ? 0 : (document.getElementById("needsToFinishSoon").checked == true ? 1 : 0);
+        
+    studentReviewDetails.uin = uin;
+    studentReviewDetails.facultyName = "";
+    studentReviewDetails.reviewYear = reviewYear;
+    studentReviewDetails.rating = rating;
+    studentReviewDetails.commentsForStudents = commentsForStudents;
+    studentReviewDetails.needsToImproveGrade = needsToImproveGrade;
+    studentReviewDetails.noStudentReportAvailable = noStudentReportAvailable;
+    studentReviewDetails.misconduct = misconduct;
+    studentReviewDetails.needsToPassQualiferExam = needsToPassQualiferExam;
+    studentReviewDetails.needsToFindAdvisor = needsToFindAdvisor;
+    studentReviewDetails.needsToFileDegreePlan = needsToFileDegreePlan;
+    studentReviewDetails.needsToDoPrelim = needsToDoPrelim;
+    studentReviewDetails.needsToSubmitProposal = needsToSubmitProposal;
+    studentReviewDetails.needsToFinishSoon = needsToFinishSoon;
+    studentReviewDetails.reportUrl = document.getElementById("viewStudentReport").href;
+    studentReviewDetails.improvementPlanUrl = document.getElementById("viewImprovementPlan").href;
+    
+    console.log("Student", studentReviewDetails.reportUrl);
+    console.log("calling update review details function");
+    
+    google.script.run.withSuccessHandler(onSuccessOfReviewSubmit).updateStudentReviewDetails(studentReviewDetails);
+    
+  }
+  
+  function onSuccessOfReviewSubmit(result) {
+      alert("Review saved successfully!");
+  }
+  
+</script>

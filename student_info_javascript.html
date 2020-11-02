@@ -1,0 +1,269 @@
+<script>
+  function resetProfileFields() {  
+  
+     document.getElementById('VCV').disabled = false;
+     google.script.run.withSuccessHandler(onSuccess).getProfileInformation();
+  }
+  
+  function discardClicked(){
+    window.location.reload(false);
+    return true;
+  }
+  
+//  function strToISODateStr(strDate) {
+//    
+////    var parts = strDate.split('-');
+////    console.log(parts);
+////    var date = new Date(parts[2], parts[0]-1, parts[1]);
+////    console.log(date);
+////    return date.toISOString().slice(0,10);
+//
+//      if (strDate!=""){
+//        var d = strDate.slice(0, 10).split('-');   
+//        var date = d[1] +'/'+ d[2] +'/'+ d[0];
+//        return date;
+//      }else{
+//        return "";
+//      }
+//  }
+  
+  function updateClicked(){
+    var userInfo = {};
+    userInfo.firstname = document.getElementById("fn").value;
+    userInfo.lastname = document.getElementById("ln").value;
+    userInfo.UIN = document.getElementById("uin_").value;
+    userInfo.email = document.getElementById("email").value;
+    userInfo.startsem = document.getElementById("start-semester").value;
+    userInfo.qualstatus = document.getElementById("qual").value;
+    userInfo.numattempts = document.getElementById("attempts").value;
+    userInfo.advisor = document.getElementById("advisor").value;
+    userInfo.coadvisor = document.getElementById("co-advisor").value;
+    userInfo.degreeplanstatus = document.getElementById("degree-plan").value;
+    
+    var a = document.getElementById("prelim-date").value;
+    if (a!=""){
+      userInfo.prelime_date  =  (document.getElementById("prelim-date").value);
+    }else{
+      userInfo.prelime_date  = a;
+    }
+    
+    var b = document.getElementById("proposal-date").value;
+    if (b!=""){
+      userInfo.proposal_date  =  document.getElementById("proposal-date").value;
+    }else{
+      userInfo.proposal_date  = b;
+    }
+    
+    var c = document.getElementById("defense-date").value;
+    if (c!=""){
+      userInfo.defense_date = document.getElementById("defense-date").value;
+    }else{
+      userInfo.defense_date  = c;
+    }
+    
+    google.script.run.submitProfile(userInfo);
+  
+  var cv = document.getElementById("cv").files[0];
+////    console.log(cv);
+    if (cv){
+    console.log("CV present");
+      document.getElementById('filename').value = "";
+      document.getElementById('VCV').disabled = true;
+      var d = document.getElementById('cv_url');
+      d.removeAttribute("href");
+      
+      uploadFile(userInfo,cv,"cv");
+    }else{
+////      setTimeout(resetProfileFields, 5000);
+////      resetProfileFields();
+   }
+
+    alert("Data Updated");
+  }
+  
+  function uploadFile(userInfo,f,file_type) {
+    var file, reader = new FileReader();
+    var fullName = userInfo.firstname + " " + userInfo.lastname;
+    reader.onloadend = function(e) {
+      google.script.run.withSuccessHandler(resetProfileFields)
+      .uploadFileToDrive(
+        e.target.result, file.name,
+        fullName,file_type,userInfo.email
+      );
+    };
+    
+    file = f;
+    if(file){  
+      reader.readAsDataURL(file);
+    } 
+  }
+  
+  function onSuccess(userInfo) {
+    
+    console.log("User Info returned ");
+    console.log(userInfo);
+    
+    document.getElementById("fn").value = userInfo.firstname;
+    document.getElementById("ln").value = userInfo.lastname;
+    document.getElementById("uin_").value = userInfo.UIN;
+    document.getElementById("email").value = userInfo.email;
+
+        /////// For Drop Down//////////
+        
+    var a  = document.getElementById("start-semester");
+    a.value = userInfo.startsem;
+    M.FormSelect.init(a);
+    
+    var a  = document.getElementById("qual");
+    a.value = userInfo.qualstatus;
+    M.FormSelect.init(a);
+    
+    var a  = document.getElementById("attempts");
+    a.value = userInfo.numattempts;
+    M.FormSelect.init(a);
+    
+    var a  = document.getElementById("advisor");
+    a.value = userInfo.advisor;
+    M.FormSelect.init(a);
+    
+    var a  = document.getElementById("co-advisor");
+    a.value = userInfo.coadvisor;
+    M.FormSelect.init(a);
+    
+    var a  = document.getElementById("degree-plan");
+    a.value = userInfo.degreeplanstatus;
+    M.FormSelect.init(a);
+    
+    
+    //////////////////////////////////////
+    
+    
+    var elem  = document.getElementById("prelim-date");
+
+    var options = {
+            defaultDate: new Date(userInfo.prelime_date),
+            setDefaultDate: true,
+            format: "mm/dd/yyyy"
+        };
+    var instance = M.Datepicker.init(elem, options);
+    
+    
+    var elem  = document.getElementById("proposal-date");
+
+    var options = {
+            defaultDate: new Date(userInfo.proposal_date),
+            setDefaultDate: true,
+            format: "mm/dd/yyyy"
+        };
+    var instance = M.Datepicker.init(elem, options);
+    
+    
+    var elem  = document.getElementById("defense-date");
+
+    var options = {
+            defaultDate: new Date(userInfo.defense_date),
+            setDefaultDate: true,
+            format: "mm/dd/yyyy"
+        };
+    var instance = M.Datepicker.init(elem, options);
+    
+//    document.getElementById("proposal-date").value = strToISODateStr(userInfo.proposal_date);
+//    document.getElementById("defense-date").value = strToISODateStr(userInfo.defense_date);
+    
+    var a = document.getElementById('cv_url');
+    if (userInfo.cv_url!=""){
+      a.href = userInfo.cv_url;
+      console.log("Hurray!");
+    }
+    
+    google.script.run.withSuccessHandler(function(activeYear) {    
+      if(activeYear == "None") {
+        console.log(activeYear);
+        $('input').attr('disabled', true);
+        document.getElementById('VCV').disabled = true;
+        document.getElementById('update').disabled = true;
+        document.getElementById('discard').disabled = true;
+        document.getElementById('filename').disabled = true;
+        document.getElementById('up').classList.remove("btn") ;
+        alert(" No Active Review Year");
+      }
+    }).getActiveReviewYear();
+    
+    M.updateTextFields();
+    
+    
+
+  }
+
+function check_cv(){
+  var b = document.getElementById('cv_url');
+  console.log('b: ',b.href);
+  if(b.href==""){
+    alert("CV not Uploaded");
+  }
+}
+
+
+
+  // below from views/js/app.js
+  
+  
+  function load_monitor(){
+  
+  M.textareaAutoResize($('#textarea1'));
+  
+  }
+  
+  function EditReview(){  
+  console.log("here");
+  }
+  
+  document.addEventListener('DOMContentLoaded', function() {
+  var elems = document.querySelectorAll('select');
+  var instances = M.FormSelect.init(elems, {});
+  });
+  
+  document.addEventListener('DOMContentLoaded', function() {
+  var elems = document.querySelectorAll('.modal');
+  var instances = M.Modal.init(elems, {dismissible: false, startingTop:'1%', endingTop:'0%'});
+  });
+  
+//  document.addEventListener('DOMContentLoaded', function() {
+//  var elems = document.querySelectorAll('.datepicker');
+//  var instances = M.Datepicker.init(elems, options);
+//  });
+
+  $(document).ready(function(){
+    $('.datepicker').datepicker({
+      format: 'mm/dd/yyyy'
+    });
+  });
+  
+  document.addEventListener('DOMContentLoaded', function() {
+  var elems = document.querySelectorAll('select');
+  var instances = M.FormSelect.init(elems);
+  });
+  // Or with jQuery
+  
+  $(document).ready(function(){
+  $('.modal').modal();
+  });
+  
+  
+  // Or with jQuery
+  
+  $(document).ready(function(){
+  $('select').formSelect();
+  });
+  
+  document.addEventListener('DOMContentLoaded', function() {
+  var elems = document.querySelectorAll('.fixed-action-btn');
+  var instances = M.FloatingActionButton.init(elems, {
+  direction: 'left',
+  hoverEnabled: false
+  });
+  });
+  
+  
+
+</script>

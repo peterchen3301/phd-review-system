@@ -1,0 +1,327 @@
+<script>
+/*document.getElementById("").addEventListener("click", submitStudentReview);
+
+function submitStudentReview() {
+    var reviewInfo = {};
+    reviewInfo.uin = document.getElementById("").value();
+    reviewInfo.commentsForStudent
+}
+
+*/
+
+document.getElementById("admin-view").style.visibility = "hidden";
+document.getElementById("add-student").style.visibility = "hidden";
+google.script.run.withSuccessHandler(hideAdminView).isAdmin();
+
+function hideAdminView(result) {
+  if (result == true) {
+    document.getElementById("view-name").innerHTML = "Admin View";
+    document.getElementById("admin-view").style.visibility = "visible";
+    document.getElementById("add-student").style.visibility = "visible";
+  }
+}
+// ---------- slickgrid stuff ------------
+
+var grid;
+var columns = [
+  { id: 'uin',
+    name: 'UIN', 
+    field: 'uin', 
+    sortable: true, 
+    width: 120 
+  },
+  {
+    id: 'name',
+    name: 'Name',
+    field: 'name',
+    sortable: true,
+    toolTip: 'Really Really Really Long Title',
+    width: 220
+  },
+  {
+    id: 'advisor',
+    name: 'Advisor',
+    field: 'advisor',
+    sortable: true,
+    width: 220
+  },
+  {
+    id: 'start_semester',
+    name: 'Start Semester',
+    field: 'start_semester',
+    sortable: true,
+    width: 130
+  },
+  {
+    id: 'qual_exam',
+    name: 'Qual Exam',
+    field: 'qual_exam',
+    sortable: true,
+    width: 110
+  },
+  {
+    id: 'degree_plan_submitted',
+    name: 'Degree Plan Submitted',
+    field: 'degree_plan_submitted',
+    sortable: true,
+    width: 150
+  },
+  /*{
+    id: 'student_report',
+    name: 'Student Report',
+    field: 'student_report',
+    sortable: true,
+    width: 100
+  },
+  {
+    id: 'improvement_plan',
+    name: 'Improvement Plan',
+    field: 'improvement_plan',
+    sortable: true,
+    width: 100
+  },*/
+  {
+    id: 'cv',
+    name: 'CV',
+    field: 'cv',
+    sortable: true,
+    formatter: linkFormatter,
+    width: 110
+  },
+  {
+    id: 'more_student_details',
+    name: 'More Student Details',
+    field: 'more_student_details',
+    sortable: false,
+    formatter: linkFormatter,
+    width: 120
+  },
+  {
+    id: 'all_reviews',
+    name: 'All Reviews',
+    field: 'all_reviews',
+    sortable: false,
+    formatter: linkFormatter,
+    width: 120
+  },
+  {
+    id: 'add_review',
+    name: 'Add Review',
+    field: 'add_review',
+    sortable: false,
+    formatter: linkFormatter,
+    width: 120  },
+  {
+    id: 'remove',
+    name: 'Remove',
+    field: 'remove',
+    sortable: false,
+    formatter: linkFormatter,
+    width: 120  },
+    
+];
+
+function dayFormatter(row, cell, value, columnDef, dataContext) {
+  return value + ' days';
+}
+
+function dateFormatter(row, cell, value, columnDef, dataContext) {
+  return value.getMonth() + '/' + value.getDate() + '/' + value.getFullYear();
+}
+
+function linkFormatter(row, cell, value, columnDef, dataContext) {
+        return value;
+}
+
+var options = {
+  enableColumnReorder: false,
+  multiColumnSort: true,
+  enableCellNavigation: true,
+  autoExpandColumns: false,
+  forceFitColumns: false,
+  showFooterRow: false,
+ // rowHeight: 45,
+  //headerRowHeight: 50
+};
+
+
+var all_student_records;
+var scriptUrl;
+google.script.run.withSuccessHandler(successHandler).getMyScriptUrl();
+
+function successHandler(urlString){
+  scriptUrl = urlString;
+  google.script.run.withSuccessHandler(onSuccess).getAllStudentRecords();
+}
+
+function onSuccess(result) {
+all_student_records = result;
+console.log(all_student_records);
+
+$(function() {
+  var MS_PER_DAY = 24 * 60 * 60 * 1000;
+  var data = [];
+  
+  /*for (var i = 0; i < 500; i++) {
+    var startDate = new Date(
+      new Date('1/1/1980').getTime() +
+        Math.round(Math.random() * 365 * 25) * MS_PER_DAY
+    );
+    var endDate = new Date(
+      startDate.getTime() + Math.round(Math.random() * 365) * MS_PER_DAY
+    );
+    data[i] = {
+      uin: 'Task ' + i,
+      name: 'Super duper long string here',
+      advisor: Math.round(Math.random() * 30) + 2,
+      start_semester: Math.round(Math.random() * 100),
+      qual_exam: startDate,
+      degree_plan_submitted: endDate,
+      student_report: i % 5 == 0,
+      improvement_plan: i,
+      cv: i * 2,
+      more_student_details: i * 3,
+      add_review: i * 4
+    };
+  } */
+  var j = 0;
+  for(var i = 0; i < all_student_records.length; i++) {
+      
+      //Checking if student is marked as current student
+      if(all_student_records[i][8] != "1")
+      continue;
+      var d = (data[j++] = {});
+      console.log("Var d: ", d);
+      d["uin"] = all_student_records[i][4],
+      d["name"] = all_student_records[i][3] + ', ' + all_student_records[i][2],
+      d["advisor"] = all_student_records[i][9],
+      d["start_semester"] = all_student_records[i][6],
+      d["qual_exam"] = all_student_records[i][12],
+      d["degree_plan_submitted"] = all_student_records[i][11],
+      //d["student_report"] = "NA",
+      //d["improvement_plan"] = "NA",
+      d["cv"] = "<a href=" + all_student_records[i][14] + "><u>CV</u></a>",
+      console.log(scriptUrl + "?v=student_details&uin=" + all_student_records[i][4]);
+      var t = "'" + scriptUrl + "?v=student_details&uin=" + all_student_records[i][4] +"'";
+      console.log(t);
+      console.log("<a href=" + t + "<u>Details</u></a>");
+      d["more_student_details"] = "<a href=" + t + "><u>Details</u></a>",
+      // d["more_student_details"] = "<a href=\"https://script.google.com#?v=student_details&uin=" + d["uin"] + "\" class=\"details-link\" style = \" color:blue;\"><u>Details</u></a>",
+
+      console.log(scriptUrl + "?v=see_reviews&uin=" + all_student_records[i][4]);
+      var t = "'" + scriptUrl + "?v=see_reviews&uin=" + all_student_records[i][4] +"'";
+      console.log(t);
+      console.log("<a href=" + t + "<u>Details</u></a>");
+      d["all_reviews"] = "<a href=" + t + "><u>Reviews</u></a>",
+      
+      console.log(scriptUrl + "?v=add_review&uin=" + all_student_records[i][4]);
+      var t = "'" + scriptUrl + "?v=add_review&uin=" + all_student_records[i][4] +"'";
+      console.log(t);
+      console.log("<a href=" + t + "<u>Details</u></a>");
+      d["add_review"] = "<a href=" + t + "><u>Add Review</u></a>"
+      
+      // Adding link to remove student page
+      var t = "'" + scriptUrl + "?v=remove_student&uin=" + all_student_records[i][4] +"'";
+      d["remove"] = "<a href=" + t + "><u>Remove</u></a>"
+      
+      // data can also be populated this way:
+      /*data[i] = {
+          uin: all_student_records[i][4],
+          name: all_student_records[i][3] + ', ' + all_student_records[i][2],
+          advisor: all_student_records[i][9],
+          start_semester: all_student_records[i][6],
+          qual_exam: all_student_records[i][12],
+          degree_plan_submitted: all_student_records[i][11],
+          student_report: "NA",
+          improvement_plan: "NA",
+          cv: "NA",
+          more_student_details: "NA",
+          add_review: "<a href=\"index.html\">Add Review</a>"
+      };*/
+  }
+  
+
+  grid = new Slick.Grid('#myGrid', data, columns, options);
+
+  grid.registerPlugin( new Slick.AutoTooltips({ enableForHeaderCells: true }) );
+
+  grid.onSort.subscribe(function(e, args) {
+    var cols = args.sortCols;
+
+    data.sort(function(dataRow1, dataRow2) {
+      for (var i = 0, l = cols.length; i < l; i++) {
+        var field = cols[i].sortCol.field;
+        var sign = cols[i].sortAsc ? 1 : -1;
+        var value1 = dataRow1[field],
+          value2 = dataRow2[field];
+        var result = (value1 == value2 ? 0 : value1 > value2 ? 1 : -1) * sign;
+        if (result != 0) {
+          return result;
+        }
+      }
+      return 0;
+    });
+    //grid.setHeaderRowHeight(30);
+    grid.invalidate();
+    grid.render();
+  });
+  
+  google.script.run.withSuccessHandler(function(result){
+    var detailsLinks = document.getElementsByClassName('details-link');
+    var allReviewsLinks = document.getElementsByClassName('all-reviews-link');
+    var addReviewLinks = document.getElementsByClassName('add-review-link');
+    for(var i = 0; i < all_student_records.length; i++) {
+      var detailsLink = detailsLinks[i];
+      var allReviewsLink = allReviewsLinks[i];
+      var addReviewLink = addReviewLinks[i];
+      detailsLink.href = detailsLink.href.replace('#', result._parts.path);
+      allReviewsLink.href = allReviewsLink.href.replace('#', result._parts.path);
+      addReviewLink.href = addReviewLink.href.replace('#', result._parts.path);
+    }
+  }).getScriptUrl();
+});
+
+}
+
+
+// ---------- slickgrid stuff end ------------
+
+
+
+
+
+// ---------- search ------------
+
+document.getElementById("searchBtn").addEventListener("click", searchBtnClicked);
+
+  function searchBtnClicked(){
+  console.log("search button clicked");
+    var userInfo = {}
+    
+    var firstName = document.getElementById("first_name").value;
+    if(firstName.length > 0){
+      userInfo.firstName = firstName;
+    }
+    
+    var lastName = document.getElementById("last_name").value;
+    if(lastName.length > 0){
+      userInfo.lastName = lastName;
+    }
+    
+    var uin = document.getElementById("uin").value;
+    if(uin.length > 0){
+      userInfo.uin = uin;
+    }
+    
+    google.script.run.withSuccessHandler(onSuccess).handleSearchBtnClickedByUser(userInfo);
+    
+  }
+
+// ---------- search end ------------
+
+
+
+
+</script>
+
+
