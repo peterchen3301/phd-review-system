@@ -148,9 +148,9 @@ function onSuccess(urls){
   
   var a = document.getElementById('re_url');
   var b = document.getElementById('ip_url');
-  
+  var c = document.getElementById('dl_url');
   if (urls.report!=""){
-    console.log("ipurl"+urls.report);
+    console.log("reurl"+urls.report);
     a.href = urls.report;
   }
   
@@ -158,9 +158,14 @@ function onSuccess(urls){
     console.log("ipurl"+urls.improvement);
     b.href = urls.improvement;
   }
+    if (urls.departmentletter!=""){
+    console.log("dlurl"+urls.departmentletter);
+    c.href = urls.departmentletter;
+  }
   
   document.getElementById('VR').disabled = false;
   document.getElementById('VI').disabled = false;
+  document.getElementById('VDL').disabled = false;
   
   google.script.run.withSuccessHandler(function(activeYear) {
       
