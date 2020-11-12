@@ -214,7 +214,7 @@ function loadAllStudentReviews(e){
       }
   }
   var ss1 = SpreadsheetApp.openByUrl(url_review_year_information);
-  var ws1 = ss1.getSheetByName("review_years");
+  var ws1 = ss1.getSheetByName("Sheet1");
   var years = ws1.getRange(2,1,ws.getRange("A1").getDataRegion().getLastRow()-1,1).getValues().filter(String);
   Logger.log(years);
  

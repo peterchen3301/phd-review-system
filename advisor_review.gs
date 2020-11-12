@@ -24,7 +24,7 @@ function getAllStudentsReviewData() {
 
 function getAllReviewYearInformation() {
   var ss = SpreadsheetApp.openByUrl(url_review_year_information);
-  var ws = ss.getSheetByName("review_years");
+  var ws = ss.getSheetByName("Sheet1");
   var review_year_records = ws.getRange(2, 1, ws.getRange("A1").getDataRegion().getLastRow() - 1, ws.getRange("A1").getDataRegion().getLastColumn()).getValues();
   Logger.log(review_year_records);
   return review_year_records;

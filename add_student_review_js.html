@@ -59,6 +59,7 @@ function onSuccessToGetStudentReviewInformation(result) {
     var selectElement = document.getElementById("reviewYear");
     var uin = uinElement.innerHTML;
     var year = selectElement.options[selectElement.selectedIndex].value;
+    console.log("Selected year:",year);
     google.script.run.withSuccessHandler(onSuccess).get_urls(uin,year);    
 }
 
