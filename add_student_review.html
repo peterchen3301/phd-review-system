@@ -14,6 +14,7 @@
       <?!= include('css'); ?>
       <meta charset="utf-8"/>
       <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+      <base target="_top">
   </head>
   <body onload = "onLoadAddStudentReview()">
   <div class="navbar-fixed" style="height: 110px">
@@ -22,6 +23,7 @@
             <a href="javascript:void(0)" class="brand-logo">Ph.D. Review System</a>
             <ul id="nav-mobile" class="right hide-on-med-and-down">
               <li id="admin-view"><a href="<?= getScriptUrl();?>?v=admin_view">Admin</a></li>
+              <li id="add-student"><a href="<?= getScriptUrl();?>?v=add_student">Add Student</a></li>
               <li ><a href="<?= getScriptUrl();?>?v=faculty_view">Student Search</a></li>
               <li><a href="<?= getScriptUrl();?>?v=index">Logout</a></li>
             </ul>
@@ -38,12 +40,16 @@
     <div class="container">
     <div id="upload-review">
           <div>
-            <h4>Review for UIN: <?=uinValue?></h4>
+            <h5>Review for UIN: <?=uinValue?></h5>
+            <h5>First Name: <?=firstName?></h5>
+            <h5>Last Name: <?=lastName?></h5>
             <label visible="false" class = "hide" id = "uinForThisPage" ><?=uinValue?></label>
+            <label visible="false" class = "hide" id = "fname" ><?=firstName?></label>
+            <label visible="false" class = "hide" id = "lname" ><?=lastName?></label>
             <br>
             <form class="col s12" >
             
-              <div class="row">
+              <!--div class="row">
 
                 <div class="input-field col s3">
                   <select id = "reviewYear" onchange = "onChangeReviewYear()">
@@ -55,7 +61,16 @@
                   <label>Review Year</label>
                 </div>
 
-              </div>
+              </div-->
+            <div class="row">
+            <div class="input-field col s3">
+              <select id="review_year" class="validate" onchange="onChangeReviewYear()">
+                <option value="null" disabled selected>Select Review Year</option>
+              </select>
+              <label for="review-year">Review Year</label>
+              
+            </div>
+          </div>
 
               <div class="row">
 
@@ -79,6 +94,15 @@
                   <label>Rating</label>
                 </div>
 
+              </div>
+              <div class="file-field input-field s3">
+                <div id = "dl" class="btn">
+                  <span>Add Departmental Letter</span>
+                  <input type="file" id="letter">
+                </div>
+                <div class="file-path-wrapper s3">
+                  <input class="file-path validate" id = "dlname" type="text">
+                </div>
               </div>
 
               <div class="row adminOnly" id="adminOnlyNotes">
@@ -172,8 +196,9 @@
 
               </div>
               <a id="reviewSubmitButton" class="waves-effect waves-light btn">Submit</a>
-              <a id="viewStudentReport" class="waves-effect waves-light btn">View Student Report</a>
-              <a id="viewImprovementPlan" class="waves-effect waves-light btn">View Improvement Plan</a>
+              <a id="viewStudentReport" class="waves-effect waves-light btn" onmousedown = "check_re()">View Student Report</a>
+              <a id="viewImprovementPlan" class="waves-effect waves-light btn" onmousedown = "check_ip()">View Improvement Plan</a>
+              <a id="viewDepartmentLetter" class="waves-effect waves-light btn" onmousedown = "check_dl()">View Department Letter</a>
             </form>
           </div>
         </div>
@@ -189,5 +214,3 @@
     
   </body>
 </html>
-
-

@@ -22,6 +22,7 @@
             <a href="javascript:void(0)" class="brand-logo">Ph.D. Review System</a>
             <ul id="nav-mobile" class="right hide-on-med-and-down">
               <li id="admin-view"><a href="<?= getScriptUrl();?>?v=admin_view">Admin</a></li>
+              <li id="add-student"><a href="<?= getScriptUrl();?>?v=add_student">Add Student</a></li>
               <li ><a href="<?= getScriptUrl();?>?v=faculty_view">Student Search</a></li>
               <li><a href="<?= getScriptUrl();?>?v=index">Logout</a></li>
             </ul>
@@ -137,10 +138,12 @@
     
     <script>
     document.getElementById("admin-view").style.visibility = "hidden";
+    document.getElementById("add-student").style.visibility = "hidden";
     google.script.run.withSuccessHandler(setUser).isAdmin();
     function setUser(result) {
        if (result == true) {//is Admin!
           document.getElementById("admin-view").style.visibility = "visible";
+          document.getElementById("add-student").style.visibility = "visible";
           document.getElementById("view-name").innerHTML = "Admin View";
        }
     }
