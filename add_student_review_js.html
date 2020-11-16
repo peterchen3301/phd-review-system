@@ -206,8 +206,8 @@ document.getElementById("reviewSubmitButton").addEventListener("click", reviewSu
     studentReviewDetails.needsToDoPrelim = needsToDoPrelim;
     studentReviewDetails.needsToSubmitProposal = needsToSubmitProposal;
     studentReviewDetails.needsToFinishSoon = needsToFinishSoon;
-    studentReviewDetails.reportUrl = document.getElementById("viewStudentReport").href;
-    studentReviewDetails.improvementPlanUrl = document.getElementById("viewImprovementPlan").href;
+    studentReviewDetails.reportUrl = document.getElementById("viewStudentReport").getAttribute("href");
+    studentReviewDetails.improvementPlanUrl = document.getElementById("viewImprovementPlan").getAttribute("href");
     
     console.log("Student", studentReviewDetails.reportUrl);
     console.log("calling update review details function");

@@ -622,17 +622,7 @@ function uploadDLToDrive(content,filename,file_type,year,fullName,uin) {
       
       Logger.log("Access:",openFile.getSharingAccess());
       Logger.log("Permission:",openFile.getSharingPermission());
-//      Drive.Permissions.insert(
-//        {
-//          'role': 'reader',
-//          'type': 'user',
-//          'value': email
-//        },
-//        fileId,
-//        {
-//          'sendNotificationEmails': 'false'
-//        });
- 
+
     }
     Logger.log("Uploading is done!");
   }
@@ -704,13 +694,7 @@ function uploadIp_R_ToDrive(content,filename,file_type,year){
             y_folder.removeFile(file);
           }
         }
-//        while (c.hasNext()){
-//          file = c.next();
-//          file_name = file.getName();
-//          if (file_name.indexOf(file_type[0])==0){
-//            file.setName("p"+file_name);
-//          }
-//        }
+
         Logger.log("Previous similar type file deleted");
       }
       
@@ -727,17 +711,6 @@ function uploadIp_R_ToDrive(content,filename,file_type,year){
              var openFile = DriveApp.getFileById(fileId)
                     
       openFile.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
-//      Drive.Permissions.insert(
-//        {
-//          'role': 'reader',
-//          'type': 'user',
-//          'value': email
-//        },
-//        fileId,
-//        {
-//          'sendNotificationEmails': 'false'
-//        });
- 
     }
   }
   catch (f){
