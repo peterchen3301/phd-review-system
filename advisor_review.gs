@@ -228,7 +228,7 @@ function updateStudentReviewDetails(studentReviewDetails) {
 
 function getUser() {
   var user = Session.getActiveUser().getEmail();
-  if(user == "walker@tamu.edu" || user == "karrie@tamu.edu") {
+  if(user == "d-walker@tamu.edu" || user == "karrie.bourquin@tamu.edu") {
     return "admin";
   }
   return user;
@@ -237,8 +237,11 @@ function getUser() {
 function getFacultyName() {
   var email = getFacultyEmail();
   var name = "";
-  if(email == "walker@tamu.edu" || email == "karrie@tamu.edu" || email == "dolapinaki@tamu.edu")
-    name = "Department";
+//  if(email == "d-walker@tamu.edu" || email == "karrie.bourquin@tamu.edu" || email == "dolapinaki@tamu.edu")
+//    name = "Department";
+  
+  if(email == "grad-advisor@cse.tamu.edu")
+     name = "Department";
   else {
   var ss = SpreadsheetApp.openByUrl(login_sheet);
   var ws = ss.getSheetByName("Faculty");
