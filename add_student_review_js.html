@@ -6,6 +6,8 @@ document.getElementById("adminOnlyNotes").style.display = 'none';
 document.getElementById("adminOnlyCheckboxes").style.display = 'none';
 document.getElementById("admin-view").style.visibility = "hidden";
 document.getElementById("add-student").style.visibility = "hidden";
+document.getElementById("dl").style.visibility = "hidden";
+document.getElementById("dlname").style.visibility = "hidden";
 google.script.run.withSuccessHandler(setUser).isAdmin();
 function setUser(result) {
   if (result == true) {//is Admin!
@@ -163,11 +165,11 @@ document.getElementById("reviewSubmitButton").addEventListener("click", reviewSu
     }
 
   }
-  else{
-  
-    alert(" Nothing to Upload");
- 
-  }
+//  else{
+//  
+//    alert(" Nothing to Upload");
+// 
+//  }
   /////////////////////////////////////////////////////////////////////////////////
     console.log("submit button clicked!!!!!!!");
    
