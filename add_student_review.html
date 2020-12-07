@@ -14,6 +14,7 @@
       <?!= include('css'); ?>
       <meta charset="utf-8"/>
       <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+      <base target="_top">
   </head>
   <body onload = "onLoadAddStudentReview()">
   <div class="navbar-fixed" style="height: 110px">
@@ -48,7 +49,7 @@
             <br>
             <form class="col s12" >
             
-              <div class="row">
+              <!--div class="row">
 
                 <div class="input-field col s3">
                   <select id = "reviewYear" onchange = "onChangeReviewYear()">
@@ -60,7 +61,16 @@
                   <label>Review Year</label>
                 </div>
 
-              </div>
+              </div-->
+            <div class="row">
+            <div class="input-field col s3">
+              <select id="review_year" class="validate" onchange="onChangeReviewYear()">
+                <option value="null" disabled selected>Select Review Year</option>
+              </select>
+              <label for="review-year">Review Year</label>
+              
+            </div>
+          </div>
 
               <div class="row">
 
@@ -186,9 +196,11 @@
 
               </div>
               <a id="reviewSubmitButton" class="waves-effect waves-light btn">Submit</a>
-              <a id="viewStudentReport" class="waves-effect waves-light btn">View Student Report</a>
-              <a id="viewImprovementPlan" class="waves-effect waves-light btn">View Improvement Plan</a>
-              <a id="viewDepartmentLetter" class="waves-effect waves-light btn">View Department Letter</a>
+
+              <a id="viewStudentReport" target="_blank" class="waves-effect waves-light btn" onmousedown = "check_re()">View Student Report</a>
+              <a id="viewImprovementPlan" target="_blank" class="waves-effect waves-light btn" onmousedown = "check_ip()">View Improvement Plan</a>
+              <a id="viewDepartmentLetter" target="_blank" class="waves-effect waves-light btn" onmousedown = "check_dl()">View Department Letter</a>
+
             </form>
           </div>
         </div>

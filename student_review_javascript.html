@@ -1,15 +1,5 @@
 <script>
 function initialize(){
-//  var a  = document.getElementById("review-year");
-//  var d = new Date();
-//  for(y = d.getFullYear(); y > 2010; y--) {
-//    var optn = document.createElement("OPTION");
-//    optn.text = y;
-//    optn.value = y;
-//    
-//    a.options.add(optn);
-//  }
-//  M.FormSelect.init(a);
 
    google.script.run.withSuccessHandler(populate_dropdown).getAllReviewYears();
 }
@@ -34,7 +24,7 @@ function uploadClicked(){
   
   var ip = document.getElementById("improvement").files[0];
   var re = document.getElementById("report").files[0];
-  
+
   if (ip || re){
     
     document.getElementById('rname').value = "";
@@ -43,13 +33,15 @@ function uploadClicked(){
     var year = document.getElementById("review-year").value;
   
     if (ip){
-  
+      console.log("IP");
       var d = document.getElementById('ip_url');
       d.removeAttribute("href");
       document.getElementById('VI').disabled = true;
       uploadFile(ip,"ip",year);
+      sleep(9000);
     }
     if (re){
+      console.log("RE");
       var c = document.getElementById('re_url');
       c.removeAttribute("href");
     
@@ -63,6 +55,14 @@ function uploadClicked(){
  
   }
 }
+function sleep(milliseconds) {
+  const date = Date.now();
+  let currentDate = null;
+  do {
+    currentDate = Date.now();
+  } while (currentDate - date < milliseconds) {console.log("SLeep");}
+}
+
 
 function uploadFile(f,file_type,year) {
   
@@ -79,10 +79,6 @@ function uploadFile(f,file_type,year) {
   if(file){  
     reader.readAsDataURL(file);
   }
-  
-//  var s = document.getElementById("test");
-//  s.innehHTML = "hello";
-  
 }
 
 function reset_fields(){
@@ -100,11 +96,33 @@ function reset_fields(){
   
 }
 
+function reset_fields1(file_type){
+  console.log("Inside reset fields 1");
+  if(file_type == "ip")
+   status = true;
+  var a = document.getElementById("improvement");
+  a.value = "";
+  
+  var b = document.getElementById("report");
+  b.value = "";
+    
+  document.getElementById('rname').value = "";
+  document.getElementById('iname').value = "";
+  
+  get_data1();
+  
+}
+
+
 
 function get_data(){
 
   var x = document.getElementById("result");
   x.style.display = "none";
+  
+    
+  var y = document.getElementById("rde");
+  y.style.display = "none";
   
   document.getElementById('upload').disabled = false;
   document.getElementById('discard').disabled = false;
@@ -126,9 +144,11 @@ function get_data(){
 } 
 
 function get_links(uin){
+console.log("In function get_links");
 
   if (uin != ""){
     var year = document.getElementById("review-year").value;
+    console.log("Year in dropdwon: ",year);
     google.script.run.withSuccessHandler(onSuccess).get_urls(uin,year);
   }else{
     alert("UIN not found Enter UIN first and then upload ");
@@ -153,15 +173,28 @@ function onSuccess(urls){
     console.log("reurl"+urls.report);
     a.href = urls.report;
   }
+  else {
+  a.href = "";
+  }
   
   if (urls.improvement!=""){
     console.log("ipurl"+urls.improvement);
     b.href = urls.improvement;
   }
+
+  else {
+  b.href = "";
+  }
+
     if (urls.departmentletter!=""){
     console.log("dlurl"+urls.departmentletter);
     c.href = urls.departmentletter;
   }
+
+  else {
+  c.href = "";
+  }
+
   
   document.getElementById('VR').disabled = false;
   document.getElementById('VI').disabled = false;
@@ -194,21 +227,21 @@ function onSuccess(urls){
 
 function check_ip(){
   var b = document.getElementById('ip_url');
-  if(b.href==""){
+  if(b.getAttribute("href")==""){
     alert("Improvement Plan not uploaded for this review year");
   }
 }
 
 function check_re(){
   var b = document.getElementById('re_url');
-  if(b.href==""){
+  if(b.getAttribute("href")==""){
     alert("Report not uploaded for this review year");
   }
 }
 
 function check_dl(){
   var b = document.getElementById('dl_url');
-  if(b.href==""){
+  if(b.getAttribute("href")==""){
     alert("Department Letter is not available");
   }
 }

@@ -9,7 +9,7 @@ function getAllStudentRecords() {
   var ws = ss.getSheetByName("Sheet1");
   
   var student_records = ws.getRange(2, 1, ws.getRange("A1").getDataRegion().getLastRow() - 1, ws.getRange("A1").getDataRegion().getLastColumn()-3).getValues(); // note: explicitly excluding date columns (they cause error?)
-  Logger.log(student_records);
+  //Logger.log(student_records);
   return student_records;
 }
 
@@ -18,7 +18,7 @@ function getAllStudentsReviewData() {
   var ws = ss.getSheetByName("Sheet1");
   
   var student_records = ws.getRange(2, 1, ws.getRange("A1").getDataRegion().getLastRow() - 1, ws.getRange("A1").getDataRegion().getLastColumn()).getValues();
-  Logger.log(student_records);
+  //Logger.log(student_records);
   return student_records;
 }
 
@@ -26,16 +26,16 @@ function getAllReviewYearInformation() {
   var ss = SpreadsheetApp.openByUrl(url_review_year_information);
   var ws = ss.getSheetByName("Sheet1");
   var review_year_records = ws.getRange(2, 1, ws.getRange("A1").getDataRegion().getLastRow() - 1, ws.getRange("A1").getDataRegion().getLastColumn()).getValues();
-  Logger.log(review_year_records);
+  //Logger.log(review_year_records);
   return review_year_records;
 }
 
 function getActiveReviewYear() {
   var filteredData = getAllReviewYearInformation();
   filteredData = ArrayLib.filterByText(filteredData, 1, "1");
-  Logger.log(filteredData);
+  //Logger.log(filteredData);
   if(filteredData.length == 1) {
-    Logger.log(filteredData[0][0]);
+    //Logger.log(filteredData[0][0]);
     return filteredData[0][0];
   }
   else {
@@ -53,12 +53,12 @@ function addNewReviewYear(newReviewYear) {
   for (var i = 0; i < values.length; i++) {
     if (values[i][0] == newReviewYear) {
       dataExists = true;
-      Logger.log("review year exists");
+     // Logger.log("review year exists");
       return "The review year already exists!";
     } 
   }
   
-  Logger.log("adding new review year");
+  //Logger.log("adding new review year");
     ws.appendRow([newReviewYear, 0]);
   return "Review year added! Please refresh the page to view the latest review year.";
 }
@@ -80,7 +80,7 @@ function endCurrentReviewYear() {
   }
   
   if(ended) {
-    Logger.log("Ended current review year");
+    //Logger.log("Ended current review year");
     return "Ended the review year " + currentReviewYear + "! Please refresh the page to view the latest state.";
   }
   return "No active review year found!";
@@ -103,7 +103,7 @@ function beginThisReviewYear(reviewYear) {
   }
   
   if(begun) {
-    Logger.log("Ended current review year");
+    //Logger.log("Ended current review year");
     return "Started the review year " + reviewYear + "! Please refresh the page to view the latest state.";
   }
   return "Review year " + reviewYear + " not found!";
@@ -114,7 +114,7 @@ function getEmptyReviewData() {
   for(var i = 0; i < 21; i++) {
     student_records.push("");
   }
-  Logger.log("student_records: " + student_records);
+  //Logger.log("student_records: " + student_records);
   return student_records;
 }
 
@@ -144,44 +144,36 @@ function getReviewInformationForUinAndYear(uin, reviewYear) {
   //uin = parseInt(uin);
   //reviewYear = parseInt(reviewYear);
   
-  Logger.log("uin =" + uin + ", reviewYear =" + reviewYear +".");
+ // Logger.log("uin =" + uin + ", reviewYear =" + reviewYear +".");
   
   var filteredData = getAllStudentsReviewData();
-  Logger.log("before filtering: " + filteredData);
+  //Logger.log("before filtering: " + filteredData);
   
   if(uin != null && uin != undefined) {
     filteredData = ArrayLib.filterByText(filteredData, 0, uin);
   }
   
-  Logger.log("after first filtering: " + filteredData);
+  //Logger.log("after first filtering: " + filteredData);
   
   if(reviewYear != null && reviewYear != undefined) {
     filteredData = ArrayLib.filterByText(filteredData, 1, reviewYear);
   }
   
-  Logger.log("after second filtering: " + filteredData);
+  //Logger.log("after second filtering: " + filteredData);
   
   if(filteredData != null && filteredData != undefined && filteredData.length > 0) {
     return filteredData[0];
   }
-  Logger.log("getting empty review data now");
+  //Logger.log("getting empty review data now");
   
   emptyReviewData = getEmptyReviewData();
-  Logger.log("emptyReviewdat = " + emptyReviewData);
+  //Logger.log("emptyReviewdat = " + emptyReviewData);
   return emptyReviewData;
 }
 
 function updateStudentReviewDetails(studentReviewDetails) {
   
-  //Adding code for fetching file URLs from review_year_information spreadsheet
-//  var uin = studentReviewDetails.uin;
-//  var year = studentReviewDetails.reviewYear;
-//  var urls = get_urls(uin,year);
-//  Logger.log("In updateStudentReviewDetails");
-//  Logger.log("URLs: ", urls);
-//  Logger.log(urls.report);
-//  Logger.log(urls.improvement);
-//  
+
   var ss = SpreadsheetApp.openByUrl(url_student_review_details);
   var ws = ss.getSheetByName("Sheet1");
   var dataRange = ws.getDataRange();
@@ -189,10 +181,12 @@ function updateStudentReviewDetails(studentReviewDetails) {
   var dataExists = false;
   
   for (var i = 0; i < values.length; i++) {
-    Logger.log(getFacultyName());
+
+    //Logger.log(getFacultyName());
     if (values[i][0] == studentReviewDetails.uin && values[i][1] == studentReviewDetails.reviewYear && values[i][2] == getFacultyName()) {
       dataExists = true;
-      Logger.log("data exists");
+      //Logger.log("data exists");
+
       //ws.getRange(i + 1, 3).setValue("Dummy Name");
       //Adding column for Faculty Name
       ws.getRange(i + 1,3).setValue(getFacultyName());
@@ -228,7 +222,7 @@ function updateStudentReviewDetails(studentReviewDetails) {
 
 function getUser() {
   var user = Session.getActiveUser().getEmail();
-  if(user == "walker@tamu.edu" || user == "karrie@tamu.edu") {
+  if(user == "d-walker@tamu.edu" || user == "karrie.bourquin@tamu.edu") {
     return "admin";
   }
   return user;
@@ -237,8 +231,11 @@ function getUser() {
 function getFacultyName() {
   var email = getFacultyEmail();
   var name = "";
-  if(email == "walker@tamu.edu" || email == "karrie@tamu.edu" || email == "dolapinaki@tamu.edu")
-    name = "Department";
+
+  
+  if(email == "grad-advisor@cse.tamu.edu" || email == "dolapinaki@tamu.edu")
+     name = "Department";
+
   else {
   var ss = SpreadsheetApp.openByUrl(login_sheet);
   var ws = ss.getSheetByName("Faculty");
@@ -268,7 +265,7 @@ function getStudentInfo(uin){
   
   var student_records = ws.getRange(2, 1, ws.getRange("A1").getDataRegion().getLastRow() - 1, ws.getRange("A1").getDataRegion().getLastColumn()).getValues();
   var filtered_student_record = ArrayLib.filterByText(student_records, 4, uin);
-  Logger.log(filtered_student_record)
+ // Logger.log(filtered_student_record)
   return filtered_student_record;
 }
 
@@ -288,9 +285,11 @@ function getStudentReviews(uin){
   var ws = ss.getSheetByName("Sheet1");
 
   var student_reviews = ws.getRange(2, 1, ws.getRange("A1").getDataRegion().getLastRow() - 1, ws.getRange("A1").getDataRegion().getLastColumn()).getValues();
-  Logger.log("Raw student_reviews " + student_reviews);
+
+  //Logger.log("Raw student_reviews " + student_reviews);
   var filtered_student_reviews = ArrayLib.filterByText(student_reviews, 0, uin);
-  Logger.log("Filtered student reviews \n" + filtered_student_reviews);
+  //Logger.log("Filtered student reviews \n" + filtered_student_reviews);
+
   return filtered_student_reviews;
 }
 

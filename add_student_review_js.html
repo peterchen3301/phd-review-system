@@ -6,11 +6,19 @@ document.getElementById("adminOnlyNotes").style.display = 'none';
 document.getElementById("adminOnlyCheckboxes").style.display = 'none';
 document.getElementById("admin-view").style.visibility = "hidden";
 document.getElementById("add-student").style.visibility = "hidden";
+
+document.getElementById("dl").style.visibility = "hidden";
+document.getElementById("dlname").style.visibility = "hidden";
+
 google.script.run.withSuccessHandler(setUser).isAdmin();
 function setUser(result) {
   if (result == true) {//is Admin!
     document.getElementById("admin-view").style.visibility = "visible";
     document.getElementById("add-student").style.visibility = "visible";
+
+    document.getElementById("dl").style.visibility = "visible";
+document.getElementById("dlname").style.visibility = "visible";
+
     adminMode = true;
     document.getElementById("adminOnlyNotes").style.display = 'inline';
     document.getElementById("adminOnlyCheckboxes").style.display = 'inline';
@@ -18,17 +26,34 @@ function setUser(result) {
   }
 }
 function onLoadAddStudentReview() {
-   
+
+   google.script.run.withSuccessHandler(populate_dropdown).getAllReviewYears();
+
     onChangeReviewYear();
 }
 
+
+function populate_dropdown(all_review_years){
+  
+  var a  = document.getElementById("review_year");
+  var i;
+  for (i = 0; i < all_review_years.length; i++) {
+    var optn = document.createElement("OPTION");
+    optn.text = all_review_years[i];
+    optn.value = all_review_years[i];;
+    
+    a.options.add(optn);
+  }
+  M.FormSelect.init(a);
+  
+}
 
 function onChangeReviewYear() {
     var studentInfo = {};
     var uinElement = document.getElementById("uinForThisPage");
     console.log(uinElement);
     var uin = uinElement.innerHTML;
-    var selectElement = document.getElementById("reviewYear");
+    var selectElement = document.getElementById("review_year");
     var reviewYear = selectElement.options[selectElement.selectedIndex].value;
     console.log(reviewYear + " " + uin);
     
@@ -56,7 +81,9 @@ function onSuccessToGetStudentReviewInformation(result) {
     //Code for fetching Student Report and IP links
     var uinElement = document.getElementById("uinForThisPage");
     var uin = uinElement.innerHTML;
-    var selectElement = document.getElementById("reviewYear");
+
+    var selectElement = document.getElementById("review_year");
+
     var uin = uinElement.innerHTML;
     var year = selectElement.options[selectElement.selectedIndex].value;
     console.log("Selected year:",year);
@@ -71,32 +98,65 @@ function onSuccess(urls){
   var a = document.getElementById('viewStudentReport');
   var b = document.getElementById('viewImprovementPlan');
   var c = document.getElementById('viewDepartmentLetter');
+  //a.href = urls.report;
   
   if (urls.report!=""){
     console.log("reurl"+urls.report);
     a.href = urls.report;
   }
-  
+  else {
+  a.href = "";
+  }
+
   if (urls.improvement!=""){
     console.log("ipurl"+urls.improvement);
     b.href = urls.improvement;
+  }
+  else {
+  b.href = "";
+  console.log("Set IP to empty:",b);
+  console.log(b.getAttribute("href"));
+  console.log(b.class);
   }
   if (urls.departmentletter!=""){
     console.log("dlurl"+urls.departmentletter);
     c.href = urls.departmentletter;
   }
+  else {
+  c.href = "";
+  }
+}
 
+function check_ip(){
+  var b = document.getElementById('viewImprovementPlan');
+  if(b.getAttribute("href")==""){
+    alert("Improvement Plan not uploaded for this review year");
+  }
+}
+
+
+function check_re(){
+  var b = document.getElementById('viewStudentReport');
+  if(b.getAttribute("href")==""){
+    alert("Report not uploaded for this review year");
+  }
+}
+
+function check_dl(){
+  var b = document.getElementById('viewDepartmentLetter');
+  if(b.getAttribute("href")==""){
+    alert("Department Letter is not available");
+  }
 }
 
 
 var reviewSubmitButtonElement = document.getElementById("reviewSubmitButton");
 
 
-
 document.getElementById("reviewSubmitButton").addEventListener("click", reviewSubmitButtonClicked);
 
   function reviewSubmitButtonClicked(){
-  
+
   //Code for uploading Departmental Letter
   var uin = document.getElementById("uinForThisPage").innerHTML;
   var fullName = document.getElementById("fname").innerHTML+" "+document.getElementById("lname").innerHTML;
@@ -107,7 +167,9 @@ document.getElementById("reviewSubmitButton").addEventListener("click", reviewSu
     
     document.getElementById('dlname').value = "";
   
-    var selectReviewYearElement = document.getElementById("reviewYear");
+
+    var selectReviewYearElement = document.getElementById("review_year");
+
     var year = selectReviewYearElement.options[selectReviewYearElement.selectedIndex].value;
   
     if (dl){
@@ -116,17 +178,13 @@ document.getElementById("reviewSubmitButton").addEventListener("click", reviewSu
     }
 
   }
-  else{
-  
-    alert(" Nothing to Upload");
- 
-  }
+
   /////////////////////////////////////////////////////////////////////////////////
     console.log("submit button clicked!!!!!!!");
    
     var studentReviewDetails = {};
     
-    var selectReviewYearElement = document.getElementById("reviewYear");
+    var selectReviewYearElement = document.getElementById("review_year");
     var reviewYear = selectReviewYearElement.options[selectReviewYearElement.selectedIndex].value;
     
     var selectReviewElement = document.getElementById("reviewSelect");
@@ -159,8 +217,10 @@ document.getElementById("reviewSubmitButton").addEventListener("click", reviewSu
     studentReviewDetails.needsToDoPrelim = needsToDoPrelim;
     studentReviewDetails.needsToSubmitProposal = needsToSubmitProposal;
     studentReviewDetails.needsToFinishSoon = needsToFinishSoon;
-    studentReviewDetails.reportUrl = document.getElementById("viewStudentReport").href;
-    studentReviewDetails.improvementPlanUrl = document.getElementById("viewImprovementPlan").href;
+
+    studentReviewDetails.reportUrl = document.getElementById("viewStudentReport").getAttribute("href");
+    studentReviewDetails.improvementPlanUrl = document.getElementById("viewImprovementPlan").getAttribute("href");
+
     
     console.log("Student", studentReviewDetails.reportUrl);
     console.log("calling update review details function");
@@ -193,7 +253,9 @@ function reset_fields(){
   var a = document.getElementById("letter");
   a.value = "";
   document.getElementById('dlname').value = "";
-  var selectReviewYearElement = document.getElementById("reviewYear");
+
+  var selectReviewYearElement = document.getElementById("review_year");
+
     var year = selectReviewYearElement.options[selectReviewYearElement.selectedIndex].value;
   google.script.run.withSuccessHandler(onSuccess).get_urls(document.getElementById("uinForThisPage").innerHTML,year);
   //get_data1();
