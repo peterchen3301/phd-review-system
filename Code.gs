@@ -205,7 +205,7 @@ function loadAllStudentReviews(e){
   var ss1 = SpreadsheetApp.openByUrl(url_review_year_information);
   var ws1 = ss1.getSheetByName("Sheet1");
   var years = ws1.getRange(2,1,ws.getRange("A1").getDataRegion().getLastRow()-1,1).getValues().filter(String);
-  //Logger.log(years);
+
  
   //var tmp = HtmlService.createTemplateFromFile("see_reviews");
   tmp.uin = uin;
@@ -243,7 +243,7 @@ function loadAddReview(e){
 
 //Function to mark student as removed
 function markStudentAsRemoved(uin) {
-  //Logger.log("Marked",uin);
+
   var ss = SpreadsheetApp.openByUrl(student_info_sheet_url);
   var ws = ss.getSheetByName("Sheet1");
   var values = ws.getDataRange().getValues();
@@ -446,7 +446,7 @@ function folderExistsIn(parent_folder,folder_name){
 
 function uploadFileToDrive(content, filename, name ,file_type, email){
   
-  //Logger.log("Name: "+ name);
+
   try {
     var dropbox = "phd_review_dev";
     var folder, folders = DriveApp.getFoldersByName(dropbox);
@@ -481,7 +481,7 @@ function uploadFileToDrive(content, filename, name ,file_type, email){
       } 
       
       var new_file_name = file_type+"_"+filename;
-      
+
       var contentType = content.substring(5,content.indexOf(';')),
           bytes = Utilities.base64Decode(content.substr(content.indexOf('base64,')+7)),
           blob = Utilities.newBlob(bytes, contentType, new_file_name);
@@ -489,15 +489,15 @@ function uploadFileToDrive(content, filename, name ,file_type, email){
            
       fl = s_folder.createFile(blob);
       var file_url = fl.getUrl();
-      
+
       update_file_url(email,file_url);
       
       //s_folder.setSharing(DriveApp.Access.DOMAIN_WITH_LINK, DriveApp.Permission.VIEW);
       fileId = fl.getId();
       
-      
       var cv_file = DriveApp.getFileById(fileId);  
       cv_file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+
       
     }
     
@@ -682,6 +682,7 @@ function uploadIp_R_ToDrive(content,filename,file_type,year){
              var openFile = DriveApp.getFileById(fileId)
                     
       openFile.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+
     }
   }
   catch (f){
@@ -691,7 +692,7 @@ function uploadIp_R_ToDrive(content,filename,file_type,year){
 }
 
 function update_file_url(email,file_url){
-  //Logger.log("In update file url");
+
   var ss = SpreadsheetApp.openByUrl(student_info_sheet_url);
   var ws = ss.getSheetByName("Sheet1");
   var dataRange = ws.getDataRange();
@@ -708,8 +709,7 @@ function update_file_url(email,file_url){
 
 function update_review_files_url(email,file_url,file_type,year){
 //  var url = "https://docs.google.com/spreadsheets/d/1C5YZ2Lt903A-YGguYQH02JtL9vxs66sMydcD7BeZFJ4/edit#gid=0";
-//  Logger.log("In update review files");
-//  Logger.log("Updating review files url:",file_url);
+
   var ss = SpreadsheetApp.openByUrl(student_info_sheet_url);
   var ws = ss.getSheetByName("Sheet1");
   var dataRange = ws.getDataRange();
@@ -737,6 +737,7 @@ function update_review_files_url(email,file_url,file_type,year){
         ww.getRange(i+1,3+1).setValue(file_url);
       }
       else {
+
         setRowValue(ww, rvalues, i, "4 department_review", file_url);
     }
        break;
@@ -795,7 +796,7 @@ function get_urls(uin, year){
   
   for (var i = 0; i < rvalues.length; i++) {
     if (rvalues[i][0] == uin && rvalues[i][1] == year) {
-      //Logger.log(rvalues[i][4]);
+
       if(rvalues[i][2]!=""){
         urls.report = rvalues[i][2];
       }
@@ -854,7 +855,7 @@ function get_advisor_list(){
   var ws = ss.getSheetByName("Faculty");
   var list = ws.getRange(2,2, ws.getRange("A2").getDataRegion().getLastRow(),1).getValues();
   
-  //Logger.log("Faculty list ",list);
+
   
   var advisorlist = list.map(function(r){return '<option value="'+r[0]+'">'+r[0]+'</option>';}).join('');
   //Logger.log(advisorlist)

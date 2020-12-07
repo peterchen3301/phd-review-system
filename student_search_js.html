@@ -225,6 +225,10 @@ $(function() {
       var t = "'" + scriptUrl + "?v=remove_student&uin=" + all_student_records[i][4] +"'";
       d["remove"] = "<a href=" + t + " target = \"_blank\"><u>Remove</u></a>"
       
+      // Adding link to remove student page
+      var t = "'" + scriptUrl + "?v=remove_student&uin=" + all_student_records[i][4] +"'";
+      d["remove"] = "<a href=" + t + "><u>Remove</u></a>"
+      
       // data can also be populated this way:
       /*data[i] = {
           uin: all_student_records[i][4],
