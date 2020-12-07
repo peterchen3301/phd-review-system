@@ -228,10 +228,8 @@ function getUser() {
 function getFacultyName() {
   var email = getFacultyEmail();
   var name = "";
-//  if(email == "d-walker@tamu.edu" || email == "karrie.bourquin@tamu.edu" || email == "dolapinaki@tamu.edu")
-//    name = "Department";
   
-  if(email == "grad-advisor@cse.tamu.edu" || email == "dolapinaki@tamu.edu")
+  if(email == "grad-advisor@cse.tamu.edu")
      name = "Department";
   else {
   var ss = SpreadsheetApp.openByUrl(login_sheet);

@@ -197,10 +197,14 @@ $(function() {
       d["advisor"] = all_student_records[i][9],
       d["start_semester"] = all_student_records[i][6],
       d["qual_exam"] = all_student_records[i][12],
-      d["degree_plan_submitted"] = all_student_records[i][11],
+      d["degree_plan_submitted"] = all_student_records[i][11];
       //d["student_report"] = "NA",
       //d["improvement_plan"] = "NA",
-      d["cv"] = "<a href=" + all_student_records[i][14] + " target = \"_blank\"><u>CV</u></a>",
+      if(all_student_records[i][14]!="") {
+      d["cv"] = "<a href=" + all_student_records[i][14] + " target = \"_blank\"><u>CV</u></a>";
+      }
+      else
+      d["cv"] = "Not available";
       console.log("CVVVV:",d["cv"]);
       console.log(scriptUrl + "?v=student_details&uin=" + all_student_records[i][4]);
       var t = "'" + scriptUrl + "?v=student_details&uin=" + all_student_records[i][4] +"'";

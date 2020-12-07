@@ -537,8 +537,10 @@ function uploadDLToDrive(content,filename,file_type,year,fullName,uin) {
       folder = DriveApp.createFolder(dropbox);
     }
     
+    
     if (!folderExistsIn(folder,fullName)){
       folder.createFolder(fullName);
+      Logger.log("Created ",folder);
     }
     
     var s_folder, s_folders = DriveApp.getFoldersByName(fullName);
@@ -605,6 +607,7 @@ function uploadDLToDrive(content,filename,file_type,year,fullName,uin) {
 
 
 function uploadIp_R_ToDrive(content,filename,file_type,year){
+  SpreadsheetApp.flush();
   Logger.log("In upload IP:",file_type);
   var email = Session.getActiveUser().getEmail();
   var fullName = "";
@@ -647,7 +650,7 @@ function uploadIp_R_ToDrive(content,filename,file_type,year){
     }
     
     if (!folderExistsIn(s_folder,year)){
-      Logger.log("Folder does not exist:",s_folder);
+      Logger.log("Folder does not exist:",year);
       s_folder.createFolder(year);
     }
     
@@ -688,10 +691,13 @@ function uploadIp_R_ToDrive(content,filename,file_type,year){
     return f.toString();
   }
   return file_type;
+  SpreadsheetApp.flush();
 }
+
 
 function update_file_url(email,file_url){
   //Logger.log("In update file url");
+  SpreadsheetApp.flush();
   var ss = SpreadsheetApp.openByUrl(student_info_sheet_url);
   var ws = ss.getSheetByName("Sheet1");
   var dataRange = ws.getDataRange();

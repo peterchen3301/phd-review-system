@@ -21,7 +21,8 @@ function populate_dropdown(all_review_years){
 
 
 function uploadClicked(){
-  
+  var doc = true;
+  console.log("hereee");
   var ip = document.getElementById("improvement").files[0];
   var re = document.getElementById("report").files[0];
 
@@ -38,7 +39,7 @@ function uploadClicked(){
       d.removeAttribute("href");
       document.getElementById('VI').disabled = true;
       uploadFile(ip,"ip",year);
-      sleep(9000);
+      //sleep(15000);
     }
     if (re){
       console.log("RE");
@@ -50,10 +51,12 @@ function uploadClicked(){
     }
   }
   else{
-  
+   doc = false;
     alert(" Nothing to Upload");
  
   }
+  if(doc)
+  alert("Files uploaded");
 }
 function sleep(milliseconds) {
   const date = Date.now();
@@ -65,7 +68,7 @@ function sleep(milliseconds) {
 
 
 function uploadFile(f,file_type,year) {
-  
+  console.log("In upload files");
   var file, reader = new FileReader();
   reader.onloadend = function(e) {
     google.script.run.withSuccessHandler(reset_fields)
@@ -79,7 +82,10 @@ function uploadFile(f,file_type,year) {
   if(file){  
     reader.readAsDataURL(file);
   }
+console.log("end");
 }
+
+
 
 function reset_fields(){
   console.log("Inside reset fields");
