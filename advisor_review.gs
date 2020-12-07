@@ -173,7 +173,6 @@ function getReviewInformationForUinAndYear(uin, reviewYear) {
 
 function updateStudentReviewDetails(studentReviewDetails) {
   
-
   var ss = SpreadsheetApp.openByUrl(url_student_review_details);
   var ws = ss.getSheetByName("Sheet1");
   var dataRange = ws.getDataRange();
@@ -181,12 +180,10 @@ function updateStudentReviewDetails(studentReviewDetails) {
   var dataExists = false;
   
   for (var i = 0; i < values.length; i++) {
-
     //Logger.log(getFacultyName());
     if (values[i][0] == studentReviewDetails.uin && values[i][1] == studentReviewDetails.reviewYear && values[i][2] == getFacultyName()) {
       dataExists = true;
       //Logger.log("data exists");
-
       //ws.getRange(i + 1, 3).setValue("Dummy Name");
       //Adding column for Faculty Name
       ws.getRange(i + 1,3).setValue(getFacultyName());
@@ -231,11 +228,9 @@ function getUser() {
 function getFacultyName() {
   var email = getFacultyEmail();
   var name = "";
-
   
-  if(email == "grad-advisor@cse.tamu.edu" || email == "dolapinaki@tamu.edu")
+  if(email == "grad-advisor@cse.tamu.edu")
      name = "Department";
-
   else {
   var ss = SpreadsheetApp.openByUrl(login_sheet);
   var ws = ss.getSheetByName("Faculty");
@@ -285,11 +280,9 @@ function getStudentReviews(uin){
   var ws = ss.getSheetByName("Sheet1");
 
   var student_reviews = ws.getRange(2, 1, ws.getRange("A1").getDataRegion().getLastRow() - 1, ws.getRange("A1").getDataRegion().getLastColumn()).getValues();
-
   //Logger.log("Raw student_reviews " + student_reviews);
   var filtered_student_reviews = ArrayLib.filterByText(student_reviews, 0, uin);
   //Logger.log("Filtered student reviews \n" + filtered_student_reviews);
-
   return filtered_student_reviews;
 }
 

@@ -1,7 +1,7 @@
 <script>
   function resetProfileFields() {  
   
-     document.getElementById('VCV').disabled = false;
+     //document.getElementById('VCV').disabled = false;
      google.script.run.withSuccessHandler(onSuccess).getProfileInformation();
   }
   
@@ -68,7 +68,7 @@
     if (cv){
     console.log("CV present");
       document.getElementById('filename').value = "";
-      document.getElementById('VCV').disabled = true;
+      //document.getElementById('VCV').disabled = true;
       var d = document.getElementById('cv_url');
       d.removeAttribute("href");
       
@@ -180,7 +180,7 @@
       if(activeYear == "None") {
         console.log(activeYear);
         $('input').attr('disabled', true);
-        document.getElementById('VCV').disabled = true;
+        //document.getElementById('VCV').disabled = true;
         document.getElementById('update').disabled = true;
         document.getElementById('discard').disabled = true;
         document.getElementById('filename').disabled = true;
@@ -197,7 +197,9 @@
 
 function check_cv(){
   var b = document.getElementById('cv_url');
+  console.log("In here");
   console.log('b: ',b.href);
+  
   if(b.href==""){
     alert("CV not Uploaded");
   }
