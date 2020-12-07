@@ -19,20 +19,21 @@
           <div class="nav-wrapper tamu-navbar">
             <a href="javascript:void(0)" class="brand-logo">Ph.D. Review System</a>
             <ul id="nav-mobile" class="right hide-on-med-and-down">
-              <li class="active"><a href="<?= getScriptUrl();?>?v=student_view">Student Information</a></li>
-              <li><a href="<?= getScriptUrl();?>?v=student_review">Reviews</a></li>
+              <li class="active"><a href="<?= getScriptUrl();?>?v=admin_view">Admin</a></li>
+              <li ><a href="<?= getScriptUrl();?>?v=faculty_view">Student Search</a></li>
+              <li ><a href="<?= getScriptUrl();?>?v=add_student">Add Student</a></li>
               <li><a href="<?= getScriptUrl();?>?v=index">Logout</a></li>
             </ul>
           </div>
       <div class="nav-content">
         <ul class="tabs tabs-transparent">
-         <li class="tab"><a href="javascript:void(0)" class="active">Student View</a></li>
+         <li class="tab"><a href="javascript:void(0)" class="active">Admin View</a></li>
       </ul>
     </div>
         </nav>
       </div>
       <div class="container">
-      <form action="javascript:void(0)"> <!--onsubmit="updateClicked()"-->
+      <form action="javascript:void(0)" onsubmit="updateClicked()">
           <div class="row">
             <div class="input-field col s3">
               <input id="fn" type="text" class="validate" required>
@@ -50,7 +51,7 @@
               <span class="helper-text" data-error="Incorrect UIN" data-success=""></span>
             </div>
             <div class="input-field col s4">
-              <input id="email" type="text" class="validate" disabled>
+              <input id="email" type="text" class="validate">
               <label for="email">Email</label>
             </div>
           </div>
@@ -125,8 +126,8 @@
             </div>
           </div>
 
-          <div class="row">
-            <a id ="cv_url" target="_top"><button class="btn waves-effect waves-light" id = "VCV" onclick="check_cv()" target = "_top">View CV</button></a>
+          <!--div class="row">
+            <a id ="cv_url"><button class="btn waves-effect waves-light" id = "VCV" onclick="check_cv()">View CV</button></a>
           </div>
 
         <div class="row">
@@ -139,13 +140,13 @@
               <input class="file-path validate" id = "filename" type="text">
             </div>
           </div>
-        </div>
+        </div-->
 
         <div class="row">
           <div class="center">
-            <button class="btn waves-effect waves-light cancel" onclick="resetProfileFields()" id = "discard"> Discard
+            <button class="btn waves-effect waves-light cancel" onclick="resetFields()" id = "discard"> Discard
             </button>
-            <button class="btn waves-effect waves-light" id = "update" onclick="updateClicked()"> Update!
+            <button class="btn waves-effect waves-light" id = "update"> Update!
             </button>
           </div>
         </div>
@@ -154,12 +155,12 @@
       </div>
         <script type = "text/javascript" src = "https://code.jquery.com/jquery-2.1.1.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
-        <?!= include('student_info_javascript'); ?>
-        <script>
+        <?!= include('add_student_js'); ?>
+        <!--script>
         window.onload = function(){
            resetProfileFields();
           }
-        </script>
+        </script-->
         <script>
           var sts = document.getElementById("start-semester");
           var semesters = ["Fall","Summer","Spring"];

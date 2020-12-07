@@ -10,12 +10,14 @@ function submitStudentReview() {
 */
 
 document.getElementById("admin-view").style.visibility = "hidden";
+document.getElementById("add-student").style.visibility = "hidden";
 google.script.run.withSuccessHandler(hideAdminView).isAdmin();
 
 function hideAdminView(result) {
   if (result == true) {
     document.getElementById("view-name").innerHTML = "Admin View";
     document.getElementById("admin-view").style.visibility = "visible";
+    document.getElementById("add-student").style.visibility = "visible";
   }
 }
 // ---------- slickgrid stuff ------------
@@ -109,6 +111,14 @@ var columns = [
     sortable: false,
     formatter: linkFormatter,
     width: 120  },
+  {
+    id: 'remove',
+    name: 'Remove',
+    field: 'remove',
+    sortable: false,
+    formatter: linkFormatter,
+    width: 120  },
+    
 ];
 
 function dayFormatter(row, cell, value, columnDef, dataContext) {
@@ -174,10 +184,14 @@ $(function() {
       add_review: i * 4
     };
   } */
-  
+  var j = 0;
   for(var i = 0; i < all_student_records.length; i++) {
-      var d = (data[i] = {});
       
+      //Checking if student is marked as current student
+      if(all_student_records[i][8] != "1")
+      continue;
+      var d = (data[j++] = {});
+      console.log("Var d: ", d);
       d["uin"] = all_student_records[i][4],
       d["name"] = all_student_records[i][3] + ', ' + all_student_records[i][2],
       d["advisor"] = all_student_records[i][9],
@@ -186,25 +200,30 @@ $(function() {
       d["degree_plan_submitted"] = all_student_records[i][11],
       //d["student_report"] = "NA",
       //d["improvement_plan"] = "NA",
-      d["cv"] = "<a href=" + all_student_records[i][14] + "><u>CV</u></a>",
+      d["cv"] = "<a href=" + all_student_records[i][14] + " target = \"_blank\"><u>CV</u></a>",
+      console.log("CVVVV:",d["cv"]);
       console.log(scriptUrl + "?v=student_details&uin=" + all_student_records[i][4]);
       var t = "'" + scriptUrl + "?v=student_details&uin=" + all_student_records[i][4] +"'";
       console.log(t);
       console.log("<a href=" + t + "<u>Details</u></a>");
-      d["more_student_details"] = "<a href=" + t + "><u>Details</u></a>",
+      d["more_student_details"] = "<a href=" + t + " target = \"_blank\"><u>Details</u></a>",
       // d["more_student_details"] = "<a href=\"https://script.google.com#?v=student_details&uin=" + d["uin"] + "\" class=\"details-link\" style = \" color:blue;\"><u>Details</u></a>",
 
       console.log(scriptUrl + "?v=see_reviews&uin=" + all_student_records[i][4]);
       var t = "'" + scriptUrl + "?v=see_reviews&uin=" + all_student_records[i][4] +"'";
       console.log(t);
       console.log("<a href=" + t + "<u>Details</u></a>");
-      d["all_reviews"] = "<a href=" + t + "><u>Reviews</u></a>",
+      d["all_reviews"] = "<a href=" + t + " target = \"_blank\"><u>Reviews</u></a>",
       
       console.log(scriptUrl + "?v=add_review&uin=" + all_student_records[i][4]);
       var t = "'" + scriptUrl + "?v=add_review&uin=" + all_student_records[i][4] +"'";
       console.log(t);
       console.log("<a href=" + t + "<u>Details</u></a>");
-      d["add_review"] = "<a href=" + t + "><u>Add Review</u></a>"
+      d["add_review"] = "<a href=" + t + " target = \"_blank\"><u>Add Review</u></a>"
+      
+      // Adding link to remove student page
+      var t = "'" + scriptUrl + "?v=remove_student&uin=" + all_student_records[i][4] +"'";
+      d["remove"] = "<a href=" + t + " target = \"_blank\"><u>Remove</u></a>"
       
       // data can also be populated this way:
       /*data[i] = {
