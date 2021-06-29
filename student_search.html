@@ -1,5 +1,4 @@
-
-  <!DOCTYPE html>
+<!DOCTYPE html>
   <html>
     <head>
       <base target="_top">
@@ -26,19 +25,26 @@
     </head>
 
     <body onload="load_monitor()">
-      <div class="navbar-fixed">
-        <nav>
+      <div class="navbar-fixed" style="height: 110px">
+        <nav class="nav-extended tamu-navbar">
           <div class="nav-wrapper tamu-navbar">
-            <a href="#" class="brand-logo">Ph.D. Review System</a>
+            <a href="javascript:void(0)" class="brand-logo">Ph.D. Review System</a>
             <ul id="nav-mobile" class="right hide-on-med-and-down">
               <li id="admin-view"><a href="<?= getScriptUrl();?>?v=admin_view">Admin</a></li>
+              <li id="add-student"><a href="<?= getScriptUrl();?>?v=add_student">Add Student</a></li>
               <li class="active"><a href="<?= getScriptUrl();?>?v=faculty_view">Student Search</a></li>
               <li><a href="<?= getScriptUrl();?>?v=index">Logout</a></li>
             </ul>
           </div>
+      <div class="nav-content">
+      <ul class="tabs tabs-transparent">
+        <li class="tab"><a href="javascript:void(0)" id="view-name" class="active">Faculty View</a></li>
+      </ul>
+    </div>
         </nav>
       </div>
-
+      
+      <div class="container">
       <h3> Student Search </h3>
 
 
@@ -114,6 +120,7 @@
           </tbody>
         </table-->
         
+      </div>
         <div id="myGrid" style="margin-left: 0.5%; margin-top: 10px; width: 99%; height:450px;"></div>
 
 
@@ -131,3 +138,4 @@
       <?!= include("student_search_js") ?>
     </body>
   </html>
+  

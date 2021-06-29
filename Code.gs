@@ -1,9 +1,8 @@
-var account_sheet_url = "https://docs.google.com/spreadsheets/d/1UWcbToPpGux2qT_u7YHJROfdH_jlSp4-apZGEs52w08/edit#gid=0";
-
-var student_info_sheet_url = "https://docs.google.com/spreadsheets/d/1vSpjuhHL4BpCgV7-mdMYtCIVd4VfQpKHw16218awcV8/edit#gid=0";
-var faculty_data_sheet_url = "https://docs.google.com/spreadsheets/d/1QzU70E5pUVw7QQ7Lmqgzth4Mg7a79AB-aaGxqd_NkJI/edit#gid=0";
-var student_review_sheet_url = "https://docs.google.com/spreadsheets/d/1Ndizu-BwuJ8-rexcruRsrPfot9mgVtP5RE1Qz6PDxFw/edit#gid=0";
-var url_review_year_information = "https://docs.google.com/spreadsheets/d/18EJyEDD-NufR0dtzzoXbA9mtvIQC-jr0zxF13IkWqIc/edit#gid=0";
+// changed to test data
+var account_sheet_url = "https://docs.google.com/spreadsheets/d/16q1qt5JTmCsSaUz_ixYswOWi6LDDOC8SZz2NvYTx7zI/edit#gid=0";
+var student_info_sheet_url = "https://docs.google.com/spreadsheets/d/1Wq-zmCeYI_12uUVXAbPQfbM2FphfV0B0M9pEjt7LV8E/edit#gid=0";
+var student_review_sheet_url = "https://docs.google.com/spreadsheets/d/1Gs5b7c4ADRMQjeNJxFB8gv0yBXoK0pPFTsFLxqyC9yc/edit#gid=0";
+var url_review_year_information = "https://docs.google.com/spreadsheets/d/1itGFcZYze2Ev0yETquZoKdUnrgQjbo2M4GfQtoFfsY0/edit#gid=0";
 
 var userEmail = '';
 
@@ -14,7 +13,7 @@ Route.path = function(param, callBack){
 
 
 function doGet(e){
-  //Logger.log(e);
+  
   var userInfo = {};
   userInfo.email = Session.getActiveUser().getEmail();
   Logger.log(userInfo.email); //actions can be taken based on these
@@ -36,26 +35,17 @@ function doGet(e){
   Route.path("profile", loadProfile);
   Route.path("index", loadHome);
   Route.path("see_reviews", loadAllStudentReviews);
+  Route.path("add_student", loadAddStudent);
+  Route.path("remove_student", loadRemoveStudent);
   
-  Logger.log(e.parameters.v);
+
   if(Route[cls]){
     return Route[cls](e);
   }else{
     //return HtmlService.createHtmlOutput("<h1>Page Not Found!</h1>");
     return loadHome();
   }
-//  Logger.log(ScriptApp.getService().getUrl());
-//  var student_records = getAllStudentRecords();
-//  //if (!e.parameter.page){
-//    var tmp = HtmlService.createTemplateFromFile("student_search");
-//    tmp.records = student_records;
-//    Logger.log("records -------" + student_records[0][1]);
-//    return tmp.evaluate();
-  /*}
-  else{
-//    Logger.log(e.parameter['page']);
-    return HtmlService.createTemplateFromFile(e.parameter['page']).evaluate(); 
-  }*/
+
 }
 
 function userClickedLogin(userInfo){
@@ -105,14 +95,14 @@ function getCredential(){
 
 }
 
-function search(sheetName, searchTerm){//usage: search('Student', 'a.kunder@tamu.edu') or search('Faculty', 'xyz@tamu.edu')
+function search(sheetName, searchTerm){ //usage: search('Student', 'a.kunder@tamu.edu') or search('Faculty', 'xyz@tamu.edu')
   var ss = SpreadsheetApp.openByUrl(account_sheet_url);
   var ws = ss.getSheetByName(sheetName);
   var data = ws.getRange(1, 1, ws.getLastRow(), 1).getValues();
   var nameList = data.map(function (r){return r[0];});
   
   var index = nameList.indexOf(searchTerm);
-  Logger.log([ss, sheetName, searchTerm, index]);
+  //Logger.log([ss, sheetName, searchTerm, index]);
   if(index>=0){
     return 1;
   }
@@ -122,7 +112,7 @@ function search(sheetName, searchTerm){//usage: search('Student', 'a.kunder@tamu
 }
 
 function render(file, argsObject){
-  Logger.log(file, argsObject);
+  //Logger.log(file, argsObject);
   var tmp = HtmlService.createTemplateFromFile(file);
   if(argsObject){
     var keys = Object.keys(argsObject);
@@ -141,15 +131,42 @@ function loadProfile(){
 function loadStudentReview(){
   return render("student_review");
 }
+//Function for loading Add Student Page
+
+function loadAddStudent() {
+  return render("add_student");
+}
+
+//Function for loading Remove Student Page
+
+function loadRemoveStudent(e) {
+  var uin = e.parameters.uin;
+  var tmp = HtmlService.createTemplateFromFile("remove_student");
+  tmp.uin = uin;
+  var ss = SpreadsheetApp.openByUrl(student_info_sheet_url);
+  var ws = ss.getSheetByName("Sheet1");
+  var data = ws.getRange(1, 1, ws.getLastRow(), 1).getValues();
+  
+  var values = ws.getDataRange().getValues();
+  var headers = values[0];
+  
+  for (var i = 1; i < values.length; i++) {
+    if (rowValue(values, i, "uin") == uin) {
+      
+      //Logger.log("Email"+userInfo.email);
+      tmp.firstName = rowValue(values, i, "first_name");
+      tmp.lastName = rowValue(values, i, "last_name");
+      break;
+      }
+  }
+  
+  //var filtered_student_reviews = getStudentReviews(uin);
+  //var tableDataHtml = convertFilteredStudentReviewsDataToHTMLTable(filtered_student_reviews);
+
+  return tmp.evaluate();
+}
 
 function loadStudentDetails(e){
-  /*
-  var uin = e.parameters.uin;
-  var args = {};
-  args.record = getStudentInfo(uin)[0];
-  return render("student_details", args);
-  */
-
   var uin = e.parameters.uin;
   var filtered_student_record = getThatStudentInfo(uin);
   var tmp = HtmlService.createTemplateFromFile("student_details");
@@ -159,22 +176,94 @@ function loadStudentDetails(e){
 
 function loadAllStudentReviews(e){
   var uin = e.parameters.uin;
+  
   var filtered_student_reviews = getStudentReviews(uin);
   var tableDataHtml = convertFilteredStudentReviewsDataToHTMLTable(filtered_student_reviews);
   var tmp = HtmlService.createTemplateFromFile("see_reviews");
+  //tmp.tableDataHtml = tableDataHtml;
+  
+  
+  //Adding first name and last name
+  var ss = SpreadsheetApp.openByUrl(student_info_sheet_url);
+  var ws = ss.getSheetByName("Sheet1");
+  var data = ws.getRange(1, 1, ws.getLastRow(), 1).getValues();
+  
+  var values = ws.getDataRange().getValues();
+  var headers = values[0];
+  
+  for (var i = 1; i < values.length; i++) {
+    if (rowValue(values, i, "uin") == uin) {
+      
+      //Logger.log("Email"+userInfo.email);
+      tmp.firstName = rowValue(values, i, "first_name");
+      tmp.lastName = rowValue(values, i, "last_name");
+      break;
+      }
+  }
+  var ss1 = SpreadsheetApp.openByUrl(url_review_year_information);
+  var ws1 = ss1.getSheetByName("Sheet1");
+  var years = ws1.getRange(2,1,ws.getRange("A1").getDataRegion().getLastRow()-1,1).getValues().filter(String);
+  //Logger.log(years);
+ 
+  //var tmp = HtmlService.createTemplateFromFile("see_reviews");
+  tmp.uin = uin;
+  tmp.years = years.map(function(r){return r[0];});
   tmp.tableDataHtml = tableDataHtml;
+  
   return tmp.evaluate();
 }
+
 
 function loadAddReview(e){
   var args = {};
   args.uinValue = e.parameters.uin;
+  //Getting first name and last name
+  var ss = SpreadsheetApp.openByUrl(student_info_sheet_url);
+  var ws = ss.getSheetByName("Sheet1");
+  var data = ws.getRange(1, 1, ws.getLastRow(), 1).getValues();
+  
+  var values = ws.getDataRange().getValues();
+  var headers = values[0];
+  
+  for (var i = 1; i < values.length; i++) {
+    if (rowValue(values, i, "uin") == args.uinValue) {
+      
+      //Logger.log("Email"+userInfo.email);
+      args.firstName = rowValue(values, i, "first_name");
+      args.lastName = rowValue(values, i, "last_name");
+      break;
+      }
+  }
+      
   Logger.log("args are ----- " + args)
   return render("add_student_review", args);
 }
 
+//Function to mark student as removed
+function markStudentAsRemoved(uin) {
+  //Logger.log("Marked",uin);
+  var ss = SpreadsheetApp.openByUrl(student_info_sheet_url);
+  var ws = ss.getSheetByName("Sheet1");
+  var values = ws.getDataRange().getValues();
+  var i = 1;
+  while(i < values.length ) {
+    if (rowValue(values, i, "uin") == uin) {
+      setRowValue(ws, values, i, "is_current_student", 0); 
+      break;  
+    }
+    i++;
+  }
+}
+
+
 function getAllReviewYears() {
-  var review_year_records = getAllReviewYearInformation();
+
+  //var review_year_records = getAllReviewYearInformation();
+
+  // Test
+  var review_year_records = [[2019.0, 0.0], [2020.0, 0.0], [2021.0, 1.0], [2022.0, 0.0], [2023.0, 0.0]]
+  // Test
+
   Logger.log(review_year_records);
   var all_review_years = review_year_records.map(function(r){return r[0];});
   all_review_years.sort();
@@ -238,7 +327,7 @@ function getProfileInformation() {
   for (var i = 1; i < values.length; i++) {
     if (rowValue(values, i, "email") == userInfo.email) {
       
-      Logger.log("Email"+userInfo.email);
+      //Logger.log("Email"+userInfo.email);
       userInfo.firstname = rowValue(values, i, "first_name");
       userInfo.lastname = rowValue(values, i, "last_name");
       userInfo.UIN = rowValue(values, i, "uin");
@@ -253,6 +342,7 @@ function getProfileInformation() {
         userInfo.prelime_date = rowValue(values, i, "prelim_date").toISOString();
       }
       
+
       if(rowValue(values, i, "proposal_date")!="") {
         userInfo.proposal_date = rowValue(values, i, "proposal_date").toISOString();
       }
@@ -265,9 +355,10 @@ function getProfileInformation() {
       
       break;
     }
+  
   }
-  Logger.log("Returning Userinfo");
-  Logger.log(userInfo);
+  //Logger.log("Returning Userinfo");
+  //Logger.log(userInfo);
   return userInfo;
 }
 //////////////////////////////////////////////////////////////////////// Updating Student Informaiton //////////////////////////////////////////////////////
@@ -276,6 +367,34 @@ function setRowValue(ws, values, rowIdx, headerLabel, value) {
   var headers = values[0];
   ws.getRange(rowIdx+1, headers.indexOf(headerLabel)+1).setValue(value);
 }
+
+//Function to add student to the Login sheet
+function updateLoginSheet(userInfo) {
+  var ss = SpreadsheetApp.openByUrl(account_sheet_url);
+  var ws = ss.getSheetByName("Student");
+  var values = ws.getDataRange().getValues();
+  var studentExists = false;
+
+  var full_name = userInfo.firstname + " " + userInfo.lastname;
+  var i = 1;
+  while(i < values.length ) {
+    if (rowValue(values, i, "EMAIL_PREFERRED_ADDRESS") == userInfo.email) {
+      studentExists = true;
+      setRowValue(ws, values, i, "FULL_NAME_LFMI", full_name);
+      setRowValue(ws, values, i, "LAST_NAME", userInfo.lastname);
+      setRowValue(ws, values, i, "FIRST_NAME", userInfo.firstname);    
+      break;  
+    }
+    i++;
+  }
+  
+  if (!studentExists){ 
+    ws.appendRow([userInfo.email,full_name,userInfo.lastname,userInfo.firstname
+                 ]);
+  } 
+}
+  
+  
 
 function submitProfile(userInfo){
   var ss = SpreadsheetApp.openByUrl(student_info_sheet_url);
@@ -329,7 +448,9 @@ function folderExistsIn(parent_folder,folder_name){
   return false;
 }
 
-function uploadFileToDrive(content, filename, email,file_type){
+function uploadFileToDrive(content, filename, name ,file_type, email){
+  
+  //Logger.log("Name: "+ name);
   try {
     var dropbox = "phd_review_dev";
     var folder, folders = DriveApp.getFoldersByName(dropbox);
@@ -340,11 +461,12 @@ function uploadFileToDrive(content, filename, email,file_type){
       folder = DriveApp.createFolder(dropbox);
     }
     
-    if (!folderExistsIn(folder,email)){
-      folder.createFolder(email);
+    if (!folderExistsIn(folder,name)){
+      folder.createFolder(name);
+      
     }
     
-    var s_folder, s_folders = DriveApp.getFoldersByName(email);
+    var s_folder, s_folders = DriveApp.getFoldersByName(name);
     
     if (s_folders.hasNext()) {
       
@@ -363,6 +485,7 @@ function uploadFileToDrive(content, filename, email,file_type){
       } 
       
       var new_file_name = file_type+"_"+filename;
+      
       var contentType = content.substring(5,content.indexOf(';')),
           bytes = Utilities.base64Decode(content.substr(content.indexOf('base64,')+7)),
           blob = Utilities.newBlob(bytes, contentType, new_file_name);
@@ -370,22 +493,17 @@ function uploadFileToDrive(content, filename, email,file_type){
            
       fl = s_folder.createFile(blob);
       var file_url = fl.getUrl();
+      
       update_file_url(email,file_url);
       
+      //s_folder.setSharing(DriveApp.Access.DOMAIN_WITH_LINK, DriveApp.Permission.VIEW);
       fileId = fl.getId();
-//      Drive.Permissions.insert(
-//        {
-//          'role': 'reader',
-//          'type': 'user',
-//          'value': email
-//        },
-//        fileId,
-//        {
-//          'sendNotificationEmails': 'false'
-//        });
+      
+      
+      var cv_file = DriveApp.getFileById(fileId);  
+      cv_file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
       
     }
-    
     
     Logger.log("Uploading is done");
     
@@ -394,11 +512,126 @@ function uploadFileToDrive(content, filename, email,file_type){
   }
   
 }
+//Function for Departmental Letter upload by Admin
+function uploadDLToDrive(content,filename,file_type,year,fullName,uin) {
+  Logger.log("In uploadDLtoDrive:",fullName);
+  //Code for fetching email of the student
+  var ss = SpreadsheetApp.openByUrl(student_info_sheet_url);
+  var ws = ss.getSheetByName("Sheet1");
+  var values = ws.getDataRange().getValues();
 
-
-function uploadIp_R_ToDrive(content, filename,file_type,year){
+  var i = 1;
+  var email = "";
+  while(i < values.length ) {
+    if (rowValue(values, i, "uin") == uin) {
+      email = rowValue(values,i,"email");
+      break;  
+    }
+    i++;
+  }
   
+  try {
+    var dropbox = "phd_review_dev";
+    var folder, folders = DriveApp.getFoldersByName(dropbox);
+
+    if (folders.hasNext()) {
+      folder = folders.next();
+      Logger.log("Folder exists:",folder);
+    } else {
+      folder = DriveApp.createFolder(dropbox);
+    }
+    
+    
+    if (!folderExistsIn(folder,fullName)){
+      folder.createFolder(fullName);
+      Logger.log("Created ",folder);
+    }
+    
+    var s_folder, s_folders = DriveApp.getFoldersByName(fullName);
+    
+    if (s_folders.hasNext()) {
+      s_folder = s_folders.next();
+      Logger.log("Folder exists:",s_folder);
+    }
+    
+    if (!folderExistsIn(s_folder,year)){
+      Logger.log("Folder does not exist:",s_folder);
+      s_folder.createFolder(year);
+    }
+    
+    var y_folder, y_folders = DriveApp.getFoldersByName(year);
+    if (y_folders.hasNext()) {
+      y_folder = y_folders.next();
+      Logger.log("y_folder:",y_folder);
+      var c  = y_folder.getFiles();
+      Logger.log("c:",c);
+      if (c.hasNext()){
+        while (c.hasNext()){
+          file = c.next();
+          file_name = file.getName();
+          if (file_name.indexOf(file_type[0])==0){
+            Logger.log("Similar file found!",file_type[0]);
+            Logger.log(file_name);
+            file_id = file.getId();
+            y_folder.removeFile(file);
+          }
+        }
+
+        Logger.log("Previous similar type file deleted");
+      }
+      
+      var new_file_name = file_type+"_"+filename;
+      Logger.log("NEw file name:", new_file_name);
+      var contentType = content.substring(5,content.indexOf(';')),
+          bytes = Utilities.base64Decode(content.substr(content.indexOf('base64,')+7)),
+          blob = Utilities.newBlob(bytes, contentType, new_file_name);
+          
+      fl = y_folder.createFile(blob);
+      var file_url = fl.getUrl();
+      Logger.log("File url:",file_url);
+      
+      update_review_files_url(email,file_url,file_type,year);
+      
+      fileId = fl.getId();
+      
+       var openFile = DriveApp.getFileById(fileId)
+      openFile.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+      
+      Logger.log("Access:",openFile.getSharingAccess());
+      Logger.log("Permission:",openFile.getSharingPermission());
+
+    }
+    Logger.log("Uploading is done!");
+  }
+  catch (f){
+    return f.toString();
+  }
+}
+  
+
+
+function uploadIp_R_ToDrive(content,filename,file_type,year){
+  SpreadsheetApp.flush();
+  Logger.log("In upload IP:",file_type);
   var email = Session.getActiveUser().getEmail();
+  var fullName = "";
+  var ss = SpreadsheetApp.openByUrl(account_sheet_url);
+  var ws = ss.getSheetByName("Student");
+  var values = ws.getDataRange().getValues();
+  var studentExists = false;
+
+  var i = 1;
+  while(i < values.length ) {
+    if (rowValue(values, i, "EMAIL_PREFERRED_ADDRESS") == email) {
+      var firstName = rowValue(values,i,"FIRST_NAME");
+      var lastName = rowValue(values,i,"LAST_NAME");  
+      fullName = firstName + " " + lastName;
+      break;  
+    }
+    i++;
+  }
+  
+  
   try {
     var dropbox = "phd_review_dev";
     var folder, folders = DriveApp.getFoldersByName(dropbox);
@@ -409,23 +642,26 @@ function uploadIp_R_ToDrive(content, filename,file_type,year){
       folder = DriveApp.createFolder(dropbox);
     }
     
-    if (!folderExistsIn(folder,email)){
-      folder.createFolder(email);
+    if (!folderExistsIn(folder,fullName)){
+      folder.createFolder(fullName);
     }
     
-    var s_folder, s_folders = DriveApp.getFoldersByName(email);
+    var s_folder, s_folders = DriveApp.getFoldersByName(fullName);
     
     if (s_folders.hasNext()) {
       s_folder = s_folders.next();
+      Logger.log("Folder exists:",s_folder);
     }
     
     if (!folderExistsIn(s_folder,year)){
+      Logger.log("Folder does not exist:",year);
       s_folder.createFolder(year);
     }
     
     var y_folder, y_folders = DriveApp.getFoldersByName(year);
     if (y_folders.hasNext()) {
       y_folder = y_folders.next();
+      Logger.log("y_folder:",y_folder);
       var c  = y_folder.getFiles();
       if (c.hasNext()){
         while (c.hasNext()){
@@ -436,13 +672,7 @@ function uploadIp_R_ToDrive(content, filename,file_type,year){
             y_folder.removeFile(file);
           }
         }
-//        while (c.hasNext()){
-//          file = c.next();
-//          file_name = file.getName();
-//          if (file_name.indexOf(file_type[0])==0){
-//            file.setName("p"+file_name);
-//          }
-//        }
+
         Logger.log("Previous similar type file deleted");
       }
       
@@ -456,25 +686,22 @@ function uploadIp_R_ToDrive(content, filename,file_type,year){
       update_review_files_url(email,file_url,file_type,year);
       
       fileId = fl.getId();
-//      Drive.Permissions.insert(
-//        {
-//          'role': 'reader',
-//          'type': 'user',
-//          'value': email
-//        },
-//        fileId,
-//        {
-//          'sendNotificationEmails': 'false'
-//        });
- 
+             var openFile = DriveApp.getFileById(fileId)
+                    
+      openFile.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
     }
   }
   catch (f){
     return f.toString();
   }
+  return file_type;
+  SpreadsheetApp.flush();
 }
 
+
 function update_file_url(email,file_url){
+  //Logger.log("In update file url");
+  SpreadsheetApp.flush();
   var ss = SpreadsheetApp.openByUrl(student_info_sheet_url);
   var ws = ss.getSheetByName("Sheet1");
   var dataRange = ws.getDataRange();
@@ -486,11 +713,13 @@ function update_file_url(email,file_url){
     }
   }
   
-  Logger.log("file url Updated")
+  //Logger.log("file url Updated")
 }
 
 function update_review_files_url(email,file_url,file_type,year){
 //  var url = "https://docs.google.com/spreadsheets/d/1C5YZ2Lt903A-YGguYQH02JtL9vxs66sMydcD7BeZFJ4/edit#gid=0";
+//  Logger.log("In update review files");
+//  Logger.log("Updating review files url:",file_url);
   var ss = SpreadsheetApp.openByUrl(student_info_sheet_url);
   var ws = ss.getSheetByName("Sheet1");
   var dataRange = ws.getDataRange();
@@ -502,8 +731,8 @@ function update_review_files_url(email,file_url,file_type,year){
     }
   }
   
-  var rs = SpreadsheetApp.openByUrl(student_review_sheet_url);
-  var ww = rs.getSheetByName("Sheet1");
+  var rs = SpreadsheetApp.openByUrl(url_review_year_information);
+  var ww = rs.getSheetByName("Sheet2");
   var rdataRange = ww.getDataRange();
   var rvalues = rdataRange.getValues();
   var flag = false;
@@ -512,27 +741,32 @@ function update_review_files_url(email,file_url,file_type,year){
     if (rvalues[i][0] == uin && rvalues[i][1] == year) {
       flag=true;
       if(file_type=="re"){
-        ww.getRange(i+1,6+1).setValue(file_url);
+        ww.getRange(i+1,2+1).setValue(file_url);
       }
-      else{
-        ww.getRange(i+1,7+1).setValue(file_url);
+      else if(file_type=="ip"){
+        ww.getRange(i+1,3+1).setValue(file_url);
       }
+      else {
+        setRowValue(ww, rvalues, i, "4 department_review", file_url);
     }
+       break;
+    }
+   
   }
   
   if(!flag){
     if(file_type=="re"){
-      ww.appendRow([uin,year,"","","","",file_url
+      ww.appendRow([uin,year,file_url
                  ]);
     }
-    else{
-      ww.appendRow([uin,year,"","","","","",file_url
+    else if(file_type =="ip"){
+      ww.appendRow([uin,year,"",file_url
                  ]);
     }
-      
+    else if(file_type == "dl"){
+      ww.appendRow([uin,year,"","",file_url]);
   }
-  
-  
+  }
   Logger.log("file url Updated")
 }
 
@@ -558,39 +792,32 @@ function check_uin(){
 
 function get_urls(uin, year){
   
-//  var email = Session.getActiveUser().getEmail();
-  
-//  var ss = SpreadsheetApp.openByUrl(student_info_sheet_url);
-//  var ws = ss.getSheetByName("Sheet1");
-//  var dataRange = ws.getDataRange();
-//  var values = dataRange.getValues();
-//  var uin = "";
-//  for (var i = 0; i < values.length; i++) {
-//    if (values[i][5] == email) {
-//      uin = values[i][4];
-//    }
-//  }
-  
+  Logger.log("In function get_urls");
   var urls ={};
   urls.report="";
   urls.improvement = "";
+  urls.departmentletter = "";
 
-  var rs = SpreadsheetApp.openByUrl(student_review_sheet_url);
-  var ww = rs.getSheetByName("Sheet1");
+  var rs = SpreadsheetApp.openByUrl(url_review_year_information);
+  var ww = rs.getSheetByName("Sheet2");
   var rdataRange = ww.getDataRange();
   var rvalues = rdataRange.getValues();
   
   for (var i = 0; i < rvalues.length; i++) {
     if (rvalues[i][0] == uin && rvalues[i][1] == year) {
-      if(rvalues[i][6]!=""){
-        urls.report = rvalues[i][6];
+      //Logger.log(rvalues[i][4]);
+      if(rvalues[i][2]!=""){
+        urls.report = rvalues[i][2];
       }
-      if(rvalues[i][7]!=""){
-        urls.improvement = rvalues[i][7];
+      if(rvalues[i][3]!=""){
+        urls.improvement = rvalues[i][3];
+      } 
+      if(rvalues[i][4]!=""){
+        urls.departmentletter = rvalues[i][4];
       } 
     }
   }
-  
+  Logger.log(urls);
   return urls;
 
 }
@@ -618,10 +845,10 @@ function getReviewDetails(year){
   
   for (var i = 0; i < rvalues.length; i++) {
     if (rvalues[i][0] == uin && rvalues[i][1] == year && rvalues[i][2]!="admin") {
-      if (rvalues[i][2]!=""){
+      
 //        comments += " Reviewer Name: "+ rvalues[i][2]+"\t\t\t\t";
-        comments += rvalues[i][8]+"\n\n";
-      }
+      comments += rvalues[i][9]+"\n";
+      
     }  
   }
   
@@ -633,12 +860,14 @@ function getReviewDetails(year){
 
 function get_advisor_list(){
   
-  var ss = SpreadsheetApp.openByUrl(faculty_data_sheet_url);
-  var ws = ss.getSheetByName("f_data");
-  var list = ws.getRange(2,1, ws.getRange("A2").getDataRegion().getLastRow(),1).getValues();
+  var ss = SpreadsheetApp.openByUrl(account_sheet_url);
+  var ws = ss.getSheetByName("Faculty");
+  var list = ws.getRange(2,2, ws.getRange("A2").getDataRegion().getLastRow(),1).getValues();
+  
+  //Logger.log("Faculty list ",list);
   
   var advisorlist = list.map(function(r){return '<option value="'+r[0]+'">'+r[0]+'</option>';}).join('');
-  Logger.log(advisorlist)
+  //Logger.log(advisorlist)
   
   return advisorlist;
 }

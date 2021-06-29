@@ -1,15 +1,24 @@
 {
-  "timeZone": "America/Mexico_City",
+  "timeZone": "Asia/Taipei",
   "dependencies": {
-    "libraries": [{
-      "userSymbol": "ArrayLib",
-      "libraryId": "1r9wNWbta3ebuYL4ENAdIp4UYKmyNiWf1AqsXYzfXduRHhTZEeTxS9MhZ",
-      "version": "13"
-    }]
+    "enabledAdvancedServices": [
+      {
+        "userSymbol": "Sheets",
+        "serviceId": "sheets",
+        "version": "v4"
+      }
+    ],
+    "libraries": [
+      {
+        "userSymbol": "ArrayLib",
+        "libraryId": "1r9wNWbta3ebuYL4ENAdIp4UYKmyNiWf1AqsXYzfXduRHhTZEeTxS9MhZ",
+        "version": "13"
+      }
+    ]
   },
   "webapp": {
-    "access": "DOMAIN",
-    "executeAs": "USER_ACCESSING"
+    "executeAs": "USER_DEPLOYING",
+    "access": "MYSELF"
   },
   "exceptionLogging": "STACKDRIVER",
   "runtimeVersion": "V8"

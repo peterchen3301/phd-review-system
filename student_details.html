@@ -4,130 +4,138 @@
     <base target="_top">
     <!--Import Google Icon Font-->
       <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-      
+
       <!--Import materialize.css-->
       <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
-      
+
       <!--Let browser know website is optimized for mobile-->
-      <!--link rel="stylesheet" href="css/app.css"-->
-      
       <?!= include('css'); ?>
       <meta charset="utf-8"/>
       <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   </head>
   <body>
-  <div class="navbar-fixed">
-        <nav>
+  <div class="navbar-fixed" style="height: 110px">
+        <nav class="nav-extended tamu-navbar">
           <div class="nav-wrapper tamu-navbar">
-            <a href="#" class="brand-logo">Ph.D. Review System</a>
+            <a href="javascript.void(0);" class="brand-logo">Ph.D. Review System</a>
             <ul id="nav-mobile" class="right hide-on-med-and-down">
-              <li ><a href="<?= getScriptUrl();?>?v=admin_view">Admin</a></li>
+              <li id="admin-view"><a href="<?= getScriptUrl();?>?v=admin_view">Admin</a></li>
+              <li id="add-student"><a href="<?= getScriptUrl();?>?v=add_student">Add Student</a></li>
               <li ><a href="<?= getScriptUrl();?>?v=faculty_view">Student Search</a></li>
               <li><a href="<?= getScriptUrl();?>?v=index">Logout</a></li>
             </ul>
           </div>
+        <div class="nav-content">
+        <ul class="tabs tabs-transparent">
+         <li class="tab"><a href="javascript:void(0)" id="view-name" class="active">Faculty View</a></li>
+      </ul>
+    </div>
         </nav>
   </div>
+
+  <div class="container">
+    <h3>
+      Reviews for the Student
+    </h3>
+    <!-- Displaying Student UIN and Name-->
+    <h5 id= "uin">Review for UIN: <?=uin?></h5>
+    <h5>First Name: <?=firstName?></h5>
+    <h5>Last Name: <?=lastName?></h5>
+    <label visible="false" class = "hide" id = "uinForThisPage" ><?=uin?></label>
+    <br>
+    <!--Adding dropdown for selecting review year-->
+    <div>
+      <label>Review Year</label>
+          <select style="display: block;" id = "year" onchange="onChangeReviewYear()">
+              <option>Choose Review Year</option>
+              <?for(var i = years.length - 1; i >= 0; i--) { ?>
+              <option><?= years[i]?></option>
+              <? } ?>
+          </select>
+    </div>
+    <div id="see_reviews-student">
+      <table class="striped" id ="myTable">
+      <thead>
+      <tr>
+      <th>Reviewer</th>
+      <th>Rating</th>
+      <th>Review Year</th>
+      <th>Review</th>
+      </tr>
+      </thead>
+
+      <tbody id = "table-body"><?!=tableDataHtml?>
+      </tbody>
+      </table>
+    </div>
+ 
+    <script>
+    document.getElementById("admin-view").style.visibility = "hidden";
+    document.getElementById("add-student").style.visibility = "hidden";
+    google.script.run.withSuccessHandler(hideAdminView).isAdmin();
     
-    <div id="view-student-info" style = "margin-left: 10px;">
-          <div >
-            <h4>Student Information</h4>
-            <form class="col s12">
-              <div class="row">
-                <div class="input-field col s3">
-                  <input id="ln" type="text" disabled>
-                  <label for="ln"><?= record[3] ?></label>
-                </div>
-                <div class="input-field col s3">
-                  <input id="fn" type="text" class="validate"  disabled>
-                  <label for="fn"><?= record[2] ?></label>
-                </div>
-                <div class="input-field col s2">
-                  <input id="uin_" type="text" class="validate"  disabled>
-                  <label for="uin_"><?= record[4] ?></label>
-                </div>
-                <div class="input-field col s4">
-                  <input id="email" type="text" class="validate" value="<?= record[5] ?>" disabled>
-                  <label for="email">Email</label>
-                </div>
-              </div>
-              <div class='row'>
-              
-                 <div class="input-field col s4">
-                  <input id="start-semester" type="text" class="validate" value="<?= record[6] ?>" disabled>
-                  <label for="start-semester">Start Semester</label>
-                </div>
-                
-                <div class="input-field col s2 ">
-                  <input id="qualifer-exam" type="text" <? var display = (record[12] == 0 ? 'Fail' : 'Pass'); ?> value="<?= display ?>" disabled>
-                  <label for="qualifer-exam">Qual Exam</label>
-                </div>
-                
-                <div class="input-field col s2">
-                  <input id="number_qual_exam_attempts" type="text" value="<?= record[13] ?>" disabled>
-                  <label for="number_qual_exam_attempts">Attempts Completed</label>
-                </div>
 
-              </div>
-
-              <div class="row">
-                                
-                 <div class="input-field col s3">
-                  <input id="advisor" type="text" value="<?= record[9] ?>" disabled>
-                  <label for="advisor">Advisor</label>
-                </div>
-                <div class="input-field col s3">
-                  <input id="co-advisor" type="text" value="<?= record[10] ?>" disabled>
-                  <label for="co-advisor">Co-Advisor</label>
-                </div>
-                <div class="input-field col s2">
-                </div>
-               
-              </div>
-
-              <div class="row">
-                
-                <div class="input-field col s2">
-                  <input id="degree-plan-submitted" type="text" <? var display = (record[11] == 0 ? 'No' : 'Yes'); ?> value="<?= display ?>" disabled>
-                  <label for="degree-plan-submitted">Degree Plan Submitted</label>
-                </div>
-                
-                <div class="input-field col s3">
-                  <input id="prelim-date" type="text" value="<?= record[15] ?>" disabled>
-                  <label for="prelim-date">Prelim Date</label>
-                </div>
-                
-                <div class="input-field col s3" >
-                  <input id="proposal-date" type="text" value="<?= record[16] ?>" disabled>
-                  <label for="proposal-date">Proposal Date</label>
-                </div>
-                <!-- THIS CAN BE USED INSTEAD WHEN TO GIVE A GOOD FORMAT TO DATES>
-                 <!--input type="text" class="datepicker" id="defense-date" disabled>
-                  <label for="defense-date">Final Defense Date</label-->
-                  <!----input id="final-defense-date" type="text" value="<!?= Utilities.formatDate(record[17], 'US/Central', 'MMMM dd, yyyy'); ?>" disabled>
-                  <label for="final-defense-date">Final Defense Date</label-->
-                <div class="input-field col s3" disabled>
-                  <input id="final-defense-date" type="text" value="<?= record[17] ?>" disabled>
-                  <label for="final-defense-date">Final Defense Date</label>
-                </div>
-                
-              </div>
-
-            <div class="row">              
-              <a href= <? var cvpage = (record[14] == "" ? "#" : record[14]) ?> <?= cvpage ?> class="btn waves-effect waves-light" type="submit" name="action"> View CV
-              </a>
-              
-            </div>
-            </form>
-          </div>
-   
-        </div>
+    function onChangeReviewYear() {
+     var input, filter, table, tr, td, i, txtValue;
+     var selectElement = document.getElementById("year");
+     var filter = selectElement.options[selectElement.selectedIndex].value;
+     console.log(filter);
+     input = document.getElementById("year");
+     if(filter == "Choose Review Year")
+      filter = "";
+     table = document.getElementById("myTable");
+     tr = table.getElementsByTagName("tr");
+     for (i = 0; i < tr.length; i++) {
+     td = tr[i].getElementsByTagName("td")[2];
+     if (td) {
+      txtValue = td.textContent || td.innerText;
+      //console.log(txtValue);
+      console.log(txtValue.indexOf(filter) > -1);
+      if (txtValue.indexOf(filter) > -1) {
+        tr[i].style.display = "";
+      } 
+      else {
+        tr[i].style.display = "none";
+      }
+    }       
+  }
+}
     
+
     
-    <script type = "text/javascript" src = "https://code.jquery.com/jquery-2.1.1.min.js"></script>
-      <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    function getReview() {
+      var year = document.getElementById("review_year").value;
+      console.log("Year = "+year);
       
-      <?!= include("student_info_javascript") ?>
+      var uin = document.getElementByID("uin").value;
+     
+      google.script.run.loadReview(uin,year);
+    }
+
+    function hideAdminView(result) {
+      if (result == true)  {
+        document.getElementById("admin-view").style.visibility = "visible";
+        document.getElementById("add-student").style.visibility = "visible";
+        document.getElementById("view-name").innerHTML = "Admin View";
+      }
+    }
+    function loadTable(table) {
+       document.getElementById("review_table").value = table;
+    }
     
-  </body>
+    function loadReviews() {
+    
+        //var year = document.getElementById("year").value;
+        var uin = document.getElementById("uin").value;
+        Logger.log("In HTML loadReview");
+        console.log("In HTML loadReview");
+        //const url = window.location.search;
+        google.script.run.loadReview(uin,year);
+        }
+
+  </script>
+      <script type = "text/javascript" src = "https://code.jquery.com/jquery-2.1.1.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+</div>
+</body>
 </html>
