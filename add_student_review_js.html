@@ -60,6 +60,9 @@ function onSuccessToGetStudentReviewInformation(result) {
     document.getElementById("commentsForStudent").value = result[9];
     textAreaAdjust(document.getElementById("commentsForStudent")); // adjust textarea height to fit content
 
+    document.getElementById("commentsForFaculty").value = result[10];
+    textAreaAdjust(document.getElementById("commentsForFaculty")); // adjust textarea height to fit content
+
     document.getElementById("reviewSelect").value = result[4];
     var elems = document.querySelectorAll('select');
     var instances = M.FormSelect.init(elems, {});
@@ -186,7 +189,7 @@ document.getElementById("reviewSubmitButton").addEventListener("click", reviewSu
     var rating = selectReviewElement.options[selectReviewElement.selectedIndex].value;
     
     var commentsForStudents = document.getElementById("commentsForStudent").value;
-
+    var commentsForFaculty = document.getElementById("commentsForFaculty").value;
     
     var needsToImproveGrade = !adminMode ? 0 : (document.getElementById("needsToImproveGrade").checked == true ? 1 : 0);
     var noStudentReportAvailable = !adminMode ? 0 : (document.getElementById("noStudentReportAvailable").checked == true ? 1 : 0);
@@ -203,6 +206,7 @@ document.getElementById("reviewSubmitButton").addEventListener("click", reviewSu
     studentReviewDetails.reviewYear = reviewYear;
     studentReviewDetails.rating = rating;
     studentReviewDetails.commentsForStudents = commentsForStudents;
+    studentReviewDetails.commentsForFaculty = commentsForFaculty;
     studentReviewDetails.needsToImproveGrade = needsToImproveGrade;
     studentReviewDetails.noStudentReportAvailable = noStudentReportAvailable;
     studentReviewDetails.misconduct = misconduct;
