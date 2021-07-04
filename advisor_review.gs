@@ -13,8 +13,8 @@ var url_student_review_details = "https://docs.google.com/spreadsheets/d/1Gs5b7c
 // redirected to test data
 var url_review_year_information = "https://docs.google.com/spreadsheets/d/1itGFcZYze2Ev0yETquZoKdUnrgQjbo2M4GfQtoFfsY0/edit#gid=0";
 
-// review year info sheet, redirected to test data
-var login_sheet = "https://docs.google.com/spreadsheets/d/1itGFcZYze2Ev0yETquZoKdUnrgQjbo2M4GfQtoFfsY0/edit#gid=0";
+// review year account sheet, redirected to test data
+var login_sheet = "https://docs.google.com/spreadsheets/d/16q1qt5JTmCsSaUz_ixYswOWi6LDDOC8SZz2NvYTx7zI/edit#gid=0";
 
 
 function getAllStudentRecords() {
@@ -199,24 +199,26 @@ function updateStudentReviewDetails(studentReviewDetails) {
     //Logger.log(getFacultyName());
     if (values[i][0] == studentReviewDetails.uin && values[i][1] == studentReviewDetails.reviewYear && values[i][2] == getFacultyName()) {
       dataExists = true;
-      //Logger.log("data exists");
-      //ws.getRange(i + 1, 3).setValue("Dummy Name");
-      //Adding column for Faculty Name
-      ws.getRange(i + 1,3).setValue(getFacultyName());
-      ws.getRange(i + 1,3 + 2).setValue(studentReviewDetails.rating);
-      ws.getRange(i + 1,8).setValue(studentReviewDetails.reportUrl);
-      ws.getRange(i + 1,9).setValue(studentReviewDetails.improvementPlanUrl);
+
+      Logger.log(studentReviewDetails);
+
+      var student_id = i + 1;
+      ws.getRange( student_id, 3 ).setValue(getFacultyName());
+      ws.getRange( student_id, 5 ).setValue(studentReviewDetails.rating);
+      ws.getRange( student_id, 8 ).setValue(studentReviewDetails.reportUrl);
+      ws.getRange( student_id, 9 ).setValue(studentReviewDetails.improvementPlanUrl);
       
-      ws.getRange(i + 1,8 + 2).setValue(studentReviewDetails.commentsForStudents);
-      ws.getRange(i + 1,10 + 2).setValue(studentReviewDetails.needsToImproveGrade);
-      ws.getRange(i + 1,11 + 2).setValue(studentReviewDetails.noStudentReportAvailable);
-      ws.getRange(i + 1,12 + 2).setValue(studentReviewDetails.misconduct);
-      ws.getRange(i + 1,13 + 2).setValue(studentReviewDetails.needsToPassQualiferExam);
-      ws.getRange(i + 1,14 + 2).setValue(studentReviewDetails.needsToFindAdvisor);
-      ws.getRange(i + 1,15 + 2).setValue(studentReviewDetails.needsToFileDegreePlan);
-      ws.getRange(i + 1,16 + 2).setValue(studentReviewDetails.needsToDoPrelim);
-      ws.getRange(i + 1,17 + 2).setValue(studentReviewDetails.needsToSubmitProposal);
-      ws.getRange(i + 1,18 + 2).setValue(studentReviewDetails.needsToFinishSoon);
+      ws.getRange( student_id, 10).setValue(studentReviewDetails.commentsForStudents);
+      ws.getRange( student_id, 11).setValue(studentReviewDetails.commentsForFaculty);
+      ws.getRange(student_id, 12 ).setValue(studentReviewDetails.needsToImproveGrade);
+      ws.getRange( student_id, 13 ).setValue(studentReviewDetails.noStudentReportAvailable);
+      ws.getRange( student_id, 14 ).setValue(studentReviewDetails.misconduct);
+      ws.getRange( student_id, 15 ).setValue(studentReviewDetails.needsToPassQualiferExam);
+      ws.getRange( student_id, 16 ).setValue(studentReviewDetails.needsToFindAdvisor);
+      ws.getRange( student_id, 17 ).setValue(studentReviewDetails.needsToFileDegreePlan);
+      ws.getRange( student_id, 18 ).setValue(studentReviewDetails.needsToDoPrelim);
+      ws.getRange( student_id, 19 ).setValue(studentReviewDetails.needsToSubmitProposal);
+      ws.getRange( student_id, 20 ).setValue(studentReviewDetails.needsToFinishSoon);
       
       break;  
     } 
@@ -224,12 +226,29 @@ function updateStudentReviewDetails(studentReviewDetails) {
   
   if (!dataExists){ 
     Logger.log("adding new row");
-    ws.appendRow([studentReviewDetails.uin, studentReviewDetails.reviewYear,getFacultyName(), getFacultyEmail(), studentReviewDetails.rating, "", "", studentReviewDetails.reportUrl,studentReviewDetails.improvementPlanUrl,
-                  studentReviewDetails.commentsForStudents, "", studentReviewDetails.needsToImproveGrade,
-                  studentReviewDetails.noStudentReportAvailable, studentReviewDetails.misconduct, studentReviewDetails.needsToPassQualiferExam,
-                  studentReviewDetails.needsToFindAdvisor, studentReviewDetails.needsToFileDegreePlan, studentReviewDetails.needsToDoPrelim,
-                  studentReviewDetails.needsToSubmitProposal, studentReviewDetails.needsToFinishSoon
-                 ]);
+    ws.appendRow([
+      studentReviewDetails.uin, 
+      studentReviewDetails.reviewYear,
+      getFacultyName(), 
+      getFacultyEmail(), 
+      studentReviewDetails.rating, 
+      "", 
+      "", 
+      studentReviewDetails.reportUrl,
+      studentReviewDetails.
+      improvementPlanUrl,
+      studentReviewDetails.commentsForStudents, 
+      "", 
+      studentReviewDetails.needsToImproveGrade,
+      studentReviewDetails.noStudentReportAvailable, 
+      studentReviewDetails.misconduct, 
+      studentReviewDetails.needsToPassQualiferExam,
+      studentReviewDetails.needsToFindAdvisor, 
+      studentReviewDetails.needsToFileDegreePlan, 
+      studentReviewDetails.needsToDoPrelim,
+      studentReviewDetails.needsToSubmitProposal, 
+      studentReviewDetails.needsToFinishSoon
+      ]);
   }  
 }
 
@@ -240,8 +259,9 @@ function getUser() {
   }
   return user;
 }
-//Function to fetch Faculty Name
+
 function getFacultyName() {
+
   var email = getFacultyEmail();
   var name = "";
   
