@@ -45,7 +45,9 @@ function populate_dropdown(all_review_years){
   
 }
 
+
 function onChangeReviewYear() {
+
     var studentInfo = {};
     var uinElement = document.getElementById("uinForThisPage");
     console.log(uinElement);
@@ -59,6 +61,7 @@ function onChangeReviewYear() {
 }
 
 function onSuccessToGetStudentReviewInformation(result) {
+
     console.log("student review info:" + result);
 
     document.getElementById("commentsForStudent").value = result[9];
@@ -225,9 +228,10 @@ document.getElementById("reviewSubmitButton").addEventListener("click", reviewSu
     
     console.log("Student", studentReviewDetails.reportUrl);
     console.log("calling update review details function");
-    
-    google.script.run.withSuccessHandler(onSuccessOfReviewSubmit).updateStudentReviewDetails(studentReviewDetails);
-    
+
+    var ScriptRunner0 = google.script.run.withFailureHandler(onFailureOfReviewSubmit);
+    var ScriptRunner = ScriptRunner0.withSuccessHandler(onSuccessOfReviewSubmit);
+    ScriptRunner.updateStudentReviewDetails(studentReviewDetails);
   }
   
   
@@ -261,9 +265,17 @@ function reset_fields(){
   
 }
 
+
 function onSuccessOfReviewSubmit(result) {
     alert("Review saved successfully!");
 }
+
+
+// To do : add indication of how review saving failed 
+function onFailureOfReviewSubmit(result) {
+    alert("Failed to save review.");
+}
+
 
 function textAreaAdjust(o) {
   o.style.height = "1px";
