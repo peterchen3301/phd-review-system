@@ -1,8 +1,4 @@
 // changed to test data
-var account_sheet_url = "https://docs.google.com/spreadsheets/d/16q1qt5JTmCsSaUz_ixYswOWi6LDDOC8SZz2NvYTx7zI/edit#gid=0";
-var student_info_sheet_url = "https://docs.google.com/spreadsheets/d/1Wq-zmCeYI_12uUVXAbPQfbM2FphfV0B0M9pEjt7LV8E/edit#gid=0";
-var student_review_sheet_url = "https://docs.google.com/spreadsheets/d/1Gs5b7c4ADRMQjeNJxFB8gv0yBXoK0pPFTsFLxqyC9yc/edit#gid=0";
-var url_review_year_information = "https://docs.google.com/spreadsheets/d/1itGFcZYze2Ev0yETquZoKdUnrgQjbo2M4GfQtoFfsY0/edit#gid=0";
 
 var userEmail = '';
 
@@ -16,7 +12,9 @@ function doGet(e){
   
   var userInfo = {};
   userInfo.email = Session.getActiveUser().getEmail();
+
   Logger.log(userInfo.email); //actions can be taken based on these
+  
   userEmail = userInfo.email;
   var cls = null;
   if(e.parameters.v){
@@ -37,7 +35,6 @@ function doGet(e){
   Route.path("see_reviews", loadAllStudentReviews);
   Route.path("add_student", loadAddStudent);
   Route.path("remove_student", loadRemoveStudent);
-  
 
   if(Route[cls]){
     return Route[cls](e);
@@ -200,7 +197,7 @@ function loadAllStudentReviews(e){
       break;
       }
   }
-  var ss1 = SpreadsheetApp.openByUrl(url_review_year_information);
+  var ss1 = SpreadsheetApp.openByUrl(review_year_information_url);
   var ws1 = ss1.getSheetByName("Sheet1");
   var years = ws1.getRange(2,1,ws.getRange("A1").getDataRegion().getLastRow()-1,1).getValues().filter(String);
   //Logger.log(years);
@@ -731,7 +728,7 @@ function update_review_files_url(email,file_url,file_type,year){
     }
   }
   
-  var rs = SpreadsheetApp.openByUrl(url_review_year_information);
+  var rs = SpreadsheetApp.openByUrl(review_year_information_url);
   var ww = rs.getSheetByName("Sheet2");
   var rdataRange = ww.getDataRange();
   var rvalues = rdataRange.getValues();
@@ -798,7 +795,7 @@ function get_urls(uin, year){
   urls.improvement = "";
   urls.departmentletter = "";
 
-  var rs = SpreadsheetApp.openByUrl(url_review_year_information);
+  var rs = SpreadsheetApp.openByUrl(review_year_information_url);
   var ww = rs.getSheetByName("Sheet2");
   var rdataRange = ww.getDataRange();
   var rvalues = rdataRange.getValues();

@@ -3,22 +3,8 @@
  * Need to switch to legacy editor to install this.
  */
 
-// Student info sheet, redirected to test data
-var url_student_personal_details = "https://docs.google.com/spreadsheets/d/1Wq-zmCeYI_12uUVXAbPQfbM2FphfV0B0M9pEjt7LV8E/edit#gid=0";
-
-// Student review sheet (is it?)
-//var url_student_review_details = "https://docs.google.com/spreadsheets/d/1oHgzdeU05UGMdV8hs_Gz1zNT24UEx_QjN720MjaHZN8/edit#gid=0";
-var url_student_review_details = "https://docs.google.com/spreadsheets/d/1Gs5b7c4ADRMQjeNJxFB8gv0yBXoK0pPFTsFLxqyC9yc/edit#gid=0";
-
-// redirected to test data
-var url_review_year_information = "https://docs.google.com/spreadsheets/d/1itGFcZYze2Ev0yETquZoKdUnrgQjbo2M4GfQtoFfsY0/edit#gid=0";
-
-// review year account sheet, redirected to test data
-var login_sheet = "https://docs.google.com/spreadsheets/d/16q1qt5JTmCsSaUz_ixYswOWi6LDDOC8SZz2NvYTx7zI/edit#gid=0";
-
-
 function getAllStudentRecords() {
-  var ss = SpreadsheetApp.openByUrl(url_student_personal_details);
+  var ss = SpreadsheetApp.openByUrl(student_info_sheet_url);
   var ws = ss.getSheetByName("Sheet1");
   
   var student_records = ws.getRange(2, 1, ws.getRange("A1").getDataRegion().getLastRow() - 1, ws.getRange("A1").getDataRegion().getLastColumn()-3).getValues(); // note: explicitly excluding date columns (they cause error?)
@@ -27,7 +13,7 @@ function getAllStudentRecords() {
 }
 
 function getAllStudentsReviewData() {
-  var ss = SpreadsheetApp.openByUrl(url_student_review_details);
+  var ss = SpreadsheetApp.openByUrl(student_review_sheet_url);
   var ws = ss.getSheetByName("Sheet1");
   
   var student_records = ws.getRange(2, 1, ws.getRange("A1").getDataRegion().getLastRow() - 1, ws.getRange("A1").getDataRegion().getLastColumn()).getValues();
@@ -36,7 +22,7 @@ function getAllStudentsReviewData() {
 }
 
 function getAllReviewYearInformation() {
-  var ss = SpreadsheetApp.openByUrl(url_review_year_information);
+  var ss = SpreadsheetApp.openByUrl(review_year_information_url);
   
   var ws = ss.getSheetByName("Sheet1");
   var review_year_records = ws.getRange(2, 1, ws.getRange("A1").getDataRegion().getLastRow() - 1, ws.getRange("A1").getDataRegion().getLastColumn()).getValues();
@@ -60,7 +46,7 @@ function getActiveReviewYear() {
 }
 
 function addNewReviewYear(newReviewYear) {
-  var ss = SpreadsheetApp.openByUrl(url_review_year_information);
+  var ss = SpreadsheetApp.openByUrl(review_year_information_url);
   var ws = ss.getSheetByName("Sheet1");
   var dataRange = ws.getDataRange();
   var values = dataRange.getValues();
@@ -80,7 +66,7 @@ function addNewReviewYear(newReviewYear) {
 }
 
 function endCurrentReviewYear() {
-  var ss = SpreadsheetApp.openByUrl(url_review_year_information);
+  var ss = SpreadsheetApp.openByUrl(review_year_information_url);
   var ws = ss.getSheetByName("Sheet1");
   var dataRange = ws.getDataRange();
   var values = dataRange.getValues();
@@ -103,7 +89,7 @@ function endCurrentReviewYear() {
 }
 
 function beginThisReviewYear(reviewYear) {
-  var ss = SpreadsheetApp.openByUrl(url_review_year_information);
+  var ss = SpreadsheetApp.openByUrl(review_year_information_url);
   var ws = ss.getSheetByName("Sheet1");
   var dataRange = ws.getDataRange();
   var values = dataRange.getValues();
@@ -189,7 +175,7 @@ function getReviewInformationForUinAndYear(uin, reviewYear) {
 
 function updateStudentReviewDetails(studentReviewDetails) {
   
-  var ss = SpreadsheetApp.openByUrl(url_student_review_details);
+  var ss = SpreadsheetApp.openByUrl(student_review_sheet_url);
   var ws = ss.getSheetByName("Sheet1");
   var dataRange = ws.getDataRange();
   var values = dataRange.getValues();
@@ -268,7 +254,7 @@ function getFacultyName() {
   if(email == "grad-advisor@cse.tamu.edu")
      name = "Department";
   else {
-  var ss = SpreadsheetApp.openByUrl(login_sheet);
+  var ss = SpreadsheetApp.openByUrl(account_sheet_url);
   var ws = ss.getSheetByName("Faculty");
   var data = ws.getRange(1, 1, ws.getLastRow(), 1).getValues();
   
@@ -291,7 +277,7 @@ function getFacultyEmail() {
 }
 
 function getStudentInfo(uin){
-  var ss = SpreadsheetApp.openByUrl(url_student_personal_details);
+  var ss = SpreadsheetApp.openByUrl(student_info_sheet_url);
   var ws = ss.getSheetByName("Sheet1");
   
   var student_records = ws.getRange(2, 1, ws.getRange("A1").getDataRegion().getLastRow() - 1, ws.getRange("A1").getDataRegion().getLastColumn()).getValues();
@@ -301,7 +287,7 @@ function getStudentInfo(uin){
 }
 
 function getThatStudentInfo(uin){
-  var ss = SpreadsheetApp.openByUrl(url_student_personal_details);
+  var ss = SpreadsheetApp.openByUrl(student_info_sheet_url);
   var ws = ss.getSheetByName("Sheet1");
 
   var student_records = ws.getRange(2, 1, ws.getRange("A1").getDataRegion().getLastRow() - 1, ws.getRange("A1").getDataRegion().getLastColumn()).getValues();
@@ -312,7 +298,7 @@ function getThatStudentInfo(uin){
 
 function getStudentReviews(uin){
   Logger.log("In getStudentReviews()");
-  var ss = SpreadsheetApp.openByUrl(url_student_review_details);
+  var ss = SpreadsheetApp.openByUrl(student_review_sheet_url);
   var ws = ss.getSheetByName("Sheet1");
 
   var student_reviews = ws.getRange(2, 1, ws.getRange("A1").getDataRegion().getLastRow() - 1, ws.getRange("A1").getDataRegion().getLastColumn()).getValues();

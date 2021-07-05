@@ -8,6 +8,8 @@ document.getElementById("add-student").style.visibility = "hidden";
 document.getElementById("dl").style.visibility = "hidden";
 document.getElementById("dlname").style.visibility = "hidden";
 google.script.run.withSuccessHandler(setUser).isAdmin();
+
+
 function setUser(result) {
   if (result == true) {//is Admin!
     document.getElementById("admin-view").style.visibility = "visible";
@@ -20,9 +22,11 @@ document.getElementById("dlname").style.visibility = "visible";
     document.getElementById("view-name").innerHTML = "Admin View";
   }
 }
+
+
 function onLoadAddStudentReview() {
-   google.script.run.withSuccessHandler(populate_dropdown).getAllReviewYears();
-    onChangeReviewYear();
+  google.script.run.withSuccessHandler(populate_dropdown).getAllReviewYears();
+  onChangeReviewYear();
 }
 
 
