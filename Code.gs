@@ -61,21 +61,20 @@ function userClickedLogin(userInfo){
 }
 
 function isAdmin(){
-  Logger.log(getCredential());
-  return "admin" == getCredential();
+  return "admin" == getCurrentUserCredential();
 }
 
 function isFaculty(){
-  return "faculty" == getCredential();
+  return "faculty" == getCurrentUserCredential();
 }
 
 function isStudent(){
-  return "student" == getCredential();
+  return "student" == getCurrentUserCredential();
 }
 
-function getCredential(){
+function getCredential(account){
   var userInfo = {};
-  userInfo.email = Session.getActiveUser().getEmail();
+  userInfo.email = account;
   var view = userClickedLogin(userInfo);
   if(view =='student_view'){
     return 'student';
@@ -89,7 +88,11 @@ function getCredential(){
   else{
     return 'basic';
   }
+}
 
+function getCurrentUserCredential(){
+  this_account = Session.getActiveUser().getEmail();
+  return getCredential(this_account);
 }
 
 function search(sheetName, searchTerm){ //usage: search('Student', 'a.kunder@tamu.edu') or search('Faculty', 'xyz@tamu.edu')
@@ -157,9 +160,6 @@ function loadRemoveStudent(e) {
       break;
       }
   }
-  
-  //var filtered_student_reviews = getStudentReviews(uin);
-  //var tableDataHtml = convertFilteredStudentReviewsDataToHTMLTable(filtered_student_reviews);
 
   return tmp.evaluate();
 }

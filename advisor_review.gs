@@ -139,12 +139,13 @@ function handleSearchBtnClickedByUser(userInfo){
 }
 
 
-function getReviewInformationForUinAndYear(uin, reviewYear) {
+function getReviewInformationForUinAndYear(uin, reviewYear, reviewer_account = getCurrentReviewerEmail() ) {
 
   var filteredData = getAllStudentsReviewData();
 
-  console.log(filteredData);
-  
+  Logger.log(reviewer_account);
+  Logger.log(filteredData);
+
   if(uin != null && uin != undefined) {
     filteredData = ArrayLib.filterByText(filteredData, 0, uin);
   }
@@ -153,22 +154,30 @@ function getReviewInformationForUinAndYear(uin, reviewYear) {
     filteredData = ArrayLib.filterByText(filteredData, 1, reviewYear);
   }
 
-  console.log(filteredData);
-  
+  // if this reviewer is a faculty, get only his review 
+  if( getCredential(reviewer_account) == 'faculty' ) {
+    filteredData = ArrayLib.filterByText(filteredData, 3, reviewer_account);
+  }
+  // if this reviewer is an admin, get all admin reviews
+  else if ( getCredential(reviewer_account) == 'admin' ) {
+    filteredData = filterByAdminReviews(filteredData);
+  }
+
+  Logger.log(filteredData);
+
   if(filteredData != null && filteredData != undefined && filteredData.length > 0) {
+
+    if( filteredData.length > 1 ){
+      Logger.log("Multiple reviews found, risk of overridden.");
+    }
     return filteredData[0];
   }
   
-  emptyReviewData = getEmptyReviewData();
-  return emptyReviewData;
+  return getEmptyReviewData();
 }
 
 
 function updateStudentReviewDetails(studentReviewDetails) {
-
-  Logger.log(studentReviewDetails);
-  Logger.log(studentReviewDetails.uin);
-  Logger.log(studentReviewDetails.reviewYear);
   
   var ss = SpreadsheetApp.openByUrl(student_review_sheet_url);
   var ws = ss.getSheetByName("Sheet1");
@@ -180,11 +189,8 @@ function updateStudentReviewDetails(studentReviewDetails) {
   
   for (var i = 0; i < values.length; i++) {
 
-    if (values[i][0] == studentReviewDetails.uin && values[i][1] == studentReviewDetails.reviewYear && values[i][2] == reviewer_name) {
+    if (values[i][0] == studentReviewDetails.uin && values[i][1] == studentReviewDetails.reviewYear && values[i][2] == reviewer_name) { // bad code: what if two reviewer have the same anme?
       dataExists = true;
-
-      Logger.log(values[i]);
-      Logger.log(reviewer_name);
 
       var student_id = i + 1;
       ws.getRange( student_id, 3 ).setValue(reviewer_name);
@@ -214,7 +220,7 @@ function updateStudentReviewDetails(studentReviewDetails) {
       studentReviewDetails.uin, 
       studentReviewDetails.reviewYear,
       reviewer_name, 
-      getFacultyEmail(), 
+      getCurrentReviewerEmail(), 
       studentReviewDetails.rating, 
       "", 
       "", 
@@ -236,42 +242,70 @@ function updateStudentReviewDetails(studentReviewDetails) {
   }  
 }
 
-function getUser() {
-  var user = Session.getActiveUser().getEmail();
-  if(user == "d-walker@tamu.edu" || user == "karrie.bourquin@tamu.edu") {
-    return "admin";
-  }
-  return user;
-}
 
 function getFacultyName() {
 
-  var email = getFacultyEmail();
+  var email = getCurrentReviewerEmail();
   var name = "";
   
   if(email == "grad-advisor@cse.tamu.edu")
-     name = "Department";
-  else {
-  var ss = SpreadsheetApp.openByUrl(account_sheet_url);
-  var ws = ss.getSheetByName("Faculty");
-  var data = ws.getRange(1, 1, ws.getLastRow(), 1).getValues();
-  var values = ws.getDataRange().getValues();
+    name = "Department";
   
-  for (var i = 1; i < values.length; i++) {
-    if (rowValue(values, i, "Email") == email) {
-      name = rowValue(values, i, "Faculty Name");
-      break;
+  else {
+    
+    var ss = SpreadsheetApp.openByUrl(account_sheet_url);
+    var ws = ss.getSheetByName("Faculty");
+    var values = ws.getDataRange().getValues();
+  
+    for (var i = 1; i < values.length; i++) {
+      if (rowValue(values, i, "Email") == email) {
+        name = rowValue(values, i, "Faculty Name");
+        break;
       }
-  }
+    }
   }
   return name;
 }
 
-function getFacultyEmail() {
-  var email = Session.getActiveUser().getEmail();
-  return email;
+
+function getCurrentReviewerEmail() {
+  return Session.getActiveUser().getEmail();
 }
 
+
+// return hashset of all admin accounts (email addresses) 
+function getAllAdminAccounts() {
+
+  var admin_accounts = {};
+  var ss = SpreadsheetApp.openByUrl(account_sheet_url);
+  var ws = ss.getSheetByName("Admin");
+  var values = ws.getDataRange().getValues();
+
+  for (var i = 1; i < values.length; i++) {
+    admin_accounts[ rowValue(values, i, "Email") ] = true;
+  }
+  return admin_accounts;
+}
+
+
+// return all the reviews made by admins
+function filterByAdminReviews( reviews ){
+
+  filtered = [];
+  admin_accounts = getAllAdminAccounts();
+
+  for (var i = 0; i < reviews.length; i++) {
+
+    var reviewer_account = reviews[i][3];
+    if( admin_accounts[reviewer_account] ){
+      filtered.push(reviews[i]);
+    }
+  }
+  return filtered;
+}
+
+
+// this function may be useless
 function getStudentInfo(uin){
   var ss = SpreadsheetApp.openByUrl(student_info_sheet_url);
   var ws = ss.getSheetByName("Sheet1");
@@ -282,6 +316,8 @@ function getStudentInfo(uin){
   return filtered_student_record;
 }
 
+
+// this function may be useless
 function getThatStudentInfo(uin){
   var ss = SpreadsheetApp.openByUrl(student_info_sheet_url);
   var ws = ss.getSheetByName("Sheet1");
@@ -318,5 +354,7 @@ function convertFilteredStudentReviewsDataToHTMLTable(filtered_student_reviews){
   }
   return tableDataHtml;
 }
+
+
 
 

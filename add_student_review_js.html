@@ -54,10 +54,9 @@ function onChangeReviewYear() {
     var uin = uinElement.innerHTML;
     var selectElement = document.getElementById("review_year");
     var reviewYear = selectElement.options[selectElement.selectedIndex].value;
-    console.log(reviewYear + " " + uin);
+    //console.log(reviewYear + " " + uin);
     
     google.script.run.withSuccessHandler(onSuccessToGetStudentReviewInformation).getReviewInformationForUinAndYear(uin, reviewYear);
-    
 }
 
 function onSuccessToGetStudentReviewInformation(result) {
@@ -66,13 +65,9 @@ function onSuccessToGetStudentReviewInformation(result) {
 
     document.getElementById("commentsForStudent").value = result[9];
     textAreaAdjust(document.getElementById("commentsForStudent")); // adjust textarea height to fit content
-
     document.getElementById("commentsForFaculty").value = result[10];
     textAreaAdjust(document.getElementById("commentsForFaculty")); // adjust textarea height to fit content
-
     document.getElementById("reviewSelect").value = result[4];
-    var elems = document.querySelectorAll('select');
-    var instances = M.FormSelect.init(elems, {});
     document.getElementById("needsToImproveGrade").checked = result[11] == 1 ? true : false;
     document.getElementById("noStudentReportAvailable").checked = result[12] == 1 ? true : false;
     document.getElementById("misconduct").checked = result[13] == 1 ? true : false;

@@ -22,20 +22,8 @@
  * 
 */
 
-function test_getAllStudentRecords() {
-  console.log(getAllStudentRecords());
-}
-
-function test_getFacultyName(){
-  console.log(getFacultyName());
-}
-
-function test_getFacultyEmail(){
-  console.log(getFacultyEmail());
-}
-
-function test_getAllReviewYearInformation(){
-  console.log(getAllReviewYearInformation());
+function test_getAllAdminAccounts(){
+  Logger.log(getAllAdminAccounts());
 }
 
 var test_srvd = {
@@ -48,3 +36,17 @@ var test_srvd = {
 function test_updateStudentReviewDetails(){
   updateStudentReviewDetails(test_srvd);
 }
+
+function check_user_identity(){
+  Logger.log(getCredential("rob.light@tamu.edu"));
+}
+
+function test_getReviewInformationForUinAndYear(){
+  //getReviewInformationForUinAndYear(uin, reviewYear, reviewer_account)
+  Logger.log(getReviewInformationForUinAndYear("829009530", "", "peterchen33011@gmail.com"));
+}
+
+function test(){
+  Logger.log(getCurrentReviewerEmail());
+}
+
