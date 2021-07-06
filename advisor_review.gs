@@ -154,7 +154,7 @@ function getReviewInformationForUinAndYear(uin, reviewYear, reviewer_account = g
     filteredData = ArrayLib.filterByText(filteredData, 1, reviewYear);
   }
 
-  // if this reviewer is a faculty, get only his review 
+  // if this reviewer is a faculty, get only the review he left 
   if( getCredential(reviewer_account) == 'faculty' ) {
     filteredData = ArrayLib.filterByText(filteredData, 3, reviewer_account);
   }
