@@ -44,6 +44,7 @@ fixed:
   - Specify "review index" and do all the later operation based on this. Never do 2nd search. 
 
 * At "review year" drop-down list in [add_student_review.html](add_student_review.html), the default value is a string of "null", not a literal null value.
+
   *Threatens:* 
   - confusion in terminology
   - Data management hardship
