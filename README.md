@@ -57,7 +57,7 @@ fixed:
   2. editing/adding reviews in ```updateStudentReviewDetails()``` at  [advisor_review.gs](advisor_review.gs)
   3. filling table contents in ```onSuccess()``` at [student_search_js.html](student_search_js.html)
   
-  each element is accessed in hard coded index (e.g. ```UIN = review[5]```).
+  elements are accessed through hard coded index (e.g. ```UIN = review[5]```).
 
   *Threatens:* 
   - vulnerable when spreadsheet format changes
