@@ -7,9 +7,34 @@ function getAllStudentRecords() {
   var ss = SpreadsheetApp.openByUrl(student_info_sheet_url);
   var ws = ss.getSheetByName("Sheet1");
   
-  var student_records = ws.getRange(2, 1, ws.getRange("A1").getDataRegion().getLastRow() - 1, ws.getRange("A1").getDataRegion().getLastColumn()-3).getValues(); // note: explicitly excluding date columns (they cause error?)
-  //Logger.log(student_records);
-  return student_records;
+  /* 
+   * Passing an array that includes javascript Date object to client-side script will cause error. since it may not support 
+   * such datatype. Therefore, we should convert Date objects to strings of date. 
+   */
+  var student_records = ws.getRange(1, 1, 
+    ws.getRange("A1").getDataRegion().getLastRow(), 
+    ws.getRange("A1").getDataRegion().getLastColumn() ).getValues(); 
+
+  // get indices of date element
+  iDate = [ student_records[0].indexOf('prelim_date'), 
+    student_records[0].indexOf('proposal_date'), 
+    student_records[0].indexOf('final_defense_date') ] ;
+
+  // convert date obkect to date string
+  for( var i = 1; i < student_records.length; i++ ) {
+    iDate.forEach(function (item, index) {
+      var date = student_records[i][item];
+      student_records[i][item] = date !== "" ? toDateString(date) : "n/a";
+    });
+
+  }
+  return student_records.slice(1); // trim student_records[0] since it's header
+}
+
+
+// convert date object to string
+function toDateString( date_object ) {
+  return Utilities.formatDate(date_object, 'America/Chicago', 'MM dd, yyyy');
 }
 
 function getAllStudentsReviewData() {

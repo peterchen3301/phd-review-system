@@ -53,6 +53,27 @@ var columns = [
     width: 130
   },
   {
+    id: 'prelim_date',
+    name: 'Prelim Date',
+    field: 'prelim_date',
+    sortable: true,
+    width: 100
+  },
+  {
+    id: 'proposal_date',
+    name: 'Proposal Date',
+    field: 'proposal_date',
+    sortable: true,
+    width: 100
+  },
+  {
+    id: 'final_defense_date',
+    name: 'Final Defense Date',
+    field: 'final_defense_date',
+    sortable: true,
+    width: 100
+  },
+  {
     id: 'qual_exam',
     name: 'Qual Exam',
     field: 'qual_exam',
@@ -66,20 +87,6 @@ var columns = [
     sortable: true,
     width: 150
   },
-  /*{
-    id: 'student_report',
-    name: 'Student Report',
-    field: 'student_report',
-    sortable: true,
-    width: 100
-  },
-  {
-    id: 'improvement_plan',
-    name: 'Improvement Plan',
-    field: 'improvement_plan',
-    sortable: true,
-    width: 100
-  },*/
   {
     id: 'cv',
     name: 'CV',
@@ -155,6 +162,7 @@ function successHandler(urlString){
 }
 
 function onSuccess(result) {
+
 all_student_records = result;
 console.log(all_student_records);
 
@@ -189,13 +197,16 @@ $(function() {
       
       //Checking if student is marked as current student
       if(all_student_records[i][8] != "1")
-      continue;
+        continue;
       var d = (data[j++] = {});
       console.log("Var d: ", d);
       d["uin"] = all_student_records[i][4],
       d["name"] = all_student_records[i][3] + ', ' + all_student_records[i][2],
       d["advisor"] = all_student_records[i][9],
       d["start_semester"] = all_student_records[i][6],
+      d["prelim_date"] = all_student_records[i][15],
+      d["proposal_date"] = all_student_records[i][16],
+      d["final_defense_date"] = all_student_records[i][17],
       d["qual_exam"] = all_student_records[i][12],
       d["degree_plan_submitted"] = all_student_records[i][11];
       //d["student_report"] = "NA",
