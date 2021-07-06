@@ -28,7 +28,7 @@ fixed:
 
 ![demo2_2](https://github.com/peterchen3301/phd-review-system/blob/hychen/demo_images/demo_2_2.png?raw=true)
 
-* Add columns in student search table (student_search.html) to show Prelim/Propose/Final Defense dates.
+* Added columns in student search table (student_search.html) to show Prelim/Propose/Final Defense dates.
 
 ![demo_3](https://github.com/peterchen3301/phd-review-system/blob/hychen/demo_images/demo_3.png?raw=true)
 
