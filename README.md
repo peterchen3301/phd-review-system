@@ -49,11 +49,11 @@ fixed:
   - Data management hardship
 
   *Possible solutions:*
-  - Change deafult value of "review year" drop-down list to "n/a"
-  - disallow default (unselected) option in "review year" drop-down list
+  - Change deafult value of "review year" drop-down list to "n/a".
+  - Disallow default (unselected) option in "review year" drop-down list.
   
-* While 
-  1. reading reviews in ```getReviewInformationForUinAndYear()``` at [advisor_review.gs](advisor_review.gs), 
+* At 
+  1. reading reviews in ```getReviewInformationForUinAndYear()``` at [advisor_review.gs](advisor_review.gs)
   2. editing/adding reviews in ```updateStudentReviewDetails()``` at  [advisor_review.gs](advisor_review.gs)
   3. filling table contents in ```onSuccess()``` at [student_search_js.html](student_search_js.html)
   each element is accessed in hard index (e.g. ```UIN = review[5]```).
