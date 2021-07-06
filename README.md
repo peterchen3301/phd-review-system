@@ -80,7 +80,7 @@ fixed:
 
   *Possible solutions:* 
    The key is to make sure the users are aware of timezone issue.
-  - Store date as a string of "MM/DD/YYYY" and notice the user to enter dates on Texas basis. << should be better
+  - Store date as a string of "MM/DD/YYYY" and notice the user to enter dates in Texas timezone. << should be better
   - Add a drop-down list to let users specify their timezone.
 
 * remove "student details" column in search table ( [student_search.html](student_search.html) )
