@@ -15,7 +15,13 @@ A dev branch of PhD review system for Department of Computer Science and Enginee
 * Made "Attempts Completed" and "Degree Plan Submitted" label texts in student_details.html keep in one-line. They used to be wrapped and would break line if browser window is small.
 
 before:
+
 ![demo2_1](https://github.com/peterchen3301/phd-review-system/blob/hychen/demo_images/demo_2_1.png?raw=true)
 
 fixed:
+
 ![demo2_2](https://github.com/peterchen3301/phd-review-system/blob/hychen/demo_images/demo_2_2.png?raw=true)
+
+* Add columns in student search table (student_search.html) to show Prelim/Propose/Final Defense dates.
+
+![demo_3](https://github.com/peterchen3301/phd-review-system/blob/hychen/demo_images/demo_2_1.png?raw=true)
