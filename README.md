@@ -68,10 +68,10 @@ fixed:
 
   *Threatens:* 
   - Confuse admin for the first couple of seconds. 
-  - The admins can access to faculty's pages or functions through faculty's tabs right before layouts are reloaded, which they should not be able to. 
+  - The admins can access to faculty's pages / functions through faculty's tabs right before layouts are reloaded, which they should not be able to. 
 
   *Possible solutions:*
-  - Hide both admin/faculty view and judge what to make visible based on user's identity.
+  - Hide both admin/faculty views, then judge which to make visible based on user's identity.
  
 * While selecting student's prelim/proposal/final-defense dates using datepicker class in [add_student.html](add_student.html), the timezone is recognized through the browser's current IP. This may not be a problem: Since most of the users are at Texas, so as these events will be held. However, it could cause some troubles.
 
