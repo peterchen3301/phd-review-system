@@ -12,7 +12,9 @@ A dev branch of PhD review system for Department of Computer Science and Enginee
 
 * **"Temporarily" solved the bug of student review overriding. However, current code is still vulnerable, please see "Todo" message below.**
 
-* Made "comments For Student" textarea auto-resizable depending on content length, also manual resizable
+* Added "Comments For Faculty" function & textarea.
+
+* Made "Comments For Student" textarea auto-resizable depending on content length, also manual resizable.
 
 ![demo1](https://github.com/peterchen3301/phd-review-system/blob/hychen/demo_images/demo1.png?raw=true)
 
@@ -32,7 +34,7 @@ fixed:
 
 ### Todo
 
-* **The root cause of admin/faculty review overriding bug is that the routes to fetch and to submit the reviews are standalone.** While getting review at add_student_review.html, the function getReviewInformationForUinAndYear() (advisor_review.gs) is called to search and filter from all the reviews. However, while submitting review, a standalone function updateStudentReviewDetails() (advisor_review.gs) is called.
+* **The root cause of admin/faculty review overriding bug is that the routes to fetch and to submit the reviews are different.** While getting review at [add_student_review.html](add_student_review.html), the function ```getReviewInformationForUinAndYear()``` at [advisor_review.gs](advisor_review.gs) is called to search and filter from all the reviews. However, while submitting review, a different function ```updateStudentReviewDetails()``` at [advisor_review.gs](advisor_review.gs) is called.
 
   *Threatens:* 
   - risk of admin / faculty review intervention, lead to error access and overriding
@@ -51,24 +53,28 @@ fixed:
   - Change deafult value of "review year" drop-down list to "n/a"
   - disallow default (unselected) option in "review year" drop-down list
   
-* While reading reviews at getReviewInformationForUinAndYear() (advisor_review.gs), editing/adding reviews at updateStudentReviewDetails() (advisor_review.gs), also at onSuccess() (student_search_js.html) each element is accessed in hard index (e.g. UIN = review[5]).
+* While 
+  1. reading reviews in ```getReviewInformationForUinAndYear()``` at [advisor_review.gs](advisor_review.gs), 
+  2. editing/adding reviews in ```updateStudentReviewDetails()``` at  [advisor_review.gs](advisor_review.gs)
+  3. filling table contents in ```onSuccess()``` at [student_search_js.html](student_search_js.html)
+  each element is accessed in hard index (e.g. ```UIN = review[5]```).
 
   *Threatens:* 
   - vulnerable when spreadsheet format changes
 
   *Possible solutions:*
-  - Make a dict of index{ item_name : index } to store spreadsheet items (1st row) and access element through it (e.g. UIN = review[ index.UIN ]) in all later operations.
+  - Make a dict of ```index{ item_name : index }``` to store spreadsheet items (1st row) and access element through it (e.g. ```UIN = review[ index.UIN ]```) in all later operations.
   
-* At add_student_review.html/add_student_review_js.html, student_search.html/student_search_js.html and student_details.html where admins and faculties share the same webpage. The "view-name" tab, as well as some layouts are set to faculty view as default, and reload to admin-view if it detects the current user as admin.
+* In [add_student_review.html](add_student_review.html)  / [add_student_review_js.html](add_student_review_js.html), [student_search.html](student_search.html) / [student_search_js.html](student_search_js.html) and  [student_details.html](student_details.html), where admins and faculties share the same webpages. The "view-name" tab, as well as some layouts are set to faculty view as default, and reload to admin-view if it detects the current user as admin.
 
   *Threatens:* 
   - Confuse admin for the first couple of seconds. 
   - The admins can access to faculty's pages or functions through faculty's tabs right before layouts are reloaded, which they should not be able to. 
 
   *Possible solutions:*
-  - Hide all the admin/faculty view. If current user is an admin, set to admin-view and make visible, if current user is a faculty, set to faculty-view and make visible.
+  - Hide both admin/faculty view and judge what to make visible based on user's identity.
  
-* While selecting student's prelim/proposal/final-defense dates using datepicker class in add_student.html, the timezone is recognized through the browser's current IP. This may not be a problem: Since most of the users are at Texas, so as these events will be held. However, suppose that a user selects his/her proposal date at a different location, let's say Taiwan (UTC +8), to be 7/31 00:00, then it becomes 7/30 10:00 to Texas (UTC -6). 
+* While selecting student's prelim/proposal/final-defense dates using datepicker class in [add_student.html](add_student.html), the timezone is recognized through the browser's current IP. This may not be a problem: Since most of the users are at Texas, so as these events will be held. However, suppose that a user selects his/her proposal date at a different location, let's say Taiwan (UTC +8), to be 7/31 00:00, then it becomes 7/30 10:00 to Texas (UTC -6). 
 
   *Threatens:* 
   - Timezone confusion
@@ -77,3 +83,13 @@ fixed:
    The key is to make sure the users are aware of timezone issue.
   - Store date as a string of "MM/DD/YYYY" and notice the user to enter dates on Texas basis. << should be better
   - Add a drop-down list to let users specify their timezone.
+
+* remove "student details" column in search table ( [student_search.html](student_search.html) )
+
+* add "reviewers & departmental rating" columns for both current & last year in search table ( [student_search.html](student_search.html) )
+
+* Disable prelim/proposal/final defense date editing at student-view
+
+* allow student to upload CV, report and everything in one page
+
+* add "student report" column at the right of "CV" column in search table ( [student_search.html](student_search.html) )
