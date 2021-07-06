@@ -168,7 +168,7 @@ function getReviewInformationForUinAndYear(uin, reviewYear, reviewer_account = g
   if(filteredData != null && filteredData != undefined && filteredData.length > 0) {
 
     if( filteredData.length > 1 ){
-      Logger.log("Multiple reviews found, risk of overridden.");
+      Logger.log("Multiple reviews found, risk of overriding.");
     }
     return filteredData[0];
   }

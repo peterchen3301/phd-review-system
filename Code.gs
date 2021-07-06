@@ -46,6 +46,7 @@ function doGet(e){
 }
 
 function userClickedLogin(userInfo){
+
   if(search("Student", userInfo.email)){
     return 'student_view';
   }
@@ -60,18 +61,26 @@ function userClickedLogin(userInfo){
   }
 }
 
-function isAdmin(){
-  return "admin" == getCurrentUserCredential();
+
+// return if input user-account (default: current user) is admin.
+function isAdmin(account = Session.getActiveUser().getEmail()){
+  return "admin" == getCredential(account);
 }
 
-function isFaculty(){
-  return "faculty" == getCurrentUserCredential();
+
+// return if input user-account (default: current user) is faculty.
+function isFaculty(account = Session.getActiveUser().getEmail()){
+  return "faculty" == getCredential(account);
 }
 
-function isStudent(){
-  return "student" == getCurrentUserCredential();
+
+// return if input user-account (default: current user) is student.
+function isStudent(account = Session.getActiveUser().getEmail()){
+  return "student" == getCredential(account);
 }
 
+
+// return the string representing identity of input user-account.
 function getCredential(account){
   var userInfo = {};
   userInfo.email = account;
@@ -90,12 +99,16 @@ function getCredential(account){
   }
 }
 
+
+// return string of current user identity as "admin", "faculty", "student", or "basic" if neither above.
 function getCurrentUserCredential(){
   this_account = Session.getActiveUser().getEmail();
   return getCredential(this_account);
 }
 
-function search(sheetName, searchTerm){ //usage: search('Student', 'a.kunder@tamu.edu') or search('Faculty', 'xyz@tamu.edu')
+
+// search('Student', 'a.kunder@tamu.edu') or search('Faculty', 'xyz@tamu.edu')
+function search(sheetName, searchTerm){ 
   var ss = SpreadsheetApp.openByUrl(account_sheet_url);
   var ws = ss.getSheetByName(sheetName);
   var data = ws.getRange(1, 1, ws.getLastRow(), 1).getValues();
@@ -111,17 +124,16 @@ function search(sheetName, searchTerm){ //usage: search('Student', 'a.kunder@tam
   }
 }
 
+
 function render(file, argsObject){
 
   var tmp = HtmlService.createTemplateFromFile(file);
-  
   if(argsObject){
     var keys = Object.keys(argsObject);
     keys.forEach(function(key){
       tmp[key] = argsObject[key];
     });
   }
-
   return tmp.evaluate();
 }
 
@@ -132,15 +144,17 @@ function loadProfile(){
 function loadStudentReview(){
   return render("student_review");
 }
-//Function for loading Add Student Page
 
+
+//Function for loading "Add Student" Page
 function loadAddStudent() {
   return render("add_student");
 }
 
-//Function for loading Remove Student Page
 
+//Function for loading "Remove Student" Page
 function loadRemoveStudent(e) {
+  
   var uin = e.parameters.uin;
   var tmp = HtmlService.createTemplateFromFile("remove_student");
   tmp.uin = uin;

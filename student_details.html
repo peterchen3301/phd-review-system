@@ -72,7 +72,7 @@
                 
                 <div class="input-field col s2">
                   <input id="number_qual_exam_attempts" type="text" value="<?= record[13] ?>" disabled>
-                  <label for="number_qual_exam_attempts">Attempts Completed</label>
+                  <label for="number_qual_exam_attempts" class="no-wrap">Attempts Completed</label>
                 </div>
 
               </div>
@@ -96,19 +96,19 @@
                 
                 <div class="input-field col s2">
                   <input id="degree-plan-submitted" type="text" <? var display = (record[11] == 0 ? 'No' : 'Yes'); ?> value="<?= display ?>" disabled>
-                  <label for="degree-plan-submitted">Degree Plan Submitted</label>
+                  <label for="degree-plan-submitted" class="no-wrap">Degree Plan Submitted</label>
                 </div>
                 
                 <div class="input-field col s3">
 
-                  <input id="prelim-date" type="text" <? var display = (record[15].length != 0 ? Utilities.formatDate(record[15], 'US/Central', 'MMMM dd, yyyy') : ''); ?> value="<?= display; ?>" disabled>
+                  <input id="prelim-date" type="text" <? var display = (record[15].length != 0 ? Utilities.formatDate(record[15], 'US/Central', 'MMMM dd, yyyy') : "n/a"); ?> value="<?= display; ?>" disabled>
 
                   <label for="prelim-date">Prelim Date</label>
                 </div>
                 
                 <div class="input-field col s3" >
 
-                  <input id="proposal-date" type="text" <? var display = (record[16].length != 0 ? Utilities.formatDate(record[16], 'US/Central', 'MMMM dd, yyyy') : ''); ?> value="<?= display; ?>" disabled>
+                  <input id="proposal-date" type="text" <? var display = (record[16].length != 0 ? Utilities.formatDate(record[16], 'US/Central', 'MMMM dd, yyyy') : "n/a"); ?> value="<?= display; ?>" disabled>
 
                   <label for="proposal-date">Proposal Date</label>
                 </div>
@@ -119,7 +119,7 @@
                   <label for="final-defense-date">Final Defense Date</label-->
                 <div class="input-field col s3" disabled>
 
-                  <input id="final-defense-date" type="text" <? var display = (record[17].length != 0 ? Utilities.formatDate(record[17], 'US/Central', 'MMMM dd, yyyy') : ''); ?> value="<?= display; ?>" disabled>
+                  <input id="final-defense-date" type="text" <? var display = (record[17].length != 0 ? Utilities.formatDate(record[17], 'US/Central', 'MMMM dd, yyyy') : "n/a"); ?> value="<?= display; ?>" disabled>
 
                   <label for="final-defense-date">Final Defense Date</label>
                 </div>

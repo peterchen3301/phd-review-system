@@ -266,12 +266,13 @@ function onSuccessOfReviewSubmit(result) {
 }
 
 
-// To do : add indication of how review saving failed 
+// alert when student review not being submitted successfully
 function onFailureOfReviewSubmit(result) {
     alert("Failed to save review.");
 }
 
 
+// auto-adjust text area height to fit content
 function textAreaAdjust(o) {
   o.style.height = "1px";
   o.style.height = (o.scrollHeight)+"px";
