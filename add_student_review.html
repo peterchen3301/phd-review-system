@@ -66,6 +66,11 @@
             <div class="row">
             <div class="input-field col s3">
               <select id="review_year" class="validate" onchange="onChangeReviewYear()">
+
+                <!-- 
+                this way the default value will be a string of "null", not literally null value. 
+                Consider using wither value="" or value="n/a" ( :better) instead.
+                -->
                 <option value="null" disabled selected>Select Review Year</option>
               </select>
               <label for="review-year">Review Year</label>
