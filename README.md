@@ -12,7 +12,7 @@ A dev branch of PhD review system for Department of Computer Science and Enginee
 
 ![demo1](https://github.com/peterchen3301/phd-review-system/blob/hychen/demo_images/demo1.png?raw=true)
 
-* Made "Attempts Completed" and "Degree Plan Submitted" label texts in student_details.html keep one-line. They used to be wrapped and would break lines if browser windoe is small.
+* Made "Attempts Completed" and "Degree Plan Submitted" label texts in student_details.html keep in one-line. They used to be wrapped and would break line if browser window is small.
 
 before:
 ![demo2_1](https://github.com/peterchen3301/phd-review-system/blob/hychen/demo_images/demo_2_1.png?raw=true)
