@@ -10,7 +10,7 @@ A dev branch of PhD review system for Department of Computer Science and Enginee
 
 ### Completed
 
-* **"Temporarily" solved the bug of student review overriding. However, current code is still vulnerable, please see "Todo" message below.**
+* **"Temporarily" solved the bug of student review overriding. However, current code is still considered vulnerable, please see bold message in "Dev plans".**
 
 * Added "Comments For Faculty" function & textarea.
 
@@ -32,7 +32,7 @@ fixed:
 
 ![demo_3](https://github.com/peterchen3301/phd-review-system/blob/hychen/demo_images/demo_3.png?raw=true)
 
-### Todo
+### Dev plans
 
 * **The root cause of admin/faculty review overriding bug is that the routes to fetch and to submit the reviews are different.** While getting review at [add_student_review.html](add_student_review.html), the function ```getReviewInformationForUinAndYear()``` at [advisor_review.gs](advisor_review.gs) is called to search and filter from all the reviews. However, while submitting review, a different function ```updateStudentReviewDetails()``` at [advisor_review.gs](advisor_review.gs) is called.
 
@@ -43,8 +43,7 @@ fixed:
   *Possible solutions:*
   - Specify "review index" and do all the later operation based on this. Never do 2nd search. 
 
-* At "review year" drop-down list in add_student_review.html, the default value is a string of "null", not a literal null value which could lead to confusion and data management hardship. Consider changing deafult value to "n/a", and disallow default value input.
-
+* At "review year" drop-down list in [add_student_review.html](add_student_review.html), the default value is a string of "null", not a literal null value.
   *Threatens:* 
   - confusion in terminology
   - Data management hardship
@@ -74,10 +73,10 @@ fixed:
   *Possible solutions:*
   - Hide both admin/faculty view and judge what to make visible based on user's identity.
  
-* While selecting student's prelim/proposal/final-defense dates using datepicker class in [add_student.html](add_student.html), the timezone is recognized through the browser's current IP. This may not be a problem: Since most of the users are at Texas, so as these events will be held. However, suppose that a user selects his/her proposal date at a different location, let's say Taiwan (UTC +8), to be 7/31 00:00, then it becomes 7/30 10:00 to Texas (UTC -6). 
+* While selecting student's prelim/proposal/final-defense dates using datepicker class in [add_student.html](add_student.html), the timezone is recognized through the browser's current IP. This may not be a problem: Since most of the users are at Texas, so as these events will be held. However, it could cause some troubles.
 
   *Threatens:* 
-  - Timezone confusion
+  - Timezone confusion. For example, If I select my final defense date while attending a conference in Taiwan, let's say ```7/31 00:00 Taiwan (UTC +8)```, it becomes ```7/30 10:00, Texas (UTC -6)``` for Texan people. However, in this case I definitely want to go back to College Station and have my final defense at ```7/31```, not ```7/30```.
 
   *Possible solutions:* 
    The key is to make sure the users are aware of timezone issue.
@@ -88,7 +87,7 @@ fixed:
 
 * add "reviewers & departmental rating" columns for both current & last year in search table ( [student_search.html](student_search.html) )
 
-* Disable prelim/proposal/final defense date editing at student-view
+* Disable prelim/proposal/final defense date editing from student view
 
 * allow student to upload CV, report and everything in one page
 
