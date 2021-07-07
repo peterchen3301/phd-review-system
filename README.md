@@ -75,7 +75,7 @@ fixed:
   *Possible solutions:*
   - Hide both admin/faculty views, then judge which to make visible based on user's identity.
  
-* While selecting student's prelim/proposal/final-defense dates using datepicker class in [add_student.html](add_student.html), the timezone is recognized through the browser's current IP. This may not be a problem: Since most of the users are at Texas, so as these events that will be held. However, it could still cause some unwanted circumstances.
+* While selecting student's prelim/proposal/final-defense dates using ```datepicker``` class in [add_student.html](add_student.html), the timezone is recognized through the browser's current IP. This may not be a problem: Since most of the users are at Texas, so as these events that will be held. However, it could still cause some unwanted circumstances.
 
   *Threatens:* 
   - Timezone confusion. For example, If I select my final defense date while attending a conference in Taiwan, let's say ```7/31 00:00 Taiwan (UTC +8)```, it becomes ```7/30 10:00, Texas (UTC -6)``` for Texan people. However, in this case I definitely want to go back to College Station and have my final defense at ```7/31```, not ```7/30```.
