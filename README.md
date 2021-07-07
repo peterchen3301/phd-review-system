@@ -10,7 +10,7 @@ A dev branch of PhD review system for Department of Computer Science and Enginee
 
 ### Completed
 
-* **"Temporarily" solved the bug of student review overriding. However, current code is still considered vulnerable, please see bold message in "Dev plans".**
+* **"Temporarily" solved the bug of student review overriding. However, current code is still considered vulnerable, please see [below message](https://github.com/peterchen3301/phd-review-system/blob/hychen/README.md#dev-plans) .**
 
 * Added "Comments For Faculty" function & textarea.
 
@@ -34,7 +34,7 @@ fixed:
 
 ### Dev plans
 
-* **The root cause of admin/faculty review overriding bug is that the routes to fetch and to submit the reviews are different.** While getting review at [add_student_review.html](add_student_review.html), the function ```getReviewInformationForUinAndYear()``` at [advisor_review.gs](advisor_review.gs) is called to search and filter from all the reviews. However, while submitting review, a different function ```updateStudentReviewDetails()``` at [advisor_review.gs](advisor_review.gs) is called.
+* **The root cause of admin/faculty review overriding bug is that the routes to fetch from / submit the reviews are different.** While getting review at [add_student_review.html](add_student_review.html), the function ```getReviewInformationForUinAndYear()``` at [advisor_review.gs](advisor_review.gs) is called to search and filter from all the reviews. However, while submitting review, a different function ```updateStudentReviewDetails()``` at [advisor_review.gs](advisor_review.gs) is called.
 
   *Threatens:* 
   - risk of admin / faculty review intervention, lead to error access and overriding
