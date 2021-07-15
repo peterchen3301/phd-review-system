@@ -37,7 +37,7 @@ function doGet(e){
   Route.path("remove_student", loadRemoveStudent);
 
   if(Route[cls]){
-    return Route[cls](e);
+    return Route[cls](e); 
   }else{
     //return HtmlService.createHtmlOutput("<h1>Page Not Found!</h1>");
     return loadHome();
@@ -894,7 +894,12 @@ function include(filename){
 function getScriptUrl(){
   eval(UrlFetchApp.fetch('https://cdn.rawgit.com/medialize/URI.js/gh-pages/src/URI.js').getContentText());
   var uri = URI(ScriptApp.getService().getUrl());
-  return uri.directory('/a/tamu.edu'+uri.directory());
+
+  //return uri.directory('/a/tamu.edu'+uri.directory()); // why repeat '/a/tamu.edu' ?
+
+  Logger.log( uri.directory() )
+
+  return uri.directory( uri.directory() );
 }
 
 function getMyScriptUrl(){

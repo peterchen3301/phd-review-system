@@ -86,6 +86,6 @@ function test_date(){
 }
 
 function test(){
-  Logger.log(getAllStudentRecords());
+  getScriptUrl();
 }
 
