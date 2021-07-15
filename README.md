@@ -12,6 +12,8 @@ A dev branch of PhD review system for Department of Computer Science and Enginee
 
 * **"Temporarily" solved the bug of student review overriding. However, current code is still considered vulnerable, please see [below message](https://github.com/peterchen3301/phd-review-system/blob/hychen/README.md#dev-plans) .**
 
+* Fixed the url mangling bug, where domain name "a/tamu.edu/" repeated erroneously. 
+
 * Added "Comments For Faculty" function & textarea.
 
 * Made "Comments For Student" textarea auto-resizable depending on content length, also manual resizable.
