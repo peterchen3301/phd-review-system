@@ -96,3 +96,5 @@ fixed:
 * allow student to upload CV, report and everything in one page
 
 * add "student report" column at the right of "CV" column in search table ( [student_search.html](student_search.html) )
+
+* make "reviews for the faculty" visible in review page 
