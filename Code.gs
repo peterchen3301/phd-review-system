@@ -898,12 +898,14 @@ function getScriptUrl(){
   //return uri.directory('/a/tamu.edu'+uri.directory()); // why repeat '/a/tamu.edu' ?
 
   Logger.log( uri.directory() )
-
   return uri.directory( uri.directory() );
 }
 
 function getMyScriptUrl(){
   var urlString = ScriptApp.getService().getUrl();
-  var newUrlString = urlString.substring(0, 25) + "/a/tamu.edu" + urlString.substring(25);
+
+  // var newUrlString = urlString.substring(0, 25) + "/a/tamu.edu" + urlString.substring(25); // why repeat '/a/tamu.edu' ?
+  var newUrlString = urlString.substring(0, 25) + urlString.substring(25); 
+
   return newUrlString;
 }
