@@ -15,12 +15,12 @@ function getAllStudentRecords() {
     ws.getRange("A1").getDataRegion().getLastRow(), 
     ws.getRange("A1").getDataRegion().getLastColumn() ).getValues(); 
 
-  // get indices of date element
+  // get indices of date elements
   iDate = [ student_records[0].indexOf('prelim_date'), 
     student_records[0].indexOf('proposal_date'), 
     student_records[0].indexOf('final_defense_date') ] ;
 
-  // convert date obkect to date string
+  // convert date object to date string
   for( var i = 1; i < student_records.length; i++ ) {
     iDate.forEach(function (item, index) {
       var date = student_records[i][item];

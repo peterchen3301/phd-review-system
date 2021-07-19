@@ -891,21 +891,24 @@ function include(filename){
 }
 
 
+// get 
 function getScriptUrl(){
+  
   eval(UrlFetchApp.fetch('https://cdn.rawgit.com/medialize/URI.js/gh-pages/src/URI.js').getContentText());
-  var uri = URI(ScriptApp.getService().getUrl());
+  var uri = URI( getMyScriptUrl() );
 
   //return uri.directory('/a/tamu.edu'+uri.directory()); // why repeat '/a/tamu.edu' ?
-
-  Logger.log( uri.directory() )
+  //Logger.log( uri.directory() )
   return uri.directory( uri.directory() );
 }
 
+
+//v get 
 function getMyScriptUrl(){
+
+  return ScriptApp.getService().getUrl();
+
   var urlString = ScriptApp.getService().getUrl();
-
-  // var newUrlString = urlString.substring(0, 25) + "/a/tamu.edu" + urlString.substring(25); // why repeat '/a/tamu.edu' ?
-  var newUrlString = urlString.substring(0, 25) + urlString.substring(25); 
-
+  var newUrlString = urlString.substring(0, 25) + "/a/tamu.edu" + urlString.substring(25); // why repeat '/a/tamu.edu' ?
   return newUrlString;
 }

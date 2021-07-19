@@ -1,5 +1,7 @@
 {
   "timeZone": "Asia/Taipei",
+  "exceptionLogging": "STACKDRIVER",
+  "runtimeVersion": "V8",
   "dependencies": {
     "enabledAdvancedServices": [
       {
@@ -19,7 +21,5 @@
   "webapp": {
     "executeAs": "USER_ACCESSING",
     "access": "DOMAIN"
-  },
-  "exceptionLogging": "STACKDRIVER",
-  "runtimeVersion": "V8"
+  }
 }

@@ -86,6 +86,7 @@ function test_date(){
 }
 
 function test(){
-  getScriptUrl();
+  Logger.log(getScriptUrl());
+  Logger.log(getMyScriptUrl());
 }
 

@@ -151,7 +151,6 @@ var options = {
   //headerRowHeight: 50
 };
 
-
 var all_student_records;
 var scriptUrl;
 google.script.run.withSuccessHandler(successHandler).getMyScriptUrl();
@@ -167,32 +166,11 @@ all_student_records = result;
 console.log(all_student_records);
 
 $(function() {
+
   var MS_PER_DAY = 24 * 60 * 60 * 1000;
   var data = [];
-  
-  /*for (var i = 0; i < 500; i++) {
-    var startDate = new Date(
-      new Date('1/1/1980').getTime() +
-        Math.round(Math.random() * 365 * 25) * MS_PER_DAY
-    );
-    var endDate = new Date(
-      startDate.getTime() + Math.round(Math.random() * 365) * MS_PER_DAY
-    );
-    data[i] = {
-      uin: 'Task ' + i,
-      name: 'Super duper long string here',
-      advisor: Math.round(Math.random() * 30) + 2,
-      start_semester: Math.round(Math.random() * 100),
-      qual_exam: startDate,
-      degree_plan_submitted: endDate,
-      student_report: i % 5 == 0,
-      improvement_plan: i,
-      cv: i * 2,
-      more_student_details: i * 3,
-      add_review: i * 4
-    };
-  } */
   var j = 0;
+
   for(var i = 0; i < all_student_records.length; i++) {
       
       //Checking if student is marked as current student
@@ -240,20 +218,6 @@ $(function() {
       var t = "'" + scriptUrl + "?v=remove_student&uin=" + all_student_records[i][4] +"'";
       d["remove"] = "<a href=" + t + " target = \"_blank\"><u>Remove</u></a>"
       
-      // data can also be populated this way:
-      /*data[i] = {
-          uin: all_student_records[i][4],
-          name: all_student_records[i][3] + ', ' + all_student_records[i][2],
-          advisor: all_student_records[i][9],
-          start_semester: all_student_records[i][6],
-          qual_exam: all_student_records[i][12],
-          degree_plan_submitted: all_student_records[i][11],
-          student_report: "NA",
-          improvement_plan: "NA",
-          cv: "NA",
-          more_student_details: "NA",
-          add_review: "<a href=\"index.html\">Add Review</a>"
-      };*/
   }
   
 
