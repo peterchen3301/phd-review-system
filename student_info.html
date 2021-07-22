@@ -70,6 +70,8 @@
               </select>
               <label for="qual">Qual Exam</label>
             </div>
+
+            <!--
             <div class="input-field col s3">
               <select id="attempts" class="validate">
               <option value="" disabled selected>Choose your option</option>
@@ -80,6 +82,7 @@
               </select>
               <label for="attempts">Attempts completed</label>
             </div>
+            -->
 
           </div>
 
@@ -126,19 +129,31 @@
           </div>
 
           <div class="row">
-            <!--a id ="cv_url" target="_blank"><button class="btn waves-effect waves-light" id = "VCV" onmousedown="check_cv()">View CV</button></a-->
-            <a id ="cv_url" target="_blank" class="waves-effect waves-light btn" onmousedown = "check_cv()">View CV</a>
+
+            <a id ="cv_url" class="waves-effect waves-light btn" target="_blank" href="" onmousedown = "check_cv()" disabled>
+              LOADING CV...
+            </a>
+
+            <!-- todo
+            <button class="btn waves-effect waves-light cancel" onclick="removeCVClicked()" id = "remove_cv_url" disabled = "disabled"> 
+              REMOVE
+            </button>
+            -->
+
           </div>
 
         <div class="row">
           <div class="file-field input-field s3">
+            
             <div id = "up" class="btn">
               <span >Upload CV</span>
-              <input type="file" id="cv">
+              <input type="file" id="cv">  
             </div>
+            
             <div class="file-path-wrapper s3">
               <input class="file-path validate" id = "filename" type="text">
             </div>
+          
           </div>
         </div>
 
@@ -151,16 +166,19 @@
           </div>
         </div>
         
-       </form>
+      </form>
       </div>
+
         <script type = "text/javascript" src = "https://code.jquery.com/jquery-2.1.1.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
         <?!= include('student_info_javascript'); ?>
+
         <script>
         window.onload = function(){
            resetProfileFields();
           }
         </script>
+
         <script>
           var sts = document.getElementById("start-semester");
           var semesters = ["Fall","Summer","Spring"];

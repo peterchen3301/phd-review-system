@@ -20,9 +20,11 @@
     a.value = "";
     M.FormSelect.init(a);
     
+    /*
     var a  = document.getElementById("attempts");
     a.value = "";
     M.FormSelect.init(a);
+    */
     
     var a  = document.getElementById("advisor");
     a.value = "";
@@ -74,7 +76,7 @@
     userInfo.email = document.getElementById("email").value;
     userInfo.startsem = document.getElementById("start-semester").value;
     userInfo.qualstatus = document.getElementById("qual").value;
-    userInfo.numattempts = document.getElementById("attempts").value;
+    //userInfo.numattempts = document.getElementById("attempts").value;
     userInfo.advisor = document.getElementById("advisor").value;
     userInfo.coadvisor = document.getElementById("co-advisor").value;
     userInfo.degreeplanstatus = document.getElementById("degree-plan").value;
@@ -157,9 +159,11 @@
     a.value = userInfo.qualstatus;
     M.FormSelect.init(a);
     
+    /*
     var a  = document.getElementById("attempts");
     a.value = userInfo.numattempts;
     M.FormSelect.init(a);
+    */
     
     var a  = document.getElementById("advisor");
     a.value = userInfo.advisor;

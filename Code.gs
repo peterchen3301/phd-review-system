@@ -48,7 +48,7 @@ function doGet(e){
 function userClickedLogin(userInfo){
 
   if(search("Student", userInfo.email)){
-    return 'student_view';
+    return 'student_view'; 
   }
   else if(search("Faculty", userInfo.email)){
     return 'faculty_view';
@@ -891,24 +891,39 @@ function include(filename){
 }
 
 
-// get 
+//
 function getScriptUrl(){
   
   eval(UrlFetchApp.fetch('https://cdn.rawgit.com/medialize/URI.js/gh-pages/src/URI.js').getContentText());
   var uri = URI( getMyScriptUrl() );
-
   //return uri.directory('/a/tamu.edu'+uri.directory()); // why repeat '/a/tamu.edu' ?
-  //Logger.log( uri.directory() )
+  Logger.log( uri.directory( uri.directory() ) );
   return uri.directory( uri.directory() );
 }
 
 
-//v get 
+//
 function getMyScriptUrl(){
 
   return ScriptApp.getService().getUrl();
+  //var urlString = ScriptApp.getService().getUrl();
+  //var newUrlString = urlString.substring(0, 25) + "/a/tamu.edu" + urlString.substring(25); // why repeat '/a/tamu.edu' ?
+  //return newUrlString;
+}
 
-  var urlString = ScriptApp.getService().getUrl();
-  var newUrlString = urlString.substring(0, 25) + "/a/tamu.edu" + urlString.substring(25); // why repeat '/a/tamu.edu' ?
-  return newUrlString;
+
+// input url of file on Google Drive, return file name
+function getFileNameFromURL(url) {
+
+  console.log( "input url:", url );
+
+  var fileID = getIdFromUrl(url);
+  var fileName = DriveApp.getFileById( fileID ).getName();    
+  return fileName;
+}
+
+
+// input url of file on Google Drive, extract the id part and return
+function getIdFromUrl(url) { 
+  return url.match(/[-\w]{25,}/); 
 }

@@ -1,33 +1,18 @@
 <script>
+
   function resetProfileFields() {  
-  
-     //document.getElementById('VCV').disabled = false;
      google.script.run.withSuccessHandler(onSuccess).getProfileInformation();
   }
   
+
   function discardClicked(){
     window.location.reload(false);
     return true;
   }
   
-//  function strToISODateStr(strDate) {
-//    
-////    var parts = strDate.split('-');
-////    console.log(parts);
-////    var date = new Date(parts[2], parts[0]-1, parts[1]);
-////    console.log(date);
-////    return date.toISOString().slice(0,10);
-//
-//      if (strDate!=""){
-//        var d = strDate.slice(0, 10).split('-');   
-//        var date = d[1] +'/'+ d[2] +'/'+ d[0];
-//        return date;
-//      }else{
-//        return "";
-//      }
-//  }
-  
+
   function updateClicked(){
+
     var userInfo = {};
     userInfo.firstname = document.getElementById("fn").value;
     userInfo.lastname = document.getElementById("ln").value;
@@ -35,7 +20,7 @@
     userInfo.email = document.getElementById("email").value;
     userInfo.startsem = document.getElementById("start-semester").value;
     userInfo.qualstatus = document.getElementById("qual").value;
-    userInfo.numattempts = document.getElementById("attempts").value;
+    //userInfo.numattempts = document.getElementById("attempts").value;
     userInfo.advisor = document.getElementById("advisor").value;
     userInfo.coadvisor = document.getElementById("co-advisor").value;
     userInfo.degreeplanstatus = document.getElementById("degree-plan").value;
@@ -63,33 +48,51 @@
     
     google.script.run.submitProfile(userInfo);
   
-  var cv = document.getElementById("cv").files[0];
-////    console.log(cv);
-    if (cv){
-    console.log("CV present");
-      document.getElementById('filename').value = "";
-      //document.getElementById('VCV').disabled = true;
-      var d = document.getElementById('cv_url');
-      d.removeAttribute("href");
+    var cv = document.getElementById("cv").files[0];
+
+
+    // if CV to be uploaded
+    if (cv) {
+
+      console.log("CV uploading...");
+
+      document.getElementById('filename').value = ""; // clear file-path-wrapper once uploaded
+
+      var cvURL = document.getElementById('cv_url');
+      cvURL.setAttribute("disabled", "disabled"); // disable cv_url
+      cvURL.removeAttribute("href");
+      cvURL.innerText = "UPLOADING CV..."
       
       uploadFile(userInfo,cv,"cv");
-    }else{
-////      setTimeout(resetProfileFields, 5000);
-////      resetProfileFields();
-   }
+    }
+
+    resetProfileFields(); // reset to fresh the cv_url attribute anyways
 
     alert("Data Updated");
+    return;
+  }
+
+
+  // when remove_cv_url button clicked, simply remove cv_link on database and reset 
+  function removeCVClicked() {
+    // todo
   }
   
-  function uploadFile(userInfo,f,file_type) {
+  function uploadFile( userInfo, f, file_type ) {
+
     var file, reader = new FileReader();
     var fullName = userInfo.firstname + " " + userInfo.lastname;
+
     reader.onloadend = function(e) {
-      google.script.run.withSuccessHandler(resetProfileFields)
-      .uploadFileToDrive(
-        e.target.result, file.name,
-        fullName,file_type,userInfo.email
+
+      google.script.run.withSuccessHandler(resetProfileFields).uploadFileToDrive(
+        e.target.result, 
+        file.name,
+        fullName,
+        file_type,
+        userInfo.email
       );
+
     };
     
     file = f;
@@ -118,10 +121,12 @@
     a.value = userInfo.qualstatus;
     M.FormSelect.init(a);
     
+    /*
     var a  = document.getElementById("attempts");
     a.value = userInfo.numattempts;
     M.FormSelect.init(a);
-    
+    */
+
     var a  = document.getElementById("advisor");
     a.value = userInfo.advisor;
     M.FormSelect.init(a);
@@ -136,8 +141,6 @@
     
     
     //////////////////////////////////////
-    
-    
     var elem  = document.getElementById("prelim-date");
 
     var options = {
@@ -167,14 +170,7 @@
         };
     var instance = M.Datepicker.init(elem, options);
     
-//    document.getElementById("proposal-date").value = strToISODateStr(userInfo.proposal_date);
-//    document.getElementById("defense-date").value = strToISODateStr(userInfo.defense_date);
-    
-    var a = document.getElementById('cv_url');
-    if (userInfo.cv_url!=""){
-      a.href = userInfo.cv_url;
-      console.log("Hurray!");
-    }
+    setCVUrlAttribute( userInfo );
     
     google.script.run.withSuccessHandler(function(activeYear) {    
       if(activeYear == "None") {
@@ -190,82 +186,60 @@
     }).getActiveReviewYear();
     
     M.updateTextFields();
-    
-    
-
   }
 
+
 function check_cv(){
-  var b = document.getElementById('cv_url');
+
+  var cv_link = document.getElementById('cv_url');
   console.log("In here");
-  console.log('b: ',b.href);
+  console.log('b: ',cv_link.href);
   
-  if(b.href==""){
+  if(cv_link.href==""){
     alert("CV not Uploaded");
   }
 }
 
 
+// set attribute of cv_url hyperlink according to input url
+function setCVUrlAttribute( userInfo ) {
 
-  // below from views/js/app.js
-  
-  
-  function load_monitor(){
-  
-  M.textareaAutoResize($('#textarea1'));
-  
-  }
-  
-  function EditReview(){  
-  console.log("here");
-  }
-  
-  document.addEventListener('DOMContentLoaded', function() {
-  var elems = document.querySelectorAll('select');
-  var instances = M.FormSelect.init(elems, {});
-  });
-  
-  document.addEventListener('DOMContentLoaded', function() {
-  var elems = document.querySelectorAll('.modal');
-  var instances = M.Modal.init(elems, {dismissible: false, startingTop:'1%', endingTop:'0%'});
-  });
-  
-//  document.addEventListener('DOMContentLoaded', function() {
-//  var elems = document.querySelectorAll('.datepicker');
-//  var instances = M.Datepicker.init(elems, options);
-//  });
+  var cvURL = document.getElementById("cv_url");
+  var removeCvURL = document.getElementById("remove_cv_url");
 
-  $(document).ready(function(){
-    $('.datepicker').datepicker({
-      format: 'mm/dd/yyyy'
-    });
-  });
-  
-  document.addEventListener('DOMContentLoaded', function() {
-  var elems = document.querySelectorAll('select');
-  var instances = M.FormSelect.init(elems);
-  });
-  // Or with jQuery
-  
-  $(document).ready(function(){
-  $('.modal').modal();
-  });
-  
-  
-  // Or with jQuery
-  
-  $(document).ready(function(){
-  $('select').formSelect();
-  });
-  
-  document.addEventListener('DOMContentLoaded', function() {
-  var elems = document.querySelectorAll('.fixed-action-btn');
-  var instances = M.FloatingActionButton.init(elems, {
-  direction: 'left',
-  hoverEnabled: false
-  });
-  });
-  
-  
+  // if cv found in userInfo
+  if ( userInfo.cv_url != "" ){
+
+    // set inner text to file name
+    google.script.run.withSuccessHandler( function(fileName) {
+      cvURL.innerText  = fileName;
+    }).getFileNameFromURL(userInfo.cv_url);
+
+    cvURL.href = userInfo.cv_url;
+
+    cvURL.removeAttribute("disabled"); // enable cv_url 
+    //removeCvURL.removeAttribute("disabled"); // enable remove_cv_url button
+
+    console.log("CV found in database: ", cvURL.href);
+  }
+  else { // if cv not found in userInfo
+
+    cvURL.setAttribute("disabled", "disabled"); // disable cv_url
+    //removeCvURL.setAttribute("disabled", "disabled"); // disable cv_url
+
+    // if the previous state of cv_url inner text is not "uploading CV..." and cv not found,
+    // it means cv not exist in database.
+    console.log( cvURL.innerText );
+    
+    if ( cvURL.innerText != "UPLOADING CV..." ) {
+      cvURL.innerText = "CV NOT UPLOADED";
+    } 
+
+    cvURL.href = "";
+    console.log("CV not found.");
+  }
+
+    return;
+}
 
 </script>
