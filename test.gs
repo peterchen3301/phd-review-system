@@ -48,6 +48,6 @@ function test_getFileName() {
 }
 
 function test(){
-  getAllReviewYears() 
+  Logger.log( getReviewRaings( 2021 ) );
 }
 

@@ -20,6 +20,7 @@
             <a href="javascript:void(0)" class="brand-logo">Ph.D. Review System</a>
             <ul id="nav-mobile" class="right hide-on-med-and-down">
               <li class="active"><a href="<?= getScriptUrl();?>?v=student_view">Student Information</a></li>
+              <li><a href="<?= getScriptUrl();?>?v=student_review">Reviews</a></li>
               <li><a href="<?= getScriptUrl();?>?v=index">Logout</a></li>
             </ul>
           </div>
@@ -32,12 +33,8 @@
       </div>
       <div class="container">
       <form action="javascript:void(0)"> <!--onsubmit="updateClicked()"-->
-
           <div class="row">
-            <h5 id= "current_review_year">Review Year : </h5>
-          </div>
 
-          <div class="row">
             <div class="input-field col s3">
               <input id="fn" type="text" class="validate" disabled>
               <label for="fn" >First Name</label>
@@ -79,14 +76,30 @@
               </select>
               <label for="qual">Qual Exam</label>
             </div>
+
+            <!--
+            <div class="input-field col s3">
+              <select id="attempts" class="validate">
+              <option value="" disabled selected>Choose your option</option>
+                <option value="NA" >NA</option>
+                <option value="1" >1</option>
+                <option value="2" >2</option>
+                <option value="3" >3</option>
+              </select>
+              <label for="attempts">Attempts completed</label>
+            </div>
+            -->
           </div>
 
           <div class="row">
+          
+
             <div class="input-field col s3">
               <select id="advisor" class="validate" disabled>
-                <option value="" disabled selected>Choose Advisor</option>
-                <?!= get_advisor_list(); ?>
+              <option value="" disabled selected>Choose Advisor</option>
+              <?!= get_advisor_list(); ?>
               </select>
+              
               <label for="advisor">Advisor</label>
             </div>
 
@@ -98,14 +111,16 @@
               </select>
               <label for="co-advisor">Co-Advisor</label>
             </div>
+
           </div>
 
           <div class="row">
+            
             <div class="input-field col s3">
               <select id="degree-plan" class="validate" disabled>
-                <option value="" disabled selected>Choose your option</option>
-                  <option value="yes" >Yes</option>
-                  <option value="no" >No</option>
+              <option value="" disabled selected>Choose your option</option>
+                <option value="yes" >Yes</option>
+                <option value="no" >No</option>
               </select>
               <label for="dpf">Degree Plan Filed?</label>
             </div>
@@ -116,7 +131,7 @@
             </div>
 
             <div class="input-field col s3">
-              <input type="text" class="datepicker" id="proposal-date" disabled>
+            <input type="text" class="datepicker" id="proposal-date" disabled>
               <label for="proposal-date">Proposal Date</label>
             </div>
             
@@ -124,90 +139,46 @@
               <input type="text" class="datepicker" id="defense-date" disabled>
               <label for="defense-date">Final Defense Date</label>
             </div>
+
           </div>
 
           <div class="row">
-            <a id ="cv_url" class="waves-effect waves-light btn" target="_blank" href="" disabled>
+
+            <a id ="cv_url" class="waves-effect waves-light btn" target="_blank" href="" onmousedown = "check_cv()" disabled>
               LOADING CV...
             </a>
+
+            <!-- todo
+            <button class="btn waves-effect waves-light cancel" onclick="removeCVClicked()" id = "remove_cv_url" disabled = "disabled"> 
+              REMOVE
+            </button>
+            -->
+
           </div>
 
-          <div class="row">
-            <div class="file-field input-field s3">
-              <div id = "up" class="btn">
-                <span >UPLOAD / UPDATE CV</span>
-                <input type="file" id="cv">  
-              </div>
+        <div class="row">
+          <div class="file-field input-field s3">
             
-              <div class="file-path-wrapper s3">
-                <input class="file-path validate" id = "cv_wrapper" type="text">
-              </div>
+            <div id = "up" class="btn">
+              <span >Upload CV</span>
+              <input type="file" id="cv">  
             </div>
-          </div>
-
-          <div class="row">
-            <a id ="report_url" class="waves-effect waves-light btn" target="_blank" href="" disabled>
-              LOADING REPORT...
-            </a>
-          </div>
-
-          <div class="row">
-
-            <div class="file-field input-field s3">
-              <div id = "up1" class="btn">
-                <span>UPLOAD / UPDATE REPORT</span>
-                <input type="file" id="report">
-              </div>
-              <div class="file-path-wrapper s3">
-                <input class="file-path validate" id = "report_wrapper" type="text">
-              </div>
+            
+            <div class="file-path-wrapper s3">
+              <input class="file-path validate" id = "filename" type="text">
             </div>
-
+          
           </div>
-
-          <div class="row">
-            <a id ="improvement_plan_url" class="waves-effect waves-light btn" target="_blank" href="" disabled>
-              LOADING IMPROVEMENT PLAN...
-            </a>
-          </div>
-
-          <div class="row">
-            <div class="file-field input-field s3">
-              <div id = "up" class="btn">
-                <span>UPLOAD / UPDATE IMPROVEMENT PLAN</span>
-                <input type="file" id="improvement">
-              </div>
-              <div class="file-path-wrapper s3">
-                <input class="file-path validate" id = "improvement_plan_wrapper" type="text">
-              </div>
-            </div>
-          </div>
-
-          <div class="row">
-            <a id ="department_letter_url" class="waves-effect waves-light btn" target="_blank" href="" disabled>
-              LOADING DEPARTMENT LETTER...
-            </a>
-          </div>
-
-          <div class = "row">
-            <label> Comments for you: </label>
-            <textarea id="comments_for_student" class="materialize-textarea" disabled></textarea>
-          </div>
-
-          <div class="row">
-            <div class="center">
-              <button class="btn waves-effect waves-light cancel" onclick="resetProfileFields()" id = "discard"> Discard
-              </button>
-              <button class="btn waves-effect waves-light" id = "update" onclick="updateClicked()"> Update!
-              </button>
-            </div>
-          </div>
-
-          <div class="row">
-          </div>
-
         </div>
 
+        <div class="row">
+          <div class="center">
+            <button class="btn waves-effect waves-light cancel" onclick="resetProfileFields()" id = "discard"> Discard
+            </button>
+            <button class="btn waves-effect waves-light" id = "update" onclick="updateClicked()"> Update!
+            </button>
+          </div>
+        </div>
         
       </form>
       </div>
@@ -225,7 +196,6 @@
         <script>
           var sts = document.getElementById("start-semester");
           var semesters = ["Fall","Summer","Spring"];
-
           var d = new Date();
           for(y = d.getFullYear(); y > 2010; y--) {
             for(i=0; i< semesters.length;i++){

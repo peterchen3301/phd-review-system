@@ -1,13 +1,20 @@
 <script>
-/*document.getElementById("").addEventListener("click", submitStudentReview);
+
+/*
+document.getElementById("").addEventListener("click", submitStudentReview);
 
 function submitStudentReview() {
     var reviewInfo = {};
     reviewInfo.uin = document.getElementById("").value();
-    reviewInfo.commentsForStudent
+    reviewInfo.commentsForStudent;
+}
+*/
+
+// called while body loaded in student_search.html
+function onLoad() {
+  // todo
 }
 
-*/
 
 document.getElementById("admin-view").style.visibility = "hidden";
 document.getElementById("add-student").style.visibility = "hidden";
@@ -160,6 +167,8 @@ function successHandler(urlString){
   google.script.run.withSuccessHandler(onSuccess).getAllStudentRecords();
 }
 
+
+// assign html items with corresponding values, called every time when renewing table. 
 function onSuccess(result) {
 
 all_student_records = result;
@@ -246,6 +255,10 @@ $(function() {
     grid.render();
   });
   
+
+  // error raised at here "TypeError: Cannot read property 'href' of undefined"
+  // don't know what the codes do here
+  /*
   google.script.run.withSuccessHandler(function(result){
     var detailsLinks = document.getElementsByClassName('details-link');
     var allReviewsLinks = document.getElementsByClassName('all-reviews-link');
@@ -259,6 +272,7 @@ $(function() {
       addReviewLink.href = addReviewLink.href.replace('#', result._parts.path);
     }
   }).getScriptUrl();
+  */
 });
 
 }

@@ -1,26 +1,57 @@
 <script>
 
-  function resetProfileFields() {  
-     google.script.run.withSuccessHandler(onSuccess).getProfileInformation();
+  // dict of ( type_id : type_name )
+  var doc_type_name = { "cv_url" : "CV", "report_url" : "REPORT", "improvement_plan_url" : "IMPROVEMENT PLAN", "department_letter_url" : "DEPARTMENT LETTER" };
+
+  // get current user's (student) info, called every time we renew the page.
+  function resetProfileFields() 
+  { 
+    google.script.run.withSuccessHandler(onSuccess).getProfileAndCurrentYearReview();
+  }
+
+  // assign html items with corresponding values, called every time when renewing student profle. 
+  function onSuccess( user_data ) {
+
+    setCurrentReviewYearAttribute();
+
+    console.log( user_data['student_info'] );
+    console.log( user_data['doc_urls'] );
+    console.log( user_data['review_comments'] );
+
+    user_info = user_data['student_info'];
+    setUserInfoAttribute( user_info );
+    setCVUrlAttribute( user_info['cv_url'], 'cv_url' );
+
+    doc_urls = user_data['doc_urls'];
+    setDocUrlsAttribute( doc_urls );
+
+    review_comments = user_data['review_comments'];
+    setReviewCommentAttribute( review_comments );
+      
+    M.updateTextFields();
+    return;
   }
   
 
+  // called when discard button clicked
   function discardClicked(){
     window.location.reload(false);
     return true;
   }
   
 
+  // called when update button clicked
   function updateClicked(){
 
     var userInfo = {};
+    var current_review_year = document.getElementById("current_review_year").value;
+
     userInfo.firstname = document.getElementById("fn").value;
     userInfo.lastname = document.getElementById("ln").value;
     userInfo.UIN = document.getElementById("uin_").value;
     userInfo.email = document.getElementById("email").value;
     userInfo.startsem = document.getElementById("start-semester").value;
     userInfo.qualstatus = document.getElementById("qual").value;
-    //userInfo.numattempts = document.getElementById("attempts").value;
     userInfo.advisor = document.getElementById("advisor").value;
     userInfo.coadvisor = document.getElementById("co-advisor").value;
     userInfo.degreeplanstatus = document.getElementById("degree-plan").value;
@@ -46,45 +77,56 @@
       userInfo.defense_date  = c;
     }
     
-    google.script.run.submitProfile(userInfo);
+    google.script.run.submitProfileToStudentInfo(userInfo);
   
+    // upload CV
     var cv = document.getElementById("cv").files[0];
-
-
-    // if CV to be uploaded
-    if (cv) {
-
+    if (cv) { // if CV to be uploaded
       console.log("CV uploading...");
-
-      document.getElementById('filename').value = ""; // clear file-path-wrapper once uploaded
-
+      document.getElementById('cv_wrapper').value = ""; // clear file-path-wrapper once uploaded
       var cvURL = document.getElementById('cv_url');
       cvURL.setAttribute("disabled", "disabled"); // disable cv_url
       cvURL.removeAttribute("href");
       cvURL.innerText = "UPLOADING CV..."
-      
-      uploadFile(userInfo,cv,"cv");
+      uploadCVFile(userInfo,cv,"cv");
     }
 
-    resetProfileFields(); // reset to fresh the cv_url attribute anyways
+    // upload report
+    var report = document.getElementById("report").files[0];
+    if (report) { // if report to be uploaded
+      console.log("Report uploading...");
+      document.getElementById('report_wrapper').value = ""; // clear file-path-wrapper once uploaded
+      var reportURL = document.getElementById('report_url');
+      reportURL.setAttribute("disabled", "disabled"); // disable cv_url
+      reportURL.removeAttribute("href");
+      reportURL.innerText = "UPLOADING REPORT..."
+      uploadDocument( report, "re", current_review_year );
+    }
 
-    alert("Data Updated");
+    // upload improvement plan
+    var improvement = document.getElementById("improvement").files[0];
+    if (improvement) { // if improvement plan to be uploaded
+      console.log("Improvement plan uploading...");
+      document.getElementById('improvement_plan_wrapper').value = ""; // clear file-path-wrapper once uploaded
+      var improvementURL = document.getElementById('improvement_plan_url');
+      improvementURL.setAttribute("disabled", "disabled"); // disable cv_url
+      improvementURL.removeAttribute("href");
+      improvementURL.innerText = "UPLOADING IMPROVEMENT LETTER..."
+      uploadDocument( improvement, "ip", current_review_year );
+    }
+
+    alert("Updating Data");
     return;
   }
 
-
-  // when remove_cv_url button clicked, simply remove cv_link on database and reset 
-  function removeCVClicked() {
-    // todo
-  }
   
-  function uploadFile( userInfo, f, file_type ) {
+  // upload CV file to GoogleDrive and update url to student_info_sheet
+  function uploadCVFile( userInfo, f, file_type ) {
 
     var file, reader = new FileReader();
     var fullName = userInfo.firstname + " " + userInfo.lastname;
 
     reader.onloadend = function(e) {
-
       google.script.run.withSuccessHandler(resetProfileFields).uploadFileToDrive(
         e.target.result, 
         file.name,
@@ -92,154 +134,218 @@
         file_type,
         userInfo.email
       );
-
     };
     
     file = f;
     if(file){  
       reader.readAsDataURL(file);
     } 
-  }
-  
-  function onSuccess(userInfo) {
-    
-    console.log("User Info returned ");
-    console.log(userInfo);
-    
-    document.getElementById("fn").value = userInfo.firstname;
-    document.getElementById("ln").value = userInfo.lastname;
-    document.getElementById("uin_").value = userInfo.UIN;
-    document.getElementById("email").value = userInfo.email;
 
-        /////// For Drop Down//////////
-        
-    var a  = document.getElementById("start-semester");
-    a.value = userInfo.startsem;
-    M.FormSelect.init(a);
-    
-    var a  = document.getElementById("qual");
-    a.value = userInfo.qualstatus;
-    M.FormSelect.init(a);
-    
-    /*
-    var a  = document.getElementById("attempts");
-    a.value = userInfo.numattempts;
-    M.FormSelect.init(a);
-    */
-
-    var a  = document.getElementById("advisor");
-    a.value = userInfo.advisor;
-    M.FormSelect.init(a);
-    
-    var a  = document.getElementById("co-advisor");
-    a.value = userInfo.coadvisor;
-    M.FormSelect.init(a);
-    
-    var a  = document.getElementById("degree-plan");
-    a.value = userInfo.degreeplanstatus;
-    M.FormSelect.init(a);
-    
-    
-    //////////////////////////////////////
-    var elem  = document.getElementById("prelim-date");
-
-    var options = {
-            defaultDate: new Date(userInfo.prelime_date),
-            setDefaultDate: true,
-            format: "mm/dd/yyyy"
-        };
-    var instance = M.Datepicker.init(elem, options);
-    
-    
-    var elem  = document.getElementById("proposal-date");
-
-    var options = {
-            defaultDate: new Date(userInfo.proposal_date),
-            setDefaultDate: true,
-            format: "mm/dd/yyyy"
-        };
-    var instance = M.Datepicker.init(elem, options);
-    
-    
-    var elem  = document.getElementById("defense-date");
-
-    var options = {
-            defaultDate: new Date(userInfo.defense_date),
-            setDefaultDate: true,
-            format: "mm/dd/yyyy"
-        };
-    var instance = M.Datepicker.init(elem, options);
-    
-    setCVUrlAttribute( userInfo );
-    
-    google.script.run.withSuccessHandler(function(activeYear) {    
-      if(activeYear == "None") {
-        console.log(activeYear);
-        $('input').attr('disabled', true);
-        //document.getElementById('VCV').disabled = true;
-        document.getElementById('update').disabled = true;
-        document.getElementById('discard').disabled = true;
-        document.getElementById('filename').disabled = true;
-        document.getElementById('up').classList.remove("btn") ;
-        alert(" No Active Review Year");
-      }
-    }).getActiveReviewYear();
-    
-    M.updateTextFields();
-  }
-
-
-function check_cv(){
-
-  var cv_link = document.getElementById('cv_url');
-  console.log("In here");
-  console.log('b: ',cv_link.href);
-  
-  if(cv_link.href==""){
-    alert("CV not Uploaded");
-  }
+    return;
 }
 
 
-// set attribute of cv_url hyperlink according to input url
-function setCVUrlAttribute( userInfo ) {
+// upload documents ( improvement_plan, report ) to GoogleDrive and update url to student_review_sheet
+function uploadDocument( f, file_type, year ) {
 
-  var cvURL = document.getElementById("cv_url");
-  var removeCvURL = document.getElementById("remove_cv_url");
+  var file, reader = new FileReader();
+  
+  reader.onloadend = function(e) {
+    google.script.run.withSuccessHandler(resetProfileFields).uploadIp_R_ToDrive(
+    e.target.result, file.name,
+    file_type,year
+    );
+  };
+
+  file = f;
+  if(file){  
+    reader.readAsDataURL(file);
+  }
+  console.log("end");
+}
+
+
+// set up current-review-year attribute in student_info.html 
+function setCurrentReviewYearAttribute() {
+
+  google.script.run.withSuccessHandler(function(activeYear) {    
+    if(activeYear == "None") {
+      console.log(activeYear);
+      $('input').attr('disabled', true);
+      document.getElementById('update').disabled = true;
+      document.getElementById('discard').disabled = true;
+      document.getElementById('cv_wrapper').disabled = true;
+      document.getElementById('report_wrapper').disabled = true;
+      document.getElementById('improvement_plan_wrapper').disabled = true;
+      document.getElementById('up').classList.remove("btn") ;
+      alert(" No Active Review Year");
+    }
+    else {
+      document.getElementById("current_review_year").value = activeYear;
+      document.getElementById("current_review_year").innerText = 'Review Year : ' + activeYear.toString();
+    }
+  }).getActiveReviewYear();
+
+  return;
+}
+
+
+// set up review comments of student_info.html 
+function setReviewCommentAttribute( review_comments ) {
+
+  if (review_comments['comments_for_student'] != ""){
+    var a = document.getElementById("comments_for_student");
+    a.value = review_comments['comments_for_student'];
+    M.textareaAutoResize($('#comments_for_student'));
+  }
+  else{
+    document.getElementById("comments_for_student").value = " No Reviews Available Now";
+  }
+
+  return;
+}
+
+// set up student_report, impprovement_letter and department_letter hyperlink in student_info.html  
+function setDocUrlsAttribute( document_urls ) {
+  
+  setCVUrlAttribute( document_urls.report, 'report_url' );
+  /*
+  var report_url = document.getElementById('report_url');
+  if ( document_urls.report != "" ){
+    console.log( "report_url" + document_urls.report );
+    report_url.href = document_urls.report;
+  }
+  else {
+  report_url.href = "";
+  }
+  */
+  
+  setCVUrlAttribute( document_urls.improvement, 'improvement_plan_url' );
+  /*
+  var improvement_plan_url = document.getElementById( 'improvement_plan_url' );
+  if ( document_urls.improvement != "" ){
+    console.log( "improvement_plan_url" + document_urls.improvement );
+    improvement_plan_url.href = document_urls.improvement;
+  }
+  else {
+  improvement_plan_url.href = "";
+  }
+  */
+
+  setCVUrlAttribute( document_urls.departmentletter, 'department_letter_url' );
+  /*
+  var department_letter_url = document.getElementById( 'department_letter_url' );
+  if ( document_urls.departmentletter != "" ) {
+    console.log( "department_letter_url" + document_urls.departmentletter );
+    department_letter_url.href = document_urls.departmentletter;
+  }
+  else {
+  department_letter_url.href = "";
+  }
+  */
+
+  return;
+}
+
+// set up user-info items in student_info.html 
+function setUserInfoAttribute( userInfo ) {
+  
+  document.getElementById("fn").value = userInfo.firstname;
+  document.getElementById("ln").value = userInfo.lastname;
+  document.getElementById("uin_").value = userInfo.UIN;
+  document.getElementById("email").value = userInfo.email;
+       /////// For Drop Down//////////
+      
+  var a  = document.getElementById("start-semester");
+  a.value = userInfo.startsem;
+  M.FormSelect.init(a);
+  
+  var a  = document.getElementById("qual");
+  a.value = userInfo.qualstatus;
+  M.FormSelect.init(a);
+    
+  /*
+  var a  = document.getElementById("attempts");
+  a.value = userInfo.numattempts;
+  M.FormSelect.init(a);
+  */
+
+  var a  = document.getElementById("advisor");
+  a.value = userInfo.advisor;
+  M.FormSelect.init(a);
+    
+  var a  = document.getElementById("co-advisor");
+  a.value = userInfo.coadvisor;
+  M.FormSelect.init(a);
+    
+  var a  = document.getElementById("degree-plan");
+  a.value = userInfo.degreeplanstatus;
+  M.FormSelect.init(a);
+    
+
+  var elem  = document.getElementById("prelim-date");
+  var options = {
+          defaultDate: new Date(userInfo.prelime_date),
+          setDefaultDate: true,
+          format: "mm/dd/yyyy"
+      };
+  var instance = M.Datepicker.init(elem, options);
+    
+    
+  var elem  = document.getElementById("proposal-date");
+  var options = {
+          defaultDate: new Date(userInfo.proposal_date),
+          setDefaultDate: true,
+          format: "mm/dd/yyyy"
+      };
+  var instance = M.Datepicker.init(elem, options);
+    
+    
+  var elem  = document.getElementById("defense-date");
+  var options = {
+      defaultDate: new Date(userInfo.defense_date),
+      setDefaultDate: true,
+      format: "mm/dd/yyyy"
+    };
+  var instance = M.Datepicker.init(elem, options);
+  
+  return;
+}
+
+
+// set up cv_url hyperlink in student_info.html 
+function setCVUrlAttribute( doc_url, id ) {
+
+  var cvURL = document.getElementById( id );
+  var this_type_name = doc_type_name[ id ]
 
   // if cv found in userInfo
-  if ( userInfo.cv_url != "" ){
+  if ( doc_url != "" ){
 
     // set inner text to file name
     google.script.run.withSuccessHandler( function(fileName) {
-      cvURL.innerText  = fileName;
-    }).getFileNameFromURL(userInfo.cv_url);
+      cvURL.innerText = fileName;
+    }).getFileNameFromURL(doc_url);
 
-    cvURL.href = userInfo.cv_url;
-
+    cvURL.href = doc_url;
     cvURL.removeAttribute("disabled"); // enable cv_url 
-    //removeCvURL.removeAttribute("disabled"); // enable remove_cv_url button
-
-    console.log("CV found in database: ", cvURL.href);
   }
   else { // if cv not found in userInfo
 
     cvURL.setAttribute("disabled", "disabled"); // disable cv_url
-    //removeCvURL.setAttribute("disabled", "disabled"); // disable cv_url
 
     // if the previous state of cv_url inner text is not "uploading CV..." and cv not found,
     // it means cv not exist in database.
     console.log( cvURL.innerText );
     
-    if ( cvURL.innerText != "UPLOADING CV..." ) {
-      cvURL.innerText = "CV NOT UPLOADED";
+    if ( cvURL.innerText != "UPLOADING " + this_type_name + "..." ) {
+      cvURL.innerText = this_type_name + " NOT UPLOADED";
     } 
 
     cvURL.href = "";
-    console.log("CV not found.");
   }
 
-    return;
+  return;
 }
 
 </script>

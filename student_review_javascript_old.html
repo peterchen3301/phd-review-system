@@ -1,4 +1,5 @@
 <script>
+  
 function initialize(){
 
    google.script.run.withSuccessHandler(populate_dropdown).getAllReviewYears();
@@ -42,7 +43,6 @@ function uploadClicked(){
       d.removeAttribute("href");
       document.getElementById('VI').disabled = true;
       uploadFile(ip,"ip",year);
-      //sleep(15000);
     }
     if (re){
       console.log("RE");
@@ -180,10 +180,7 @@ function get_links(uin){
 
 
 function get_data1(){
-
   google.script.run.withSuccessHandler(get_links).check_uin();
-//  var year = document.getElementById("review-year").value;
-//  google.script.run.withSuccessHandler(onSuccess).get_urls(year);
 } 
 
 
@@ -241,7 +238,7 @@ function onSuccess(urls){
   var x = document.getElementById("result");
   x.style.display = "block";
   
-  M.updateTextFields()
+  M.updateTextFields();
 }
 
 function check_ip(){
@@ -299,7 +296,7 @@ function display_comments(comments){
 // below from views/js/app.js
   
   
-  function load_monitor(){
+function load_monitor(){
   
   M.textareaAutoResize($('#textarea1'));
   

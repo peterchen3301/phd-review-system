@@ -312,6 +312,21 @@ function rowValue(values, rowIdx, headerLabel) {
   return values[rowIdx][values[0].indexOf(headerLabel)];
 }
 
+
+// get user's (student) profile, docs of current year, and review comments of current year
+function getProfileAndCurrentYearReview() {
+
+  var review_year = getActiveReviewYear();
+  var student_info = getProfileInformation();
+  var uin = check_uin();
+  var doc_urls = get_urls( uin, review_year );
+  var review_comments = getReviewDetails( review_year );
+
+  return { student_info, doc_urls, review_comments };
+}
+
+
+// get user's (student) profile from student info sheet
 function getProfileInformation() {
   
   var userInfo = {};
@@ -367,10 +382,7 @@ function getProfileInformation() {
       
       break;
     }
-  
   }
-  //Logger.log("Returning Userinfo");
-  //Logger.log(userInfo);
   return userInfo;
 }
 //////////////////////////////////////////////////////////////////////// Updating Student Informaiton //////////////////////////////////////////////////////
@@ -408,7 +420,7 @@ function updateLoginSheet(userInfo) {
   
   
 
-function submitProfile(userInfo){
+function submitProfileToStudentInfo(userInfo){
   var ss = SpreadsheetApp.openByUrl(student_info_sheet_url);
   var ws = ss.getSheetByName("Sheet1");
   var values = ws.getDataRange().getValues();
@@ -463,6 +475,8 @@ function folderExistsIn(parent_folder,folder_name){
 function uploadFileToDrive(content, filename, name ,file_type, email){
   
   //Logger.log("Name: "+ name);
+  console.log("Upload file to drive: "+ name + " " + email + " " + filename);
+
   try {
     var dropbox = "phd_review_dev";
     var folder, folders = DriveApp.getFoldersByName(dropbox);
@@ -494,6 +508,7 @@ function uploadFileToDrive(content, filename, name ,file_type, email){
           }
         }
         Logger.log("Previous similar type file deleted");
+        console.log("Previous similar type file deleted");
       } 
       
       var new_file_name = file_type+"_"+filename;
@@ -518,12 +533,15 @@ function uploadFileToDrive(content, filename, name ,file_type, email){
     }
     
     Logger.log("Uploading is done");
+    console.log("Uploading is done");
     
   } catch (f) {
     return f.toString();
   }
   
 }
+
+
 //Function for Departmental Letter upload by Admin
 function uploadDLToDrive(content,filename,file_type,year,fullName,uin) {
   Logger.log("In uploadDLtoDrive:",fullName);
@@ -622,9 +640,11 @@ function uploadDLToDrive(content,filename,file_type,year,fullName,uin) {
   
 
 
-function uploadIp_R_ToDrive(content,filename,file_type,year){
+function uploadIp_R_ToDrive( content, filename, file_type, year ){
+
   SpreadsheetApp.flush();
   Logger.log("In upload IP:",file_type);
+
   var email = Session.getActiveUser().getEmail();
   var fullName = "";
   var ss = SpreadsheetApp.openByUrl(account_sheet_url);
@@ -834,38 +854,53 @@ function get_urls(uin, year){
 
 }
 
+
+// get all the faculty's comment on current student in input review year
 function getReviewDetails(year){
   
   var email = Session.getActiveUser().getEmail();
-  var comments = "";
+  var comments = { "comments_for_student" : [], "comments_for_faculty" : [] };
   
   var ss = SpreadsheetApp.openByUrl(student_info_sheet_url);
   var ws = ss.getSheetByName("Sheet1");
   var dataRange = ws.getDataRange();
   var values = dataRange.getValues();
+
+  // get current student uin from email address
   var uin = "";
   for (var i = 0; i < values.length; i++) {
     if (values[i][5] == email) {
       uin = values[i][4];
     }
   }
+  //Logger.log(uin);
   
   var rs = SpreadsheetApp.openByUrl(student_review_sheet_url);
   var ww = rs.getSheetByName("Sheet1");
   var rdataRange = ww.getDataRange();
   var rvalues = rdataRange.getValues();
-  
+
+
+  /*
+   * It judges the rewviewer as admin by whether "faculty_name" is "admin" or not.
+   * Consider change.
+   */
+
+  // get comment_for_student 
   for (var i = 0; i < rvalues.length; i++) {
-    if (rvalues[i][0] == uin && rvalues[i][1] == year && rvalues[i][2]!="admin") {
-      
-//        comments += " Reviewer Name: "+ rvalues[i][2]+"\t\t\t\t";
-      comments += rvalues[i][9]+"\n";
-      
+    if (rvalues[i][0] == uin && rvalues[i][1] == year && rvalues[i][2] != "admin") {
+      comments[ "comments_for_student" ] += rvalues[i][9]+"\n";
     }  
   }
-  
+
+  // get comments_for_faculty
+  for (var i = 0; i < rvalues.length; i++) {
+    if (rvalues[i][0] == uin && rvalues[i][1] == year && rvalues[i][2] != "admin") {
+      comments[ "comments_for_faculty" ] += rvalues[i][10]+"\n";
+    }  
+  }
+
   return comments;
-  
 }
 
 //////////////////////////////////////

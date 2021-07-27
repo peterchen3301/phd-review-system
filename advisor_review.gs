@@ -3,17 +3,19 @@
  * Need to switch to legacy editor to install this.
  */
 
+
+// get info of every active student from student_info_sheet
 function getAllStudentRecords() {
-  var ss = SpreadsheetApp.openByUrl(student_info_sheet_url);
-  var ws = ss.getSheetByName("Sheet1");
+
+  var student_info = SpreadsheetApp.openByUrl(student_info_sheet_url).getSheetByName("Sheet1");
   
   /* 
    * Passing an array that includes javascript Date object to client-side script will cause error. since it may not support 
    * such datatype. Therefore, we should convert Date objects to strings of date. 
    */
-  var student_records = ws.getRange(1, 1, 
-    ws.getRange("A1").getDataRegion().getLastRow(), 
-    ws.getRange("A1").getDataRegion().getLastColumn() ).getValues(); 
+  var student_records = student_info.getRange(1, 1, 
+    student_info.getRange("A1").getDataRegion().getLastRow(), 
+    student_info.getRange("A1").getDataRegion().getLastColumn() ).getValues(); 
 
   // get indices of date elements
   iDate = [ student_records[0].indexOf('prelim_date'), 
@@ -37,6 +39,49 @@ function toDateString( date_object ) {
   return Utilities.formatDate(date_object, 'America/Chicago', 'MM dd, yyyy');
 }
 
+
+// return object containing faculty and admin ratings
+function getReviewRaings( review_year ) {
+
+  ratings = {};
+
+  var student_review_sheet = SpreadsheetApp.openByUrl(student_review_sheet_url).getSheetByName("Sheet1");
+  var student_records = student_review_sheet.getRange(2, 1, 
+    student_review_sheet.getRange("A1").getDataRegion().getLastRow() - 1, 
+    student_review_sheet.getRange("A1").getDataRegion().getLastColumn()).getValues();
+
+  for (var i = 0; i < student_records.length; i++) {
+    
+    uin = student_records[i][0];
+
+    if( !(uin in ratings) ) {
+      ratings[uin] = { 'admin' : [], 'faculty' : [] };
+    }
+
+    rating = student_records[i][4];
+    this_review_year = student_records[i][1];
+
+    if ( review_year != this_review_year ) {
+      continue;
+    }
+
+    /*
+     * It judges the rewviewer as admin by whether "faculty_name" is "admin" or not.
+     * Consider change.
+     */
+    if( student_records[i][2] == "admin" ){
+      ratings[uin]['admin'] += rating;
+    }
+    else {
+      ratings[uin]['faculty'] += rating;
+    }
+  }
+
+  return ratings;
+}
+
+
+// get each review from student_review_sheet
 function getAllStudentsReviewData() {
   var ss = SpreadsheetApp.openByUrl(student_review_sheet_url);
   var ws = ss.getSheetByName("Sheet1");
@@ -46,6 +91,8 @@ function getAllStudentsReviewData() {
   return student_records;
 }
 
+
+// get each review years
 function getAllReviewYearInformation() {
   var ss = SpreadsheetApp.openByUrl(review_year_information_url);
   
@@ -57,6 +104,8 @@ function getAllReviewYearInformation() {
   return review_year_records;
 }
 
+
+// get currently active review year
 function getActiveReviewYear() {
   var filteredData = getAllReviewYearInformation();
   filteredData = ArrayLib.filterByText(filteredData, 1, "1");
@@ -144,6 +193,7 @@ function getEmptyReviewData() {
 }
 
 
+// filter and get wanted student info from all 
 function handleSearchBtnClickedByUser(userInfo){
   
   var filteredData = getAllStudentRecords();
