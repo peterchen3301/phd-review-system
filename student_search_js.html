@@ -1,35 +1,23 @@
 <script>
 
-/*
-document.getElementById("").addEventListener("click", submitStudentReview);
-
-function submitStudentReview() {
-    var reviewInfo = {};
-    reviewInfo.uin = document.getElementById("").value();
-    reviewInfo.commentsForStudent;
-}
-*/
-
-// called while body loaded in student_search.html
-function onLoad() {
-  // todo
-}
-
-
 document.getElementById("admin-view").style.visibility = "hidden";
 document.getElementById("add-student").style.visibility = "hidden";
 google.script.run.withSuccessHandler(hideAdminView).isAdmin();
+google.script.run.withSuccessHandler(successHandler).getMyScriptUrl();
 
-function hideAdminView(result) {
-  if (result == true) {
-    document.getElementById("view-name").innerHTML = "Admin View";
-    document.getElementById("admin-view").style.visibility = "visible";
-    document.getElementById("add-student").style.visibility = "visible";
-  }
-}
-// ---------- slickgrid stuff ------------
+var all_student_records;
+var scriptUrl;
+var options = {
+  enableColumnReorder: false,
+  multiColumnSort: true,
+  enableCellNavigation: true,
+  autoExpandColumns: false,
+  forceFitColumns: false,
+  showFooterRow: false,
+};
 
 var grid;
+          
 var columns = [
   { id: 'uin',
     name: 'UIN', 
@@ -77,6 +65,27 @@ var columns = [
     id: 'final_defense_date',
     name: 'Final Defense Date',
     field: 'final_defense_date',
+    sortable: true,
+    width: 100
+  },
+  {
+    id: 'this_year_faculty_rating',
+    name: 'Faculty Rating of This Year',
+    field: 'this_year_faculty_rating',
+    sortable: true,
+    width: 100
+  },
+  {
+    id: 'this_year_admin_rating',
+    name: 'Dept Rating of This Year',
+    field: 'this_year_admin_rating',
+    sortable: true,
+    width: 100
+  },
+  {
+    id: 'last_year_admin_rating',
+    name: 'Dept Rating of Last Year',
+    field: 'last_year_admin_rating',
     sortable: true,
     width: 100
   },
@@ -135,32 +144,27 @@ var columns = [
     
 ];
 
-function dayFormatter(row, cell, value, columnDef, dataContext) {
-  return value + ' days';
+
+// called while body loaded in student_search.html
+function onLoad() {
+  // todo
 }
 
-function dateFormatter(row, cell, value, columnDef, dataContext) {
-  return value.getMonth() + '/' + value.getDate() + '/' + value.getFullYear();
+
+function hideAdminView(result) {
+  if (result == true) {
+    document.getElementById("view-name").innerHTML = "Admin View";
+    document.getElementById("admin-view").style.visibility = "visible";
+    document.getElementById("add-student").style.visibility = "visible";
+  }
 }
+
+
 
 function linkFormatter(row, cell, value, columnDef, dataContext) {
         return value;
 }
 
-var options = {
-  enableColumnReorder: false,
-  multiColumnSort: true,
-  enableCellNavigation: true,
-  autoExpandColumns: false,
-  forceFitColumns: false,
-  showFooterRow: false,
- // rowHeight: 45,
-  //headerRowHeight: 50
-};
-
-var all_student_records;
-var scriptUrl;
-google.script.run.withSuccessHandler(successHandler).getMyScriptUrl();
 
 function successHandler(urlString){
   scriptUrl = urlString;
@@ -169,151 +173,144 @@ function successHandler(urlString){
 
 
 // assign html items with corresponding values, called every time when renewing table. 
-function onSuccess(result) {
+function onSuccess(student_data) {
 
-all_student_records = result;
-console.log(all_student_records);
+  all_student_records = student_data["student_records"];
+  ratings = student_data["ratings"];
 
-$(function() {
-
-  var MS_PER_DAY = 24 * 60 * 60 * 1000;
   var data = [];
   var j = 0;
 
   for(var i = 0; i < all_student_records.length; i++) {
-      
-      //Checking if student is marked as current student
-      if(all_student_records[i][8] != "1")
-        continue;
-      var d = (data[j++] = {});
-      console.log("Var d: ", d);
-      d["uin"] = all_student_records[i][4],
-      d["name"] = all_student_records[i][3] + ', ' + all_student_records[i][2],
-      d["advisor"] = all_student_records[i][9],
-      d["start_semester"] = all_student_records[i][6],
-      d["prelim_date"] = all_student_records[i][15],
-      d["proposal_date"] = all_student_records[i][16],
-      d["final_defense_date"] = all_student_records[i][17],
-      d["qual_exam"] = all_student_records[i][12],
-      d["degree_plan_submitted"] = all_student_records[i][11];
-      //d["student_report"] = "NA",
-      //d["improvement_plan"] = "NA",
-      if(all_student_records[i][14]!="") {
-      d["cv"] = "<a href=" + all_student_records[i][14] + " target = \"_blank\"><u>CV</u></a>";
-      }
-      else
-      d["cv"] = "Not available";
-      console.log("CVVVV:",d["cv"]);
-      console.log(scriptUrl + "?v=student_details&uin=" + all_student_records[i][4]);
-      var t = "'" + scriptUrl + "?v=student_details&uin=" + all_student_records[i][4] +"'";
-      console.log(t);
-      console.log("<a href=" + t + "<u>Details</u></a>");
-      d["more_student_details"] = "<a href=" + t + " target = \"_blank\"><u>Details</u></a>",
-      // d["more_student_details"] = "<a href=\"https://script.google.com#?v=student_details&uin=" + d["uin"] + "\" class=\"details-link\" style = \" color:blue;\"><u>Details</u></a>",
+        
+    //Checking if student is marked as current student
+    if(all_student_records[i][8] != "1")
+    {
+      continue;
+    }
 
-      console.log(scriptUrl + "?v=see_reviews&uin=" + all_student_records[i][4]);
-      var t = "'" + scriptUrl + "?v=see_reviews&uin=" + all_student_records[i][4] +"'";
-      console.log(t);
-      console.log("<a href=" + t + "<u>Details</u></a>");
-      d["all_reviews"] = "<a href=" + t + " target = \"_blank\"><u>Reviews</u></a>",
-      
-      console.log(scriptUrl + "?v=add_review&uin=" + all_student_records[i][4]);
-      var t = "'" + scriptUrl + "?v=add_review&uin=" + all_student_records[i][4] +"'";
-      console.log(t);
-      console.log("<a href=" + t + "<u>Details</u></a>");
-      d["add_review"] = "<a href=" + t + " target = \"_blank\"><u>Add Review</u></a>"
-      
-      // Adding link to remove student page
-      var t = "'" + scriptUrl + "?v=remove_student&uin=" + all_student_records[i][4] +"'";
-      d["remove"] = "<a href=" + t + " target = \"_blank\"><u>Remove</u></a>"
-      
+    var this_student_data = (data[j++] = {});
+    var this_student_uin = all_student_records[i][4];
+
+    // map this student's profile
+    this_student_data["uin"] = this_student_uin,
+    this_student_data["name"] = all_student_records[i][3] + ', ' + all_student_records[i][2],
+    this_student_data["advisor"] = all_student_records[i][9],
+    this_student_data["start_semester"] = all_student_records[i][6],
+    this_student_data["prelim_date"] = all_student_records[i][15],
+    this_student_data["proposal_date"] = all_student_records[i][16],
+    this_student_data["final_defense_date"] = all_student_records[i][17],
+    this_student_data["qual_exam"] = all_student_records[i][12],
+    this_student_data["degree_plan_submitted"] = all_student_records[i][11];
+
+    // map student ratings 
+    this_student_data["this_year_faculty_rating"] = "n/a";
+    this_student_data["this_year_admin_rating"] = "n/a";
+    this_student_data["last_year_admin_rating"] = "n/a";
+    if( ratings["this_year"] && ratings["this_year"][this_student_uin] )
+    {
+      var this_faculty_rating = ratings["this_year"][this_student_uin]["faculty"]
+      this_student_data["this_year_faculty_rating"] = !this_faculty_rating ? "n/a" : this_faculty_rating;
+
+      var this_admin_rating = ratings["this_year"][this_student_uin]["admin"]
+      this_student_data["this_year_admin_rating"] = !this_admin_rating ? "n/a" : this_admin_rating;
+    }
+
+    if( ratings["last_year"] && ratings["last_year"][this_student_uin] )
+    {
+      var last_admin_rating = ratings["last_year"][this_student_uin]["admin"]
+      this_student_data["last_year_admin_rating"] = !last_admin_rating ? "n/a" : last_admin_rating;
+    }
+
+    // map CV link
+    if(all_student_records[i][14]!="") {
+      this_student_data["cv"] = "<a href=" + all_student_records[i][14] + " target = \"_blank\"><u>CV</u></a>";
+    }
+    else
+    {
+      this_student_data["cv"] = "Not available";
+    }
+    
+    console.log("CVVVV:",this_student_data["cv"]);
+    console.log( scriptUrl + "?v=student_details&uin=" + all_student_records[i][4] );
+    var t = "'" + scriptUrl + "?v=student_details&uin=" + all_student_records[i][4] +"'";
+    console.log(t);
+    console.log("<a href=" + t + "<u>Details</u></a>");
+    this_student_data["more_student_details"] = "<a href=" + t + " target = \"_blank\"><u>Details</u></a>",
+
+    console.log(scriptUrl + "?v=see_reviews&uin=" + all_student_records[i][4]);
+    var t = "'" + scriptUrl + "?v=see_reviews&uin=" + all_student_records[i][4] +"'";
+    console.log(t);
+    console.log("<a href=" + t + "<u>Details</u></a>");
+    this_student_data["all_reviews"] = "<a href=" + t + " target = \"_blank\"><u>Reviews</u></a>",
+        
+    console.log(scriptUrl + "?v=add_review&uin=" + all_student_records[i][4]);
+    var t = "'" + scriptUrl + "?v=add_review&uin=" + all_student_records[i][4] +"'";
+    console.log(t);
+    console.log("<a href=" + t + "<u>Details</u></a>");
+    this_student_data["add_review"] = "<a href=" + t + " target = \"_blank\"><u>Add Review</u></a>"
+        
+    // Adding link to remove student page
+    var t = "'" + scriptUrl + "?v=remove_student&uin=" + all_student_records[i][4] +"'";
+    this_student_data["remove"] = "<a href=" + t + " target = \"_blank\"><u>Remove</u></a>"
+        
   }
-  
+    
+  grid = new Slick.Grid( '#myGrid', data, columns, options );
+  grid.registerPlugin( new Slick.AutoTooltips( {enableForHeaderCells: true} ) );
 
-  grid = new Slick.Grid('#myGrid', data, columns, options);
-
-  grid.registerPlugin( new Slick.AutoTooltips({ enableForHeaderCells: true }) );
-
-  grid.onSort.subscribe(function(e, args) {
+  grid.onSort.subscribe( function(e, args) 
+  {
     var cols = args.sortCols;
-
-    data.sort(function(dataRow1, dataRow2) {
-      for (var i = 0, l = cols.length; i < l; i++) {
+    data.sort( function(dataRow1, dataRow2)
+    {
+      for (var i = 0, l = cols.length; i < l; i++) 
+      {
         var field = cols[i].sortCol.field;
         var sign = cols[i].sortAsc ? 1 : -1;
-        var value1 = dataRow1[field],
-          value2 = dataRow2[field];
+        var value1 = dataRow1[field];
+        var value2 = dataRow2[field];
         var result = (value1 == value2 ? 0 : value1 > value2 ? 1 : -1) * sign;
-        if (result != 0) {
+        if (result != 0) 
+        {
           return result;
         }
       }
       return 0;
     });
-    //grid.setHeaderRowHeight(30);
+
     grid.invalidate();
     grid.render();
+      
   });
-  
 
-  // error raised at here "TypeError: Cannot read property 'href' of undefined"
-  // don't know what the codes do here
-  /*
-  google.script.run.withSuccessHandler(function(result){
-    var detailsLinks = document.getElementsByClassName('details-link');
-    var allReviewsLinks = document.getElementsByClassName('all-reviews-link');
-    var addReviewLinks = document.getElementsByClassName('add-review-link');
-    for(var i = 0; i < all_student_records.length; i++) {
-      var detailsLink = detailsLinks[i];
-      var allReviewsLink = allReviewsLinks[i];
-      var addReviewLink = addReviewLinks[i];
-      detailsLink.href = detailsLink.href.replace('#', result._parts.path);
-      allReviewsLink.href = allReviewsLink.href.replace('#', result._parts.path);
-      addReviewLink.href = addReviewLink.href.replace('#', result._parts.path);
-    }
-  }).getScriptUrl();
-  */
-});
 
+  return;
 }
 
 
-// ---------- slickgrid stuff end ------------
+// called when search button clicked
+function searchBtnClicked(){
 
-
-
-
-
-// ---------- search ------------
-
-document.getElementById("searchBtn").addEventListener("click", searchBtnClicked);
-
-  function searchBtnClicked(){
   console.log("search button clicked");
-    var userInfo = {}
+  var filter = {}
     
-    var firstName = document.getElementById("first_name").value;
-    if(firstName.length > 0){
-      userInfo.firstName = firstName;
-    }
-    
-    var lastName = document.getElementById("last_name").value;
-    if(lastName.length > 0){
-      userInfo.lastName = lastName;
-    }
-    
-    var uin = document.getElementById("uin").value;
-    if(uin.length > 0){
-      userInfo.uin = uin;
-    }
-    
-    google.script.run.withSuccessHandler(onSuccess).handleSearchBtnClickedByUser(userInfo);
-    
+  var first_name = document.getElementById("first_name").value;
+  if(first_name.length > 0){
+    filter.first_name = first_name;
   }
-
-// ---------- search end ------------
-
-
-
+    
+  var last_name = document.getElementById("last_name").value;
+  if(last_name.length > 0){
+     filter.last_name = last_name;
+  }
+    
+  var uin = document.getElementById("uin").value;
+  if(uin.length > 0){
+    filter.uin = uin;
+  }
+    
+  google.script.run.withSuccessHandler(onSuccess).getFilteredStudentRecords(filter);
+}
 
 </script>

@@ -1,3 +1,7 @@
+<!--  
+  student_info.html
+-->
+
  <!DOCTYPE html>
   <html>
     <head>
@@ -34,7 +38,7 @@
       <form action="javascript:void(0)"> <!--onsubmit="updateClicked()"-->
 
           <div class="row">
-            <h5 id= "current_review_year">Review Year : </h5>
+            <h5 id= "review_year_title" >Review Year : </h5>
           </div>
 
           <div class="row">
@@ -135,7 +139,7 @@
           <div class="row">
             <div class="file-field input-field s3">
               <div id = "up" class="btn">
-                <span >UPLOAD / UPDATE CV</span>
+                <span >UPLOAD / RESUBMIT CV</span>
                 <input type="file" id="cv">  
               </div>
             
@@ -155,7 +159,7 @@
 
             <div class="file-field input-field s3">
               <div id = "up1" class="btn">
-                <span>UPLOAD / UPDATE REPORT</span>
+                <span>UPLOAD / RESUBMIT REPORT</span>
                 <input type="file" id="report">
               </div>
               <div class="file-path-wrapper s3">
@@ -174,7 +178,7 @@
           <div class="row">
             <div class="file-field input-field s3">
               <div id = "up" class="btn">
-                <span>UPLOAD / UPDATE IMPROVEMENT PLAN</span>
+                <span>UPLOAD / RESUBMIT IMPROVEMENT PLAN</span>
                 <input type="file" id="improvement">
               </div>
               <div class="file-path-wrapper s3">
@@ -196,7 +200,7 @@
 
           <div class="row">
             <div class="center">
-              <button class="btn waves-effect waves-light cancel" onclick="resetProfileFields()" id = "discard"> Discard
+              <button class="btn waves-effect waves-light cancel" onclick="discardClicked()" id = "discard"> Discard
               </button>
               <button class="btn waves-effect waves-light" id = "update" onclick="updateClicked()"> Update!
               </button>
@@ -217,12 +221,11 @@
         <?!= include('student_info_javascript'); ?>
 
         <script>
-        window.onload = function(){
-           resetProfileFields();
-          }
-        </script>
 
-        <script>
+          window.onload = function(){
+            resetProfileFields();
+            }
+
           var sts = document.getElementById("start-semester");
           var semesters = ["Fall","Summer","Spring"];
 
@@ -238,6 +241,7 @@
             }
           }
           M.FormSelect.init(sts);
+
         </script>
         
         </body>

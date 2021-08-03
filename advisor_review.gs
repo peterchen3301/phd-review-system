@@ -30,7 +30,11 @@ function getAllStudentRecords() {
     });
 
   }
-  return student_records.slice(1); // trim student_records[0] since it's header
+
+  student_records = student_records.slice(1); // trim student_records[0] since it's header
+  ratings = getThisAndLastYearReviewRaings()
+  ret = { "student_records" : student_records, "ratings" : ratings };
+  return ret;
 }
 
 
@@ -40,44 +44,53 @@ function toDateString( date_object ) {
 }
 
 
-// return object containing faculty and admin ratings
-function getReviewRaings( review_year ) {
 
-  ratings = {};
+function getThisAndLastYearReviewRaings( this_review_year = getActiveReviewYear() ) {
+
+  var ratings = getReviewRaingsByYears();
+  var last_review_year = this_review_year - 1;
+
+  return { "this_year" : ratings[this_review_year], "last_year" : ratings[last_review_year] };
+}
+
+
+// return faculty and admin ratings, classified by years
+function getReviewRaingsByYears() {
+
+  var ret = {};
 
   var student_review_sheet = SpreadsheetApp.openByUrl(student_review_sheet_url).getSheetByName("Sheet1");
   var student_records = student_review_sheet.getRange(2, 1, 
     student_review_sheet.getRange("A1").getDataRegion().getLastRow() - 1, 
     student_review_sheet.getRange("A1").getDataRegion().getLastColumn()).getValues();
 
-  for (var i = 0; i < student_records.length; i++) {
-    
+  for (var i = 0; i < student_records.length; i++) 
+  {  
     uin = student_records[i][0];
-
-    if( !(uin in ratings) ) {
-      ratings[uin] = { 'admin' : [], 'faculty' : [] };
-    }
-
     rating = student_records[i][4];
-    this_review_year = student_records[i][1];
+    review_year = student_records[i][1];
 
-    if ( review_year != this_review_year ) {
-      continue;
+    if( !(review_year in ret) )
+    {
+      ret[review_year] = {}
     }
-
+    if( !( uin in ret[review_year] ) ) 
+    {
+      ret[review_year][uin] = { 'admin' : "", 'faculty' : "" };
+    }
+        
     /*
-     * It judges the rewviewer as admin by whether "faculty_name" is "admin" or not.
-     * Consider change.
-     */
+    * It judges the rewviewer as admin by whether "faculty_name" is "admin" or not.
+    * Consider change.
+    */
     if( student_records[i][2] == "admin" ){
-      ratings[uin]['admin'] += rating;
+      ret[review_year][uin]['admin'] += rating + " ";
     }
     else {
-      ratings[uin]['faculty'] += rating;
+      ret[review_year][uin]['faculty'] += rating + " ";
     }
   }
-
-  return ratings;
+  return ret;
 }
 
 
@@ -194,27 +207,35 @@ function getEmptyReviewData() {
 
 
 // filter and get wanted student info from all 
-function handleSearchBtnClickedByUser(userInfo){
+function getFilteredStudentRecords( filter ){
+
+  console.log()
   
-  var filteredData = getAllStudentRecords();
+  var student_data = getAllStudentRecords();
+  var filtered_records = student_data["student_records"];
   
-  if(userInfo.firstName != null){
-    filteredData = ArrayLib.filterByText(filteredData, 2, userInfo.firstName);
+  if(filter.first_name != null){
+    filtered_records = ArrayLib.filterByText(filtered_records, 2, filter.first_name);
   }
 
-  if(userInfo.lastName != null){
-    filteredData = ArrayLib.filterByText(filteredData, 3, userInfo.lastName);
+  if(filter.last_name != null){
+    filtered_records = ArrayLib.filterByText(filtered_records, 3, filter.last_name);
   }
   
-  if(userInfo.uin != null){
-    filteredData = ArrayLib.filterByText(filteredData, 4, userInfo.uin);
+  if(filter.uin != null){
+    filtered_records = ArrayLib.filterByText(filtered_records, 4, filter.uin);
   }
-  
-  return filteredData;
+
+  student_data["student_records"] = filtered_records;
+
+  console.log("filter", filter);
+  console.log("student data", student_data);
+
+  return student_data;
 }
 
 
-function getReviewInformationForUinAndYear(uin, reviewYear, reviewer_account = getCurrentReviewerEmail() ) {
+function getReviewInformationFromUinAndYear(uin, reviewYear, reviewer_account = getCurrentReviewerEmail() ) {
 
   var filteredData = getAllStudentsReviewData();
 

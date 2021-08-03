@@ -1,7 +1,11 @@
+<!--  
+  student_info_javascript.html
+-->
+
 <script>
 
-  // dict of ( type_id : type_name )
   var doc_type_name = { "cv_url" : "CV", "report_url" : "REPORT", "improvement_plan_url" : "IMPROVEMENT PLAN", "department_letter_url" : "DEPARTMENT LETTER" };
+
 
   // get current user's (student) info, called every time we renew the page.
   function resetProfileFields() 
@@ -9,18 +13,14 @@
     google.script.run.withSuccessHandler(onSuccess).getProfileAndCurrentYearReview();
   }
 
+
   // assign html items with corresponding values, called every time when renewing student profle. 
   function onSuccess( user_data ) {
 
     setCurrentReviewYearAttribute();
 
-    console.log( user_data['student_info'] );
-    console.log( user_data['doc_urls'] );
-    console.log( user_data['review_comments'] );
-
     user_info = user_data['student_info'];
     setUserInfoAttribute( user_info );
-    setCVUrlAttribute( user_info['cv_url'], 'cv_url' );
 
     doc_urls = user_data['doc_urls'];
     setDocUrlsAttribute( doc_urls );
@@ -31,20 +31,89 @@
     M.updateTextFields();
     return;
   }
-  
 
-  // called when discard button clicked
-  function discardClicked(){
-    window.location.reload(false);
-    return true;
+
+  // called when discard button clicked, remove input elements
+  function discardClicked()
+  {
+    resetFileInputs();
+    return;
   }
-  
+
+
+  // reset input fields and wrappers of CV, Report and Improvement Plan 
+  function resetFileInputs()
+  {
+    document.getElementById("cv").value = '';
+    document.getElementById("cv_wrapper").value = '';
+
+    document.getElementById("report").value = '';
+    document.getElementById("report_wrapper").value = '';
+
+    document.getElementById("improvement").value = '';
+    document.getElementById("improvement_plan_wrapper").value = '';
+
+    return;
+  }
+
 
   // called when update button clicked
   function updateClicked(){
 
+    // no need to upload profile since they are set read-only from student view
+    // and thus cannot be edited
+    //uploadProfileToStudentInfo();
+
+    var current_review_year = document.getElementById("review_year_title").value;
+
+    var cv = document.getElementById("cv").files[0];
+    var report = document.getElementById("report").files[0];
+    var improvement = document.getElementById("improvement").files[0];
+
+    // upload CV
+    if (cv) { // if CV to be uploaded
+      console.log("CV uploading...");
+      document.getElementById('cv_wrapper').value = ""; // clear file-path-wrapper once uploaded
+      var cvURL = document.getElementById('cv_url');
+      cvURL.setAttribute("disabled", "disabled"); // disable cv_url
+      cvURL.removeAttribute("href");
+      cvURL.innerText = "UPLOADING CV..."
+      uploadDocument( cv, "cv", current_review_year);
+    }
+
+    // upload report
+    if (report) { // if report to be uploaded
+      console.log("Report uploading...");
+      document.getElementById('report_wrapper').value = ""; // clear file-path-wrapper once uploaded
+      var reportURL = document.getElementById('report_url');
+      reportURL.setAttribute("disabled", "disabled"); // disable cv_url
+      reportURL.removeAttribute("href");
+      reportURL.innerText = "UPLOADING REPORT..."
+      uploadDocument( report, "re", current_review_year );
+    }
+
+    // upload improvement plan
+    if (improvement) { // if improvement plan to be uploaded
+      console.log("Improvement plan uploading...");
+      document.getElementById('improvement_plan_wrapper').value = ""; // clear file-path-wrapper once uploaded
+      var improvementURL = document.getElementById('improvement_plan_url');
+      improvementURL.setAttribute("disabled", "disabled"); // disable cv_url
+      improvementURL.removeAttribute("href");
+      improvementURL.innerText = "UPLOADING IMPROVEMENT LETTER..."
+      uploadDocument( improvement, "ip", current_review_year );
+    }
+
+    resetFileInputs();
+
+    alert("Updating Data");
+    return;
+  }
+  
+
+  // upload personal profile to student_info_sheet
+  function uploadProfileToStudentInfo()
+  {
     var userInfo = {};
-    var current_review_year = document.getElementById("current_review_year").value;
 
     userInfo.firstname = document.getElementById("fn").value;
     userInfo.lastname = document.getElementById("ln").value;
@@ -78,46 +147,10 @@
     }
     
     google.script.run.submitProfileToStudentInfo(userInfo);
-  
-    // upload CV
-    var cv = document.getElementById("cv").files[0];
-    if (cv) { // if CV to be uploaded
-      console.log("CV uploading...");
-      document.getElementById('cv_wrapper').value = ""; // clear file-path-wrapper once uploaded
-      var cvURL = document.getElementById('cv_url');
-      cvURL.setAttribute("disabled", "disabled"); // disable cv_url
-      cvURL.removeAttribute("href");
-      cvURL.innerText = "UPLOADING CV..."
-      uploadCVFile(userInfo,cv,"cv");
-    }
 
-    // upload report
-    var report = document.getElementById("report").files[0];
-    if (report) { // if report to be uploaded
-      console.log("Report uploading...");
-      document.getElementById('report_wrapper').value = ""; // clear file-path-wrapper once uploaded
-      var reportURL = document.getElementById('report_url');
-      reportURL.setAttribute("disabled", "disabled"); // disable cv_url
-      reportURL.removeAttribute("href");
-      reportURL.innerText = "UPLOADING REPORT..."
-      uploadDocument( report, "re", current_review_year );
-    }
-
-    // upload improvement plan
-    var improvement = document.getElementById("improvement").files[0];
-    if (improvement) { // if improvement plan to be uploaded
-      console.log("Improvement plan uploading...");
-      document.getElementById('improvement_plan_wrapper').value = ""; // clear file-path-wrapper once uploaded
-      var improvementURL = document.getElementById('improvement_plan_url');
-      improvementURL.setAttribute("disabled", "disabled"); // disable cv_url
-      improvementURL.removeAttribute("href");
-      improvementURL.innerText = "UPLOADING IMPROVEMENT LETTER..."
-      uploadDocument( improvement, "ip", current_review_year );
-    }
-
-    alert("Updating Data");
-    return;
+    return
   }
+
 
   
   // upload CV file to GoogleDrive and update url to student_info_sheet
@@ -165,10 +198,11 @@ function uploadDocument( f, file_type, year ) {
 }
 
 
-// set up current-review-year attribute in student_info.html 
+// get current review year and set as title
 function setCurrentReviewYearAttribute() {
 
   google.script.run.withSuccessHandler(function(activeYear) {    
+
     if(activeYear == "None") {
       console.log(activeYear);
       $('input').attr('disabled', true);
@@ -181,16 +215,17 @@ function setCurrentReviewYearAttribute() {
       alert(" No Active Review Year");
     }
     else {
-      document.getElementById("current_review_year").value = activeYear;
-      document.getElementById("current_review_year").innerText = 'Review Year : ' + activeYear.toString();
+      document.getElementById("review_year_title").value = activeYear;
+      document.getElementById("review_year_title").innerText = 'Review Year : ' + activeYear.toString();
     }
+
   }).getActiveReviewYear();
 
   return;
 }
 
 
-// set up review comments of student_info.html 
+// set up review comments textarea
 function setReviewCommentAttribute( review_comments ) {
 
   if (review_comments['comments_for_student'] != ""){
@@ -205,49 +240,23 @@ function setReviewCommentAttribute( review_comments ) {
   return;
 }
 
-// set up student_report, impprovement_letter and department_letter hyperlink in student_info.html  
+// set up student_report, impprovement_letter and department_letter hyperlink
 function setDocUrlsAttribute( document_urls ) {
-  
-  setCVUrlAttribute( document_urls.report, 'report_url' );
-  /*
-  var report_url = document.getElementById('report_url');
-  if ( document_urls.report != "" ){
-    console.log( "report_url" + document_urls.report );
-    report_url.href = document_urls.report;
-  }
-  else {
-  report_url.href = "";
-  }
-  */
-  
-  setCVUrlAttribute( document_urls.improvement, 'improvement_plan_url' );
-  /*
-  var improvement_plan_url = document.getElementById( 'improvement_plan_url' );
-  if ( document_urls.improvement != "" ){
-    console.log( "improvement_plan_url" + document_urls.improvement );
-    improvement_plan_url.href = document_urls.improvement;
-  }
-  else {
-  improvement_plan_url.href = "";
-  }
-  */
 
-  setCVUrlAttribute( document_urls.departmentletter, 'department_letter_url' );
-  /*
-  var department_letter_url = document.getElementById( 'department_letter_url' );
-  if ( document_urls.departmentletter != "" ) {
-    console.log( "department_letter_url" + document_urls.departmentletter );
-    department_letter_url.href = document_urls.departmentletter;
-  }
-  else {
-  department_letter_url.href = "";
-  }
-  */
+  setUrlAttribute( document_urls.cv, 'cv_url' );
+  
+  setUrlAttribute( document_urls.report, 'report_url' );
+
+  setUrlAttribute( document_urls.improvement, 'improvement_plan_url' );
+
+  setUrlAttribute( document_urls.departmentletter, 'department_letter_url' );
+
 
   return;
 }
 
-// set up user-info items in student_info.html 
+
+// set up user-info items
 function setUserInfoAttribute( userInfo ) {
   
   document.getElementById("fn").value = userInfo.firstname;
@@ -313,8 +322,8 @@ function setUserInfoAttribute( userInfo ) {
 }
 
 
-// set up cv_url hyperlink in student_info.html 
-function setCVUrlAttribute( doc_url, id ) {
+// make hyperlink show innerText according to its file status 
+function setUrlAttribute( doc_url, id ) {
 
   var cvURL = document.getElementById( id );
   var this_type_name = doc_type_name[ id ]
@@ -344,7 +353,6 @@ function setCVUrlAttribute( doc_url, id ) {
 
     cvURL.href = "";
   }
-
   return;
 }
 

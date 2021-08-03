@@ -172,7 +172,7 @@ function get_links(uin){
   if (uin != ""){
     var year = document.getElementById("review-year").value;
     console.log("Year in dropdwon: ",year);
-    google.script.run.withSuccessHandler(onSuccess).get_urls(uin,year);
+    google.script.run.withSuccessHandler(onSuccess).getStudentDocumentUrls(uin,year);
   }else{
     alert("UIN not found Enter UIN first and then upload ");
   }

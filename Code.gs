@@ -319,7 +319,7 @@ function getProfileAndCurrentYearReview() {
   var review_year = getActiveReviewYear();
   var student_info = getProfileInformation();
   var uin = check_uin();
-  var doc_urls = get_urls( uin, review_year );
+  var doc_urls = getStudentDocumentUrls( uin, review_year );
   var review_comments = getReviewDetails( review_year );
 
   return { student_info, doc_urls, review_comments };
@@ -727,7 +727,6 @@ function uploadIp_R_ToDrive( content, filename, file_type, year ){
     return f.toString();
   }
   return file_type;
-  SpreadsheetApp.flush();
 }
 
 
@@ -778,9 +777,12 @@ function update_review_files_url(email,file_url,file_type,year){
       else if(file_type=="ip"){
         ww.getRange(i+1,3+1).setValue(file_url);
       }
-      else {
-        setRowValue(ww, rvalues, i, "4 department_review", file_url);
-    }
+      else if(file_type=="ip"){
+        ww.getRange(i+1,4+1).setValue(file_url);
+      }
+      else if(file_type=="cv"){
+        ww.getRange(i+1,5+1).setValue(file_url);
+      }
        break;
     }
    
@@ -788,16 +790,17 @@ function update_review_files_url(email,file_url,file_type,year){
   
   if(!flag){
     if(file_type=="re"){
-      ww.appendRow([uin,year,file_url
-                 ]);
+      ww.appendRow([uin,year,file_url]);
     }
     else if(file_type =="ip"){
-      ww.appendRow([uin,year,"",file_url
-                 ]);
+      ww.appendRow([uin,year,"",file_url]);
     }
     else if(file_type == "dl"){
       ww.appendRow([uin,year,"","",file_url]);
-  }
+    }
+    else if(file_type =="cv"){
+      ww.appendRow([uin,year,"",file_url]);
+    }
   }
   Logger.log("file url Updated")
 }
@@ -822,13 +825,14 @@ function check_uin(){
   return uin;
 }
 
-function get_urls(uin, year){
+function getStudentDocumentUrls(uin, year){
   
-  Logger.log("In function get_urls");
+  Logger.log("In function getStudentDocumentUrls");
   var urls ={};
-  urls.report="";
-  urls.improvement = "";
-  urls.departmentletter = "";
+  urls["report"] = "";
+  urls["improvement"] = "";
+  urls["departmentletter"] = "";
+  urls["cv"] = "";
 
   var rs = SpreadsheetApp.openByUrl(review_year_information_url);
   var ww = rs.getSheetByName("Sheet2");
@@ -837,16 +841,21 @@ function get_urls(uin, year){
   
   for (var i = 0; i < rvalues.length; i++) {
     if (rvalues[i][0] == uin && rvalues[i][1] == year) {
-      //Logger.log(rvalues[i][4]);
+
       if(rvalues[i][2]!=""){
-        urls.report = rvalues[i][2];
+        urls["report"] = rvalues[i][2];
       }
       if(rvalues[i][3]!=""){
-        urls.improvement = rvalues[i][3];
+        urls["improvement"] = rvalues[i][3];
       } 
       if(rvalues[i][4]!=""){
-        urls.departmentletter = rvalues[i][4];
+        urls["departmentletter"] = rvalues[i][4];
+      }
+      if(rvalues[i][5]!=""){
+        urls["cv"] = rvalues[i][5];
       } 
+
+
     }
   }
   Logger.log(urls);
@@ -856,7 +865,7 @@ function get_urls(uin, year){
 
 
 // get all the faculty's comment on current student in input review year
-function getReviewDetails(year){
+function getReviewDetails(year = getActiveReviewYear()){
   
   var email = Session.getActiveUser().getEmail();
   var comments = { "comments_for_student" : [], "comments_for_faculty" : [] };

@@ -56,7 +56,7 @@ function onChangeReviewYear() {
     var reviewYear = selectElement.options[selectElement.selectedIndex].value;
     //console.log(reviewYear + " " + uin);
     
-    google.script.run.withSuccessHandler(onSuccessToGetStudentReviewInformation).getReviewInformationForUinAndYear(uin, reviewYear);
+    google.script.run.withSuccessHandler(onSuccessToGetStudentReviewInformation).getReviewInformationFromUinAndYear(uin, reviewYear);
 }
 
 function onSuccessToGetStudentReviewInformation(result) {
@@ -86,7 +86,7 @@ function onSuccessToGetStudentReviewInformation(result) {
     var uin = uinElement.innerHTML;
     var year = selectElement.options[selectElement.selectedIndex].value;
     console.log("Selected year:",year);
-    google.script.run.withSuccessHandler(onSuccess).get_urls(uin,year);    
+    google.script.run.withSuccessHandler(onSuccess).getStudentDocumentUrls(uin,year);    
 }
 
 //Function for setting href of the html a tags
@@ -255,7 +255,7 @@ function reset_fields(){
   document.getElementById('dlname').value = "";
   var selectReviewYearElement = document.getElementById("review_year");
     var year = selectReviewYearElement.options[selectReviewYearElement.selectedIndex].value;
-  google.script.run.withSuccessHandler(onSuccess).get_urls(document.getElementById("uinForThisPage").innerHTML,year);
+  google.script.run.withSuccessHandler(onSuccess).getStudentDocumentUrls(document.getElementById("uinForThisPage").innerHTML,year);
   //get_data1();
   
 }

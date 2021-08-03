@@ -41,16 +41,16 @@
             <br>
             <div class = "row">
                 <div class = "col s3">
-                    <a id="student-personal-details" target = "_blank" class="waves-effect waves-light btn" href = "https://docs.google.com/spreadsheets/d/1ua9JtCU54lTgwjyuOyZJYxWU6d3KF-ue3fEGP9UbGtU/edit#gid=0">Student Personal Details</a>
+                    <a id="student_personal_details" target = "_blank" class="waves-effect waves-light btn" href = "">Student Personal Details</a>
                 </div>
                 <div class = "col s3">
-                    <a id="student-review-details" target = "_blank" class="waves-effect waves-light btn" href = "https://docs.google.com/spreadsheets/d/1oHgzdeU05UGMdV8hs_Gz1zNT24UEx_QjN720MjaHZN8/edit#gid=0">Student Review Details</a>
+                    <a id="student_review_details" target = "_blank" class="waves-effect waves-light btn" href = "">Student Review Details</a>
                 </div>
                 <div class = "col s3">
-                    <a id="list-of-students-faculties" target = "_blank" class="waves-effect waves-light btn" href = "https://docs.google.com/spreadsheets/d/1IMdzsWlEmiy0IkRb4t_WeqyT1NLsQF3PGvcHpP8ivo0/edit#gid=0">List of Students/Faculties</a>
+                    <a id="list_of_students_faculties" target = "_blank" class="waves-effect waves-light btn" href = "">List of Students/Faculties</a>
                 </div>
                 <div class = "col s3">
-                    <a id="review-year-information" target = "_blank" class="waves-effect waves-light btn" href = "https://docs.google.com/spreadsheets/d/1ATUYaas22ggAbztqhAHXFcqEt3SWSHPsdfqn163jD_c/edit#gid=0">Review Year Information</a>
+                    <a id="review_year_information" target = "_blank" class="waves-effect waves-light btn" href = "">Review Year Information</a>
                 </div>
             </div>
             <br>
@@ -104,6 +104,22 @@
       <?!= include("student_info_javascript") ?>
       <?!= include("admin_js") ?>
     
+
     
+    <script>
+
+        window.onload = function(){
+
+           google.script.run.withSuccessHandler( function( sheet_urls ){
+             document.getElementById("student_personal_details").href = sheet_urls['student_info_sheet_url'];
+             document.getElementById("student_review_details").href = sheet_urls['student_review_sheet_url'];
+             document.getElementById("list_of_students_faculties").href = sheet_urls['account_sheet_url'];
+             document.getElementById("review_year_information").href = sheet_urls['review_year_information_url'];
+           }).getSheetUrls();
+          }
+
+    </script>
+
+
   </body>
 </html>
