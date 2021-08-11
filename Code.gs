@@ -1,21 +1,23 @@
-// changed to test data
+/*
+ * Codes.gs
+ * 
+ */
 
-var userEmail = '';
+// immediately-invoked function expression, to avoid decalring global variables
+(function()
+{
 
-var Route = {};
-Route.path = function(param, callBack){
-  Route[param] = callBack;
-}
+  setAccountMapAsScriptProperties();
+
+
+})()
 
 
 function doGet(e){
-  
+
   var userInfo = {};
   userInfo.email = Session.getActiveUser().getEmail();
 
-  Logger.log(userInfo.email); //actions can be taken based on these
-  
-  userEmail = userInfo.email;
   var cls = null;
   if(e.parameters.v){
     cls = e.parameters.v; 
@@ -23,7 +25,25 @@ function doGet(e){
   else {
     cls = userClickedLogin(userInfo); 
   }
-  
+
+  var Route = getRoute();
+  if(Route[cls]){
+    return Route[cls](e); 
+  }else{
+    //return HtmlService.createHtmlOutput("<h1>Page Not Found!</h1>");
+    return loadHome();
+  }
+}
+
+
+// return an object of { route path : function that renders page to go to }
+function getRoute()
+{   
+  var Route = {};
+  Route.path = function(param, callBack)
+  {
+    Route[param] = callBack;
+  }
   Route.path("student_view", loadStudentView);
   Route.path("faculty_view", loadFacultyView);
   Route.path("admin_view", loadAdminView);
@@ -36,67 +56,68 @@ function doGet(e){
   Route.path("add_student", loadAddStudent);
   Route.path("remove_student", loadRemoveStudent);
 
-  if(Route[cls]){
-    return Route[cls](e); 
-  }else{
-    //return HtmlService.createHtmlOutput("<h1>Page Not Found!</h1>");
-    return loadHome();
-  }
-
+  return Route;
 }
+
 
 function userClickedLogin(userInfo){
 
-  if(search("Student", userInfo.email)){
+  var account = userInfo.email;
+  var identity = getCredential(account)
+
+  if(identity == "Student"){
     return 'student_view'; 
   }
-  else if(search("Faculty", userInfo.email)){
+  else if(identity == "Faculty"){
     return 'faculty_view';
   }
-  else if(search("Admin", userInfo.email)){
+  else if(identity == "Admin"){
     return 'admin_view';
   }
-  else{
-    return 'index';
-  }
+  return 'index';
 }
 
 
 // return if input user-account (default: current user) is admin.
 function isAdmin(account = Session.getActiveUser().getEmail()){
-  return "admin" == getCredential(account);
+  return "Admin" == getCredential(account);  
 }
 
 
 // return if input user-account (default: current user) is faculty.
 function isFaculty(account = Session.getActiveUser().getEmail()){
-  return "faculty" == getCredential(account);
+  return "Faculty" == getCredential(account);
 }
 
 
 // return if input user-account (default: current user) is student.
 function isStudent(account = Session.getActiveUser().getEmail()){
-  return "student" == getCredential(account);
+  return "Student" == getCredential(account);
 }
 
 
 // return the string representing identity of input user-account.
-function getCredential(account){
-  var userInfo = {};
-  userInfo.email = account;
-  var view = userClickedLogin(userInfo);
-  if(view =='student_view'){
-    return 'student';
+function getCredential(account = Session.getActiveUser().getEmail()){
+
+  var student_account_map = PropertiesService.getScriptProperties().getProperties()["Student"];
+  student_account_map = JSON.parse(student_account_map);
+    
+  var admin_account_map = PropertiesService.getScriptProperties().getProperties()["Admin"];
+  admin_account_map = JSON.parse(admin_account_map);
+
+  var faculty_account_map = PropertiesService.getScriptProperties().getProperties()["Faculty"];
+  faculty_account_map = JSON.parse(faculty_account_map);
+
+  if(account in student_account_map){
+  return 'Student';
   }
-  else if(view =='faculty_view'){
-    return 'faculty';
+  else if(account in faculty_account_map){
+    return 'Faculty';
   }
-  else if(view =='admin_view'){
-    return 'admin';
+  else if(account in admin_account_map){
+    return 'Admin';
   }
-  else{
-    return 'basic';
-  }
+  return 'Basic';
 }
 
 
@@ -104,24 +125,6 @@ function getCredential(account){
 function getCurrentUserCredential(){
   this_account = Session.getActiveUser().getEmail();
   return getCredential(this_account);
-}
-
-
-// search('Student', 'a.kunder@tamu.edu') or search('Faculty', 'xyz@tamu.edu')
-function search(sheetName, searchTerm){ 
-  var ss = SpreadsheetApp.openByUrl(account_sheet_url);
-  var ws = ss.getSheetByName(sheetName);
-  var data = ws.getRange(1, 1, ws.getLastRow(), 1).getValues();
-  var nameList = data.map(function (r){return r[0];});
-  
-  var index = nameList.indexOf(searchTerm);
-  //Logger.log([ss, sheetName, searchTerm, index]);
-  if(index>=0){
-    return 1;
-  }
-  else{
-    return 0;
-  }
 }
 
 
@@ -158,6 +161,7 @@ function loadRemoveStudent(e) {
   var uin = e.parameters.uin;
   var tmp = HtmlService.createTemplateFromFile("remove_student");
   tmp.uin = uin;
+
   var ss = SpreadsheetApp.openByUrl(student_info_sheet_url);
   var ws = ss.getSheetByName("Sheet1");
   var data = ws.getRange(1, 1, ws.getLastRow(), 1).getValues();
@@ -212,6 +216,7 @@ function loadAllStudentReviews(e){
       break;
       }
   }
+
   var ss1 = SpreadsheetApp.openByUrl(review_year_information_url);
   var ws1 = ss1.getSheetByName("Sheet1");
   var years = ws1.getRange(2,1,ws.getRange("A1").getDataRegion().getLastRow()-1,1).getValues().filter(String);
@@ -313,10 +318,9 @@ function rowValue(values, rowIdx, headerLabel) {
 }
 
 
-// get user's (student) profile, docs of current year, and review comments of current year
-function getProfileAndCurrentYearReview() {
+// get user's (student) profile, docs of input year, and review comments of input year
+function getProfileAndReviewByYear( review_year = getActiveReviewYear() ) {
 
-  var review_year = getActiveReviewYear();
   var student_info = getProfileInformation();
   var uin = check_uin();
   var doc_urls = getStudentDocumentUrls( uin, review_year );
@@ -394,6 +398,7 @@ function setRowValue(ws, values, rowIdx, headerLabel, value) {
 
 //Function to add student to the Login sheet
 function updateLoginSheet(userInfo) {
+
   var ss = SpreadsheetApp.openByUrl(account_sheet_url);
   var ws = ss.getSheetByName("Student");
   var values = ws.getDataRange().getValues();
@@ -421,6 +426,7 @@ function updateLoginSheet(userInfo) {
   
 
 function submitProfileToStudentInfo(userInfo){
+
   var ss = SpreadsheetApp.openByUrl(student_info_sheet_url);
   var ws = ss.getSheetByName("Sheet1");
   var values = ws.getDataRange().getValues();
@@ -544,8 +550,10 @@ function uploadFileToDrive(content, filename, name ,file_type, email){
 
 //Function for Departmental Letter upload by Admin
 function uploadDLToDrive(content,filename,file_type,year,fullName,uin) {
+  
   Logger.log("In uploadDLtoDrive:",fullName);
   //Code for fetching email of the student
+
   var ss = SpreadsheetApp.openByUrl(student_info_sheet_url);
   var ws = ss.getSheetByName("Sheet1");
   var values = ws.getDataRange().getValues();
@@ -637,16 +645,19 @@ function uploadDLToDrive(content,filename,file_type,year,fullName,uin) {
     return f.toString();
   }
 }
-  
 
 
 function uploadIp_R_ToDrive( content, filename, file_type, year ){
 
   SpreadsheetApp.flush();
-  Logger.log("In upload IP:",file_type);
+  Logger.log("In upload_IP");
+  Logger.log("input filename: ", filename);
+  Logger.log("file type: ", file_type);
+  Logger.log("year: ", year);
 
   var email = Session.getActiveUser().getEmail();
   var fullName = "";
+
   var ss = SpreadsheetApp.openByUrl(account_sheet_url);
   var ws = ss.getSheetByName("Student");
   var values = ws.getDataRange().getValues();
@@ -733,6 +744,7 @@ function uploadIp_R_ToDrive( content, filename, file_type, year ){
 function update_file_url(email,file_url){
   //Logger.log("In update file url");
   SpreadsheetApp.flush();
+
   var ss = SpreadsheetApp.openByUrl(student_info_sheet_url);
   var ws = ss.getSheetByName("Sheet1");
   var dataRange = ws.getDataRange();
@@ -749,8 +761,9 @@ function update_file_url(email,file_url){
 
 function update_review_files_url(email,file_url,file_type,year){
 //  var url = "https://docs.google.com/spreadsheets/d/1C5YZ2Lt903A-YGguYQH02JtL9vxs66sMydcD7BeZFJ4/edit#gid=0";
-//  Logger.log("In update review files");
-//  Logger.log("Updating review files url:",file_url);
+  Logger.log("In update review files");
+  Logger.log("Updating review files url:",file_url);
+
   var ss = SpreadsheetApp.openByUrl(student_info_sheet_url);
   var ws = ss.getSheetByName("Sheet1");
   var dataRange = ws.getDataRange();
@@ -777,7 +790,7 @@ function update_review_files_url(email,file_url,file_type,year){
       else if(file_type=="ip"){
         ww.getRange(i+1,3+1).setValue(file_url);
       }
-      else if(file_type=="ip"){
+      else if(file_type=="dl"){
         ww.getRange(i+1,4+1).setValue(file_url);
       }
       else if(file_type=="cv"){
@@ -825,14 +838,24 @@ function check_uin(){
   return uin;
 }
 
-function getStudentDocumentUrls(uin, year){
-  
-  Logger.log("In function getStudentDocumentUrls");
-  var urls ={};
-  urls["report"] = "";
-  urls["improvement"] = "";
-  urls["departmentletter"] = "";
-  urls["cv"] = "";
+
+// get urls of student documents (report, improvement letter, dept letter, cv) from input uin and year
+function getStudentDocumentUrls( uin, year = getActiveReviewYear() ){
+
+  var all_doc_urls = getAllDocumentUrlsByYear(year);
+
+  if( !(all_doc_urls[uin]) )
+  {
+    return { "report" : "", "improvement" : "", "departmentletter" : "", "cv" : "" };
+  }
+  return all_doc_urls[uin];
+}
+
+
+// get all the urls of student documents (report, improvement letter, dept letter, cv) of input year
+function getAllDocumentUrlsByYear( year = getActiveReviewYear() )
+{
+  var ret = {};
 
   var rs = SpreadsheetApp.openByUrl(review_year_information_url);
   var ww = rs.getSheetByName("Sheet2");
@@ -840,27 +863,39 @@ function getStudentDocumentUrls(uin, year){
   var rvalues = rdataRange.getValues();
   
   for (var i = 0; i < rvalues.length; i++) {
-    if (rvalues[i][0] == uin && rvalues[i][1] == year) {
 
-      if(rvalues[i][2]!=""){
-        urls["report"] = rvalues[i][2];
-      }
-      if(rvalues[i][3]!=""){
-        urls["improvement"] = rvalues[i][3];
-      } 
-      if(rvalues[i][4]!=""){
-        urls["departmentletter"] = rvalues[i][4];
-      }
-      if(rvalues[i][5]!=""){
-        urls["cv"] = rvalues[i][5];
-      } 
+    var this_uin = rvalues[i][0];
+    var this_year = rvalues[i][1];
 
-
+    if( this_year != year )
+    {
+      continue;
     }
-  }
-  Logger.log(urls);
-  return urls;
 
+    if( !(this_uin in ret) )
+    {
+      ret[this_uin] = {};
+    }
+    if( !(this_year in ret[this_uin]) )
+    {
+      ret[this_uin] = { "report" : "", "improvement" : "", "departmentletter" : "", "cv" : "" };
+    }
+
+    if(rvalues[i][2]!=""){
+      ret[this_uin]["report"] = rvalues[i][2];
+    }
+    if(rvalues[i][3]!=""){
+      ret[this_uin]["improvement"] = rvalues[i][3];
+    } 
+    if(rvalues[i][4]!=""){
+      ret[this_uin]["departmentletter"] = rvalues[i][4];
+    }
+    if(rvalues[i][5]!=""){
+      ret[this_uin]["cv"] = rvalues[i][5];
+    } 
+    
+  }
+  return ret;
 }
 
 
@@ -883,7 +918,6 @@ function getReviewDetails(year = getActiveReviewYear()){
     }
   }
   //Logger.log(uin);
-  
   var rs = SpreadsheetApp.openByUrl(student_review_sheet_url);
   var ww = rs.getSheetByName("Sheet1");
   var rdataRange = ww.getDataRange();
@@ -912,24 +946,25 @@ function getReviewDetails(year = getActiveReviewYear()){
   return comments;
 }
 
-//////////////////////////////////////
 
-function get_advisor_list(){
-  
-  var ss = SpreadsheetApp.openByUrl(account_sheet_url);
-  var ws = ss.getSheetByName("Faculty");
-  var list = ws.getRange(2,2, ws.getRange("A2").getDataRegion().getLastRow(),1).getValues();
-  
-  //Logger.log("Faculty list ",list);
-  
-  var advisorlist = list.map(function(r){return '<option value="'+r[0]+'">'+r[0]+'</option>';}).join('');
-  //Logger.log(advisorlist)
-  
-  return advisorlist;
+// get list of active advisors for dropdown list at add_student.html
+function getAdvisorList(){
+
+  const advisor_list = [];
+
+  var faculty_account_map = PropertiesService.getScriptProperties().getProperties()["Faculty"];
+  var faculty_names = Object.values(JSON.parse(faculty_account_map));
+
+  for ( var name of faculty_names ) 
+  {
+    advisor_list.push('<option value="' + name + '">' + name + '</option>');
+  }
+
+  return advisor_list;
 }
 
-////////////////////////////////////////////////////////// Other Stuff ///////////////////////////////////////////////////////////////////////////////
 
+// for client-side codes to call other html contents
 function include(filename){
   return HtmlService.createHtmlOutputFromFile(filename).getContent();
 }
@@ -970,4 +1005,33 @@ function getFileNameFromURL(url) {
 // input url of file on Google Drive, extract the id part and return
 function getIdFromUrl(url) { 
   return url.match(/[-\w]{25,}/); 
+}
+
+
+// set up map of identites ('Student', 'Faculty', 'Admin') to Script Properties
+function setAccountMapAsScriptProperties()
+{
+  var scriptProperties = PropertiesService.getScriptProperties();
+  var spreadsheet = SpreadsheetApp.openByUrl(account_sheet_url);
+  var identities = ['Student', 'Faculty', 'Admin'];
+
+  for( var i = 0; i < identities.length; i++ )
+  {
+    var identity = identities[i];
+    var map = {};
+    var worksheet = spreadsheet.getSheetByName(identity);
+    var data = worksheet.getRange(2, 1, worksheet.getLastRow()-1, 2).getValues();
+
+    for( var j = 0; j < data.length; j++ )
+    {
+      var this_account = data[j][0]
+      var this_name = data[j][1];
+      map[this_account] = this_name;
+    }
+ 
+    var json_map = JSON.stringify(map);
+    scriptProperties.setProperty(identity, json_map);
+  }
+
+  return;
 }

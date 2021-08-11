@@ -1,6 +1,9 @@
 /*
- * Sheet url variables and functions. These are used by the whole project so you only have to modify here 
- * while migrating databasae.
+ * sheet_urls.gs
+ * 
+ * Sheet url variables and functions. These are used by the whole project so you only have to modify here while migrating databasae.
+ * 
+ * Note that this scipt must be at top to make it accessable by later immediately-invoked function expressions.
  */
 
 var account_sheet_url = "https://docs.google.com/spreadsheets/d/16q1qt5JTmCsSaUz_ixYswOWi6LDDOC8SZz2NvYTx7zI/edit#gid=0";

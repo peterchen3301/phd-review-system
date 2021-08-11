@@ -1,5 +1,6 @@
 <!--  
   student_info_javascript.html
+  
 -->
 
 <script>
@@ -10,7 +11,7 @@
   // get current user's (student) info, called every time we renew the page.
   function resetProfileFields() 
   { 
-    google.script.run.withSuccessHandler(onSuccess).getProfileAndCurrentYearReview();
+    google.script.run.withSuccessHandler(onSuccess).getProfileAndReviewByYear();
   }
 
 
@@ -151,9 +152,8 @@
     return
   }
 
-
   
-  // upload CV file to GoogleDrive and update url to student_info_sheet
+  // upload CV file to GoogleDrive and update url to student_info_sheet : not useful
   function uploadCVFile( userInfo, f, file_type ) {
 
     var file, reader = new FileReader();
@@ -185,8 +185,10 @@ function uploadDocument( f, file_type, year ) {
   
   reader.onloadend = function(e) {
     google.script.run.withSuccessHandler(resetProfileFields).uploadIp_R_ToDrive(
-    e.target.result, file.name,
-    file_type,year
+    e.target.result, 
+    file.name,
+    file_type,
+    year
     );
   };
 
@@ -194,7 +196,7 @@ function uploadDocument( f, file_type, year ) {
   if(file){  
     reader.readAsDataURL(file);
   }
-  console.log("end");
+  return;
 }
 
 

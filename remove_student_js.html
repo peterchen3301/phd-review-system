@@ -1,10 +1,16 @@
+<!--  
+  remove_student_js.html
+-->
+
+
 <script>
 //Function to mark is_current_student as 0 when student is removed from program
     function removeStudent() {
     console.log("In function removeStudent");
     var uin = document.getElementById("uinValue").innerHTML;
     console.log(uin);
-    google.script.run.markStudentAsRemoved(uin);
-    alert("Student no longer in the program");
+    google.script.run.withSuccessHandler(function(){
+        alert("Student no longer in the program");
+    }).markStudentAsRemoved(uin);
     }
 </script>

@@ -1,3 +1,7 @@
+<!--  
+  add_student_review.html
+-->
+
 <!DOCTYPE html>
 <html>
   <head>
@@ -17,7 +21,7 @@
       <base target="_top">
 
   </head>
-  <body onload = "onLoadAddStudentReview()">
+  <body onload = "onLoad()">
   <div class="navbar-fixed" style="height: 110px">
         <nav class="nav-extended tamu-navbar">
           <div class="nav-wrapper tamu-navbar">
@@ -49,20 +53,7 @@
             <label visible="false" class = "hide" id = "lname" ><?=lastName?></label>
             <br>
             <form class="col s12" >
-            
-              <!--div class="row">
 
-                <div class="input-field col s3">
-                  <select id = "reviewYear" onchange = "onChangeReviewYear()">
-                    <option value = "2020">2020</option>
-                    <option value = "2019">2019</option>
-                    <option value = "2018">2018</option>
-                    <option value = "2017">2017</option>
-                  </select>
-                  <label>Review Year</label>
-                </div>
-
-              </div-->
             <div class="row">
             <div class="input-field col s3">
               <select id="review_year" class="validate" onchange="onChangeReviewYear()">
@@ -106,6 +97,8 @@
                 </div>
 
               </div>
+
+              <!--
               <div class="file-field input-field s3">
                 <div id = "dl" class="btn">
                   <span>Add Departmental Letter</span>
@@ -115,6 +108,39 @@
                   <input class="file-path validate" id = "dlname" type="text">
                 </div>
               </div>
+              -->
+
+              <div class="row">
+                <a id ="department_letter_url" class="waves-effect waves-light btn" target="_blank" href="" disabled>
+                  LOADING Department Letter...
+                </a>
+              </div>
+
+              <div class="row">
+                <div class="file-field input-field s3">
+                  <div id = "up" class="btn">
+                    <span >UPLOAD / RESUBMIT DEPARTMENT LETTER</span>
+                    <input type="file" id="dl">  
+                  </div>
+                
+                  <div class="file-path-wrapper s3">
+                    <input class="file-path validate" id = "dl_wrapper" type="text">
+                  </div>
+                </div>
+              </div>
+
+              <div class="row">
+                <a id ="report_url" class="waves-effect waves-light btn" target="_blank" href="" disabled>
+                  LOADING REPORT...
+                </a>
+              </div>
+
+              <div class="row">
+                <a id ="improvement_plan_url" class="waves-effect waves-light btn" target="_blank" href="" disabled>
+                  LOADING IMPROVEMENT PLAN...
+                </a>
+              </div>
+              
 
               <div class="row adminOnly" id="adminOnlyNotes">
                 <div class="col s6">
@@ -206,10 +232,18 @@
                 </div>
 
               </div>
-              <a id="reviewSubmitButton" class="waves-effect waves-light btn">Submit</a>
-              <a id="viewStudentReport" target="_blank" class="waves-effect waves-light btn" onmousedown = "check_re()">View Student Report</a>
-              <a id="viewImprovementPlan" target="_blank" class="waves-effect waves-light btn" onmousedown = "check_ip()">View Improvement Plan</a>
-              <a id="viewDepartmentLetter" target="_blank" class="waves-effect waves-light btn" onmousedown = "check_dl()">View Department Letter</a>
+
+              <div class="row">
+                <div class="center">
+
+                  <a id="reviewSubmitButton" class="waves-effect waves-light btn" onclick="onSubmitClicked()">Submit</a>
+
+                </div>
+              </div>
+
+          <div class="row">
+          </div>
+
             </form>
           </div>
         </div>
@@ -220,6 +254,8 @@
       <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
       
       <?!= include("student_info_javascript") ?>
+
+      
       <?!= include("add_student_review_js") ?>
     
     

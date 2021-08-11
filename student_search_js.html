@@ -1,3 +1,7 @@
+<!--  
+  student_search_js.html
+-->
+
 <script>
 
 document.getElementById("admin-view").style.visibility = "hidden";
@@ -112,12 +116,12 @@ var columns = [
     width: 110
   },
   {
-    id: 'more_student_details',
-    name: 'More Student Details',
-    field: 'more_student_details',
-    sortable: false,
+    id: 'report',
+    name: 'Student Report',
+    field: 'report',
+    sortable: true,
     formatter: linkFormatter,
-    width: 120
+    width: 110
   },
   {
     id: 'all_reviews',
@@ -177,6 +181,7 @@ function onSuccess(student_data) {
 
   all_student_records = student_data["student_records"];
   ratings = student_data["ratings"];
+  documents = student_data["documents"];
 
   var data = [];
   var j = 0;
@@ -191,69 +196,18 @@ function onSuccess(student_data) {
 
     var this_student_data = (data[j++] = {});
     var this_student_uin = all_student_records[i][4];
+    this_student_data["uin"] = this_student_uin;
 
-    // map this student's profile
-    this_student_data["uin"] = this_student_uin,
-    this_student_data["name"] = all_student_records[i][3] + ', ' + all_student_records[i][2],
-    this_student_data["advisor"] = all_student_records[i][9],
-    this_student_data["start_semester"] = all_student_records[i][6],
-    this_student_data["prelim_date"] = all_student_records[i][15],
-    this_student_data["proposal_date"] = all_student_records[i][16],
-    this_student_data["final_defense_date"] = all_student_records[i][17],
-    this_student_data["qual_exam"] = all_student_records[i][12],
-    this_student_data["degree_plan_submitted"] = all_student_records[i][11];
+    var this_student_records = all_student_records[i];
+    this_student_data = setStudentProfileAttributes( this_student_data, this_student_records );
 
-    // map student ratings 
-    this_student_data["this_year_faculty_rating"] = "n/a";
-    this_student_data["this_year_admin_rating"] = "n/a";
-    this_student_data["last_year_admin_rating"] = "n/a";
-    if( ratings["this_year"] && ratings["this_year"][this_student_uin] )
-    {
-      var this_faculty_rating = ratings["this_year"][this_student_uin]["faculty"]
-      this_student_data["this_year_faculty_rating"] = !this_faculty_rating ? "n/a" : this_faculty_rating;
+    var this_student_ratings = ratings[this_student_uin];
+    this_student_data = setStudentRatingAttributes( this_student_data, this_student_ratings );
 
-      var this_admin_rating = ratings["this_year"][this_student_uin]["admin"]
-      this_student_data["this_year_admin_rating"] = !this_admin_rating ? "n/a" : this_admin_rating;
-    }
+    var this_student_documents = documents[this_student_uin];
+    this_student_data = setStudentDocumentAttributes( this_student_data, this_student_documents );
 
-    if( ratings["last_year"] && ratings["last_year"][this_student_uin] )
-    {
-      var last_admin_rating = ratings["last_year"][this_student_uin]["admin"]
-      this_student_data["last_year_admin_rating"] = !last_admin_rating ? "n/a" : last_admin_rating;
-    }
-
-    // map CV link
-    if(all_student_records[i][14]!="") {
-      this_student_data["cv"] = "<a href=" + all_student_records[i][14] + " target = \"_blank\"><u>CV</u></a>";
-    }
-    else
-    {
-      this_student_data["cv"] = "Not available";
-    }
-    
-    console.log("CVVVV:",this_student_data["cv"]);
-    console.log( scriptUrl + "?v=student_details&uin=" + all_student_records[i][4] );
-    var t = "'" + scriptUrl + "?v=student_details&uin=" + all_student_records[i][4] +"'";
-    console.log(t);
-    console.log("<a href=" + t + "<u>Details</u></a>");
-    this_student_data["more_student_details"] = "<a href=" + t + " target = \"_blank\"><u>Details</u></a>",
-
-    console.log(scriptUrl + "?v=see_reviews&uin=" + all_student_records[i][4]);
-    var t = "'" + scriptUrl + "?v=see_reviews&uin=" + all_student_records[i][4] +"'";
-    console.log(t);
-    console.log("<a href=" + t + "<u>Details</u></a>");
-    this_student_data["all_reviews"] = "<a href=" + t + " target = \"_blank\"><u>Reviews</u></a>",
-        
-    console.log(scriptUrl + "?v=add_review&uin=" + all_student_records[i][4]);
-    var t = "'" + scriptUrl + "?v=add_review&uin=" + all_student_records[i][4] +"'";
-    console.log(t);
-    console.log("<a href=" + t + "<u>Details</u></a>");
-    this_student_data["add_review"] = "<a href=" + t + " target = \"_blank\"><u>Add Review</u></a>"
-        
-    // Adding link to remove student page
-    var t = "'" + scriptUrl + "?v=remove_student&uin=" + all_student_records[i][4] +"'";
-    this_student_data["remove"] = "<a href=" + t + " target = \"_blank\"><u>Remove</u></a>"
-        
+    this_student_data = setStudentLinkAttributes( this_student_data, this_student_uin );
   }
     
   grid = new Slick.Grid( '#myGrid', data, columns, options );
@@ -286,6 +240,89 @@ function onSuccess(student_data) {
 
 
   return;
+}
+
+
+// fill table elements with student data
+function setStudentProfileAttributes( this_student_data, this_student_records )
+{
+  this_student_data["name"] = this_student_records[3] + ', ' + this_student_records[2];
+  this_student_data["advisor"] = this_student_records[9];
+  this_student_data["start_semester"] = this_student_records[6];
+  this_student_data["prelim_date"] = this_student_records[15];
+  this_student_data["proposal_date"] = this_student_records[16];
+  this_student_data["final_defense_date"] = this_student_records[17];
+  this_student_data["qual_exam"] = this_student_records[12];
+  this_student_data["degree_plan_submitted"] = this_student_records[11];
+
+  return this_student_data;
+}
+
+
+// fill table elements with student ratings
+function setStudentRatingAttributes( this_student_data, this_student_ratings )
+{
+  this_student_data["this_year_faculty_rating"] = "-";
+  this_student_data["this_year_admin_rating"] = "-";
+  this_student_data["last_year_admin_rating"] = "-";
+
+  if(!this_student_ratings)
+  {
+    return this_student_data;
+  }
+  if( this_student_ratings["admin_this_year"] != "" )
+  {
+    this_student_data["this_year_admin_rating"] = this_student_ratings["admin_this_year"];
+  }
+  if( this_student_ratings["admin_last_year"] != "" )
+  {
+    this_student_data["last_year_admin_rating"] = this_student_ratings["admin_last_year"];
+  }
+  if( this_student_ratings["faculty_this_year"] != "" )
+  {
+    this_student_data["this_year_faculty_rating"] = this_student_ratings["faculty_this_year"];
+  }
+  
+  return this_student_data;
+}
+
+
+// fill table elements with document (CV, report) links
+function setStudentDocumentAttributes( this_student_data, this_student_documents )
+{
+  this_student_data["cv"] = "-";
+  this_student_data["report"] = "-";
+
+  if( !this_student_documents )
+  {
+    return this_student_data;
+  }
+  if(this_student_documents["cv"] != "") 
+  {
+    this_student_data["cv"] = "<a href=" + this_student_documents["cv"] + " target = \"_blank\"><u>CV</u></a>";
+  }
+  if(this_student_documents["report"] != "") 
+  {
+    this_student_data["report"] = "<a href=" + this_student_documents["report"] + " target = \"_blank\"><u>Reports</u></a>";
+  }
+
+  return this_student_data;
+}
+
+
+// fill table elements with links to pages (reviews, add-review, remove)
+function setStudentLinkAttributes( this_student_data, this_student_uin )
+{
+  var review_link = "'" + scriptUrl + "?v=see_reviews&uin=" + this_student_uin +"'";
+  this_student_data["all_reviews"] = "<a href=" + review_link + " target = \"_blank\"><u>Reviews</u></a>";
+
+  var add_review_link = "'" + scriptUrl + "?v=add_review&uin=" + this_student_uin +"'";
+  this_student_data["add_review"] = "<a href=" + add_review_link + " target = \"_blank\"><u>Add Review</u></a>";
+
+  var remove_link = "'" + scriptUrl + "?v=remove_student&uin=" + this_student_uin +"'";
+  this_student_data["remove"] = "<a href=" + remove_link + " target = \"_blank\"><u>Remove</u></a>";
+
+  return this_student_data;
 }
 
 
