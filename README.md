@@ -38,7 +38,7 @@ Urls of these datasheets are directed to [sheet_urls.gs](sheet_urls.gs), simply 
   - risk of race conditions, declaration and definotion chaos, and many more... 
 
   *Possible solutions:*
-  - for variables that persist within whole session, use [Web Storage API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Storage_API).
+  - for variables that persist within whole session, ~~use [Web Storage API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Storage_API)~~ refer to [Property Service](https://developers.google.com/apps-script/guides/properties) or [Cache Service](https://developers.google.com/apps-script/reference/cache/cache-service) for Google App Script.
   - for variables that are used in initialization, wrap them with immediately-invoked function expression.
   - for client-side scripts, wrap them with page onload listener functions.
 
@@ -60,7 +60,7 @@ Urls of these datasheets are directed to [sheet_urls.gs](sheet_urls.gs), simply 
   - As mentioned in 1., the reviewer identity judgement fails since no reviewer will be saved with a name "admin"
 
   *Possible solutions:*
-  - Implement a function ```getReviewerIdentity()``` that gets current reviewer's identity from his/her TAMU email address. To be more effecient, you can store a hashtable of { TAMU email address : "faculty/admin/student" } at local storage through [Web Storage API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Storage_API).
+  - Implement a function ```getReviewerIdentity()``` that gets current reviewer's identity from his/her TAMU email address. To be more effecient, you can store a hashtable of { TAMU email address : "faculty/admin/student" } at local storage ~~through [Web Storage API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Storage_API)~~ through [Property Service](https://developers.google.com/apps-script/guides/properties) or [Cache Service](https://developers.google.com/apps-script/reference/cache/cache-service) for Google App Script.
   - It should be ```getReviewerName()```, not ```getFacultyName()```.
 
 * At "review year" drop-down list in [add_student_review.html](add_student_review.html), the default value is a string of "null", not a literal null value.
