@@ -14,13 +14,13 @@ Urls of these datasheets are directed to [sheet_urls.gs](sheet_urls.gs), simply 
 
 ## Things I wish I knew beforehand
 
-* Google App Script IDE sucks. If you encouter eternal deploying (The waitbar never ends while deploying) all of the sudden, I faced that twice. The only way you can do at this stage is to create another new project, and copy all the files and configs to there and restart.
+* Google App Script IDE sucks. If you encouter eternal deploying (The waitbar never ends while deploying) all of the sudden, I faced that twice: it looks like the only way you can do create another new project, copy all the files and configs nad start over.
 
-* You'll have to import Google Sheet Service ("Sheet") and ArrayLib Library. Setting Sheet up is straightforward but setting up ArrayLib Library will bring you some trouble. Save your trouble by [looking at this](https://sites.google.com/site/scriptsexamples/custom-methods/2d-arrays-library). Remember to switch your IDE to legacy editor for this.
+* You'll have to import Googlesheet API Service ("Sheet") and ArrayLib Library to this project. Setting up Googlesheet API Service is straightforward but setting up ArrayLib Library will bring you some trouble. Save your trouble by [looking at this](https://sites.google.com/site/scriptsexamples/custom-methods/2d-arrays-library). Remember to switch your IDE to legacy editor for this.
 
-* You can manage your project through github using [Google App Script GitHub Assistant](https://chrome.google.com/webstore/detail/google-apps-script-github/lfjcgcmkmjjlieihflfhjopckgpelofo/related?hl=en) add-on. It is, however kinda limited. For example, each log-in and each token is only available to access the project by one particular computer. If you switched to another computer, since there's no log-out option, you have to remove this GitHub add-on, reinstall it and re-generate a token for it to log-in. Also, I tried connecting to TAMU GitHub but failed so I suggest using [ordinary one](https://github.com/). If that drives you crazy, try primitive way: copy then past. It will work for sure. 
+* You can manage your project through github using [Google App Script GitHub Assistant](https://chrome.google.com/webstore/detail/google-apps-script-github/lfjcgcmkmjjlieihflfhjopckgpelofo/related?hl=en) add-on. However, it has kinda limited functionality. For example, each log-in and each token is only available to link to the project through one particular computer. If you switched to another computer, since there's no log-out option, you have to remove this GitHub add-on, reinstall it and re-generate a token for it to log-in. Also, I tried accessing to TAMU GitHub but failed so I suggest using [ordinary one](https://github.com/). If this stuff drives you crazy, try primitive way: copy then past. It works for sure. 
 
-* The file-uploading functions: ```uploadFileToDrive()```, ```uploadDLToDrive()``` & ```uploadIp_R_ToDrive()``` at [Code.gs](Code.gs) are miracles: I tried to debug and maintain them but once I saw them I gave it up, considering my limited intelligence and lifetime. Anyone manged to do this will win my ultimate respect.
+* The file-uploading functions: ```uploadFileToDrive()```, ```uploadDLToDrive()``` & ```uploadIp_R_ToDrive()``` at [Code.gs](Code.gs) are miracles: I tried to debug and maintain them but gave it up after all, considering my limited intelligence and lifetime. Anyone manages to do this will earn my ultimate respect.
  
 ## dev note
 
@@ -127,12 +127,16 @@ Urls of these datasheets are directed to [sheet_urls.gs](sheet_urls.gs), simply 
 
 * Links to student documents (report / improvement plan / deptartment letter) are accessible at add_student_review.html. Shouldn't them be at see_reviews.html?
 
+* Maybe add a wait bar at pages that spend couple of seconds loading, like add_student_review.html, student_info.html & student_search.html to indicate users that the pages are still loading and be patient.
+
+* If you have plenty of time and want to do some unit tests. [QUnitGS2](http://qunitgs2.com/) may be the most promising one among a bunch of options. However, this test outputs will be shown in html so you need to add add it into the current router ```Route.path = function(param, callBack)``` in [Code.gs](Code.gs). And if you still got some time after this, ask prof. Walker how important unit test is! 
+
 ## Author of this branch
 
 Hsing-Yu Chen 
 
 ### Contact
 
-I know my progrom sucks, so in case you find it hard to realize my code, I left my contact info here so you are free to ask me anytime. 
+Forgive my lossy code. If you find it hard to realize my code, or if you have any questions & feedbacks, feel free to write me an email!
 - [peterchen3301@tamu.edu](mailto:peterchen3301@tamu.edu)
 - [peterchen33011@gmail.com](mailto:peterchen33011@gmail.com)
