@@ -2,15 +2,21 @@
 
 A dev branch of PhD review system for Department of Computer Science and Engineering, Texas A&amp;M University, College Station
 
-## Author
+## How to migrate datasheets?
 
-[Hsing-Yu Chen](mailto:peterchen33011@tamu.edu?subject=[GitHub]%20Source%20Han%20Sans)
+4 Google datasheets are used in this projects, which are:
+* Account Sheet
+* Student Info Sheet
+* Student Review Sheet
+* Review Year Information Sheet
+
+Urls of these sheets are directed to [sheet_urls.gs](sheet_urls.gs), simply modify them to migrate.
 
 ## dev note
 
 ### Completed
 
-* **"Temporarily" solved the bug of student review overriding. However, current code is still considered vulnerable, please see [below message](https://github.com/peterchen3301/phd-review-system/blob/hychen/README.md#dev-plans) .**
+* **"Temporarily" solved the bug of student review overriding. However, current code is still considered vulnerable.
 
 * Fixed the url mangling bug, where domain name "a/tamu.edu/" repeated erroneously. 
 
@@ -18,23 +24,22 @@ A dev branch of PhD review system for Department of Computer Science and Enginee
 
 * Made "Comments For Student" textarea auto-resizable depending on content length, also manual resizable.
 
-![demo1](https://github.com/peterchen3301/phd-review-system/blob/hychen/demo_images/demo1.png?raw=true)
-
-* Made "Attempts Completed" and "Degree Plan Submitted" label texts in [student_details.html](student_details.html) keep in one-line. They used to be wrapped and would break line if browser window is small.
-
-before:
-
-![demo2_1](https://github.com/peterchen3301/phd-review-system/blob/hychen/demo_images/demo_2_1.png?raw=true)
-
-fixed:
-
-![demo2_2](https://github.com/peterchen3301/phd-review-system/blob/hychen/demo_images/demo_2_2.png?raw=true)
+* Made "Attempts Completed" and "Degree Plan Submitted" label texts in student_details.htm.
 
 * Added columns in student search table (student_search.html) to show Prelim/Propose/Final Defense dates.
 
-![demo_3](https://github.com/peterchen3301/phd-review-system/blob/hychen/demo_images/demo_3.png?raw=true)
+* Student_details.html is obsolete (but not depricated yet), since student details are no longer needed from student search table.
 
-### Dev plans
+### What to do
+
+* **Gloabal variables are widely used in server-side script (.gs) and client-side script (XXX_js.html / XXX_javascript.html), which is a bad idea.**
+ 
+  *Threatens:* 
+  - risk of race conditions, declarations and definotion chaos and many more... 
+
+  *Possible solutions:*
+  - wrap variables using immediated invoked function expression
+  - for client-side scripts, wrap them with page onload listener functions
 
 * **The root cause of admin/faculty review overriding bug is that the routes to fetch from / submit the reviews are different.** While getting review at [add_student_review.html](add_student_review.html), the function ```getReviewInformationForUinAndYear()``` at [advisor_review.gs](advisor_review.gs) is called to search and filter from all the reviews. However, while submitting review, a different function ```updateStudentReviewDetails()``` at [advisor_review.gs](advisor_review.gs) is called.
 
@@ -48,7 +53,7 @@ fixed:
 * At "review year" drop-down list in [add_student_review.html](add_student_review.html), the default value is a string of "null", not a literal null value.
 
   *Threatens:* 
-  - confusion in terminology
+  - confusion with syntax terminology
   - Data management hardship
 
   *Possible solutions:*
@@ -87,14 +92,8 @@ fixed:
   - Store date as a string of "MM/DD/YYYY" and notice the user to enter dates in Texas timezone. << should be better
   - Add a drop-down list to let users specify their timezone.
 
-* remove "student details" column in search table ( [student_search.html](student_search.html) )
+* Links to student documents (report / improvement plan / deptartment letter) are accessible at add_student_review.html. Shouldn't them be at see_reviews.html?
 
-* add "reviewers & departmental rating" columns for both current & last year in search table ( [student_search.html](student_search.html) )
+## Author for this branch
 
-* Disable prelim/proposal/final defense date editing from student view
-
-* allow student to upload CV, report and everything in one page
-
-* add "student report" column at the right of "CV" column in search table ( [student_search.html](student_search.html) )
-
-* make "reviews for the faculty" visible in review page 
+[Hsing-Yu Chen](mailto:peterchen33011@tamu.edu?subject=[GitHub]%20Source%20Han%20Sans)
