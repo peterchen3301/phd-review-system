@@ -10,7 +10,7 @@ A dev branch of PhD review system for Department of Computer Science and Enginee
 * Student Review Sheet
 * Review Year Information Sheet
 
-Urls of these datasheets are directed to [sheet_urls.gs](sheet_urls.gs), simply modify them to your target datasheets urls to complete migration.
+Urls of these datasheets are directed to [sheet_urls.gs](sheet_urls.gs), simply modify them to your target datasheet urls to complete migration.
 
 ## dev note
 
