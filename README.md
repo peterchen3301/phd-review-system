@@ -132,5 +132,7 @@ Urls of these datasheets are directed to [sheet_urls.gs](sheet_urls.gs), simply 
 Hsing-Yu Chen 
 
 ### Contact
+
+I know my progrom sucks, so in case you find it hard to reuse my code, I left my contact info here so you are free to mail me at anytime. 
 - [peterchen3301@tamu.edu](mailto:peterchen3301@tamu.edu)
 - [peterchen33011@gmail.com](mailto:peterchen33011@gmail.com)
