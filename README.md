@@ -129,7 +129,7 @@ Urls of these datasheets are directed to [sheet_urls.gs](sheet_urls.gs), simply 
 
 * Maybe add a wait bar at pages that spend couple of seconds loading, like add_student_review.html, student_info.html & student_search.html to indicate users that the pages are still loading and be patient.
 
-* If you have plenty of time and want to do some unit tests. [QUnitGS2](http://qunitgs2.com/) may be the most promising one among a bunch of options. However, this test outputs will be shown in html so you need to add add it into the current router ```Route.path = function(param, callBack)``` in [Code.gs](Code.gs). And if you still got some time after this, ask prof. Walker how important unit test is! 
+* If you have plenty of time and want to do some unit tests. [QUnitGS2](http://qunitgs2.com/) may be the most promising one among a bunch of options. However, this test outputs will be in html template format so you may need to add a callback function for it into the current router ```Route.path = function(param, callBack)``` in [Code.gs](Code.gs). And if you still got some time after this, ask prof. Walker how important and meaningful unit test is! 
 
 ## Author of this branch
 
