@@ -38,8 +38,9 @@ Urls of these sheets are directed to [sheet_urls.gs](sheet_urls.gs), simply modi
   - risk of race conditions, declaration and definotion chaos, and many more... 
 
   *Possible solutions:*
-  - wrap variables using immediated invoked function expression
-  - for client-side scripts, wrap them with page onload listener functions
+  - for variables that persist within whole session, use [Web Storage API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Storage_API).
+  - for variables that are used in initialization, wrap them with immediated invoked function expression.
+  - for client-side scripts, wrap them with page onload listener functions.
 
 * **The root cause of admin/faculty review overriding bug is that the routes to fetch from / submit the reviews are different.** While getting review at [add_student_review.html](add_student_review.html), the function ```getReviewInformationForUinAndYear()``` at [advisor_review.gs](advisor_review.gs) is called to search and filter from all the reviews. However, while submitting review, a different function ```updateStudentReviewDetails()``` at [advisor_review.gs](advisor_review.gs) is called.
 
@@ -50,11 +51,23 @@ Urls of these sheets are directed to [sheet_urls.gs](sheet_urls.gs), simply modi
   *Possible solutions:*
   - Specify "review index" and do all the later operation based on this. Never do 2nd search. 
 
+* Reviewer identity entanglement. This is actually a follow-up from above issue.
+  1. At function ```getThisAndLastYearReviewRaings()``` in [advisor_review.gs](advisor_review.gs), also at function ```getReviewDetails()``` in [Code.gs](Code.gs), the reviewer's identity is judged as admin if student_review_sheet.faculty_name == "admin", or faculty otherwise. However, at function ```getFacultyName()```, where function ```updateStudentReviewDetails()``` get the current reviewer's name to be uploaded in [advisor_review.gs](advisor_review.gs), there's no case that it returns a name "admin".
+  2. At function ```updateStudentReviewDetails()``` in [advisor_review.gs](advisor_review.gs), the reviewer is matched through his/her name instead of TAMU email address.
+
+  *Threatens:* 
+  - Bad idea using reviewer's name as classification, what if two reviewers have the same name? Consider using TAMU email address instead.
+  - As mentioned in 1., the reviewer identity judgement fails since no reviewer will be saved with a name "admin"
+
+  *Possible solutions:*
+  - Implement a function ```getReviewerIdentity()``` that gets current reviewer's identity from his/her TAMU email address. To be more effecient, you can store a hashtable of { TAMU email address : "faculty/admin/student" } at local storage through [Web Storage API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Storage_API).
+  - It should be ```getReviewerName()```, not ```getFacultyName()```.
+
 * At "review year" drop-down list in [add_student_review.html](add_student_review.html), the default value is a string of "null", not a literal null value.
 
   *Threatens:* 
   - confusion with syntax terminology
-  - Data management hardship
+  - data management hardship
 
   *Possible solutions:*
   - Change deafult value of "review year" drop-down list to "n/a".
@@ -89,11 +102,15 @@ Urls of these sheets are directed to [sheet_urls.gs](sheet_urls.gs), simply modi
 
   *Possible solutions:* 
    The key is to make sure the users are aware of timezone issue.
-  - Store date as a string of "MM/DD/YYYY" and notice the user to enter dates in Texas timezone. << should be better
+  - Store date as a string of "MM/DD/YYYY" and notice the user to enter dates in Texas timezone. (should be better)
   - Add a drop-down list to let users specify their timezone.
 
 * Links to student documents (report / improvement plan / deptartment letter) are accessible at add_student_review.html. Shouldn't them be at see_reviews.html?
 
-## Author for this branch
+## Author of this branch
 
-[Hsing-Yu Chen](mailto:peterchen33011@tamu.edu?subject=[GitHub]%20Source%20Han%20Sans)
+Hsing-Yu Chen 
+
+### Contact
+- [peterchen3301@tamu.edu](mailto:peterchen3301@tamu.edu)
+- [peterchen33011@gmail.com](mailto:peterchen33011@gmail.com)
