@@ -16,23 +16,26 @@ Urls of these datasheets are directed to [sheet_urls.gs](sheet_urls.gs), simply 
 
 ### Completed
 
-* **"Temporarily" solved the bug of student review overriding. However, current code is still considered vulnerable.**
+* **"Temporarily" solved the bug of student review overriding. However, current code can still be improved.**
 
-* Fixed the url mangling bug, where domain name "a/tamu.edu/" repeated erroneously. 
+* Implemented dynamic hyperlinks for cv / report / improvement plan at student_info.html. Deprecated student_review.html and merge contents with student_info.html to simplify operations from student view.
 
-* Added "Comments For Faculty" function & textarea.
+* Fixed the url mangling bug, where domain name "a/tamu.edu/" repeated erroneously.
 
-* Made "Comments For Student" textarea auto-resizable depending on content length, also manual resizable.
+* Added "Comments For Faculty" function & textarea at add_student_review.html.
+
+* Made "Comments For Student" textarea auto-resizable depending on content length, also manual resizable at add_student_review.html.
 
 * Made "Attempts Completed" and "Degree Plan Submitted" label texts in student_details.htm.
 
-* Added columns in student search table (student_search.html) to show Prelim/Propose/Final Defense dates.
+* At student search table (student_search.html) added Prelim / Propose / Final Defense dates / ths year dept. & faculty ratings / last year dept. ratings / Report link, removed student details.
 
 * Student_details.html is obsolete (but not depricated yet), since student details are no longer needed from student search table.
 
 ### What to do
 
-* **Gloabal variables are widely used in server-side script (.gs) and client-side script (XXX_js.html / XXX_javascript.html), which is a bad idea.**
+* Gloabal variables are widely used in server-side script (.gs) ~~and client-side script (XXX_js.html / XXX_javascript.html)~~, which should be avoided.
+  > suppl. : Variables in client-side script are not-so-much a matter since they survive on the user's browser and only when the pages are opened.
  
   *Threatens:* 
   - risk of race conditions, declaration and definotion chaos, and many more... 
@@ -51,17 +54,20 @@ Urls of these datasheets are directed to [sheet_urls.gs](sheet_urls.gs), simply 
   *Possible solutions:*
   - Specify "review index" and do all the later operation based on this. Never do 2nd search. 
 
-* Reviewer identity entanglement. This is actually a follow-up from above issue.
-  1. At function ```getThisAndLastYearReviewRaings()``` in [advisor_review.gs](advisor_review.gs), also at function ```getReviewDetails()``` in [Code.gs](Code.gs), the reviewer's identity is judged as admin if student_review_sheet.faculty_name == "admin", or faculty otherwise. However, at function ```getFacultyName()```, where function ```updateStudentReviewDetails()``` get the current reviewer's name to be uploaded in [advisor_review.gs](advisor_review.gs), there's no case that it returns a name "admin".
-  2. At function ```updateStudentReviewDetails()``` in [advisor_review.gs](advisor_review.gs), the reviewer is matched through his/her name instead of TAMU email address.
-
+* Loading data from spreadsheet could be slow, since most of the server-side functions loop over the spreadsheet using Google Sheet APIs every time it is called.
+ 
   *Threatens:* 
-  - Bad idea using reviewer's name as classification, what if two reviewers have the same name? Consider using TAMU email address instead.
-  - As mentioned in 1., the reviewer identity judgement fails since no reviewer will be saved with a name "admin"
+  - Time effeciency issue, especially when loading abundant data like what student_search.html does.
 
   *Possible solutions:*
-  - Implement a function ```getReviewerIdentity()``` that gets current reviewer's identity from his/her TAMU email address. To be more effecient, you can store a hashtable of { TAMU email address : "faculty/admin/student" } at local storage ~~through [Web Storage API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Storage_API)~~ through [Property Service](https://developers.google.com/apps-script/guides/properties) or [Cache Service](https://developers.google.com/apps-script/reference/cache/cache-service) for Google App Script.
-  - It should be ```getReviewerName()```, not ```getFacultyName()```.
+  - load spreadsheet data into script properties as local storage using [Property Service](https://developers.google.com/apps-script/guides/properties), wrap with immediately-invoked function expression.
+
+    > Note : [Property Service](https://developers.google.com/apps-script/guides/properties) for Google App Script only accepts primitive data & strings as key storage. Therefore, before saving a hasp talbe / map to properties, you have convert it to JSON string format. 
+
+    > hint 1 : every functions that call the sheet by `var ss = SpreadsheetApp.openByUrl(certain_sheet_url)` and do not write back to the sheet have potential to be optimized this way. 
+    
+    > hint 2 : account_sheet readings has been optimized by loading to script properties in JSON string format. Student_info_sheet, student_review_sheet & review_year_info_sheet to go. 
+
 
 * At "review year" drop-down list in [add_student_review.html](add_student_review.html), the default value is a string of "null", not a literal null value.
 
