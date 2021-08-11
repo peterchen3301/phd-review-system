@@ -39,7 +39,7 @@ Urls of these datasheets are directed to [sheet_urls.gs](sheet_urls.gs), simply 
 
   *Possible solutions:*
   - for variables that persist within whole session, use [Web Storage API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Storage_API).
-  - for variables that are used in initialization, wrap them with immediated invoked function expression.
+  - for variables that are used in initialization, wrap them with immediately-invoked function expression.
   - for client-side scripts, wrap them with page onload listener functions.
 
 * **The root cause of admin/faculty review overriding bug is that the routes to fetch from / submit the reviews are different.** While getting review at [add_student_review.html](add_student_review.html), the function ```getReviewInformationForUinAndYear()``` at [advisor_review.gs](advisor_review.gs) is called to search and filter from all the reviews. However, while submitting review, a different function ```updateStudentReviewDetails()``` at [advisor_review.gs](advisor_review.gs) is called.
