@@ -16,7 +16,7 @@ Urls of these sheets are directed to [sheet_urls.gs](sheet_urls.gs), simply modi
 
 ### Completed
 
-* **"Temporarily" solved the bug of student review overriding. However, current code is still considered vulnerable.
+* **"Temporarily" solved the bug of student review overriding. However, current code is still considered vulnerable.**
 
 * Fixed the url mangling bug, where domain name "a/tamu.edu/" repeated erroneously. 
 
@@ -35,7 +35,7 @@ Urls of these sheets are directed to [sheet_urls.gs](sheet_urls.gs), simply modi
 * **Gloabal variables are widely used in server-side script (.gs) and client-side script (XXX_js.html / XXX_javascript.html), which is a bad idea.**
  
   *Threatens:* 
-  - risk of race conditions, declarations and definotion chaos and many more... 
+  - risk of race conditions, declaration and definotion chaos, and many more... 
 
   *Possible solutions:*
   - wrap variables using immediated invoked function expression
