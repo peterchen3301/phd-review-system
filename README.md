@@ -14,7 +14,7 @@ Urls of these datasheets are directed to [sheet_urls.gs](sheet_urls.gs), simply 
 
 ## Things I wish I knew beforehand
 
-* Google App Script IDE sucks. If you encouter eternal deploying (The waitbar never ends while deploying) all of the sudden, I faced that twice: it looks like the only way you can do is to create another new project, copy all the files and configs nad start over.
+* Google App Script IDE sucks. If you encouter eternal deploying (The waitbar never ends while deploying) all of the sudden, I faced that twice: it looks like the only way you can do is to create another new project, copy all the files and configs and start it over.
 
 * You'll have to import Googlesheet API Service ("Sheet") and ArrayLib Library to this project. Setting up Googlesheet API Service is straightforward but setting up ArrayLib Library will bring you some trouble. Save your trouble by [looking at this](https://sites.google.com/site/scriptsexamples/custom-methods/2d-arrays-library). Remember to switch your IDE to legacy editor for this.
 
