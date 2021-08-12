@@ -18,7 +18,7 @@ Urls of these spreadsheets are directed to [sheet_urls.gs](sheet_urls.gs), simpl
 
 ## Things I wish I knew beforehand
 
-* Google App Script IDE sucks. If you encouter eternal deploying (The waitbar never ends while deploying) all of the sudden, I faced that twice: it looks like the only way you can do is to create another new project, copy all the files and configs and start it over.
+* Google App Script IDE sucks. If you encouter eternal deploying (the waitbar never ends while deploying) all of the sudden, I faced that twice: it looks like the only way you can do is to create another new project, copy all the files and configs and start it over.
 
 * You'll have to import Googlesheet API Service ("Sheet") and ArrayLib Library to this project. Setting up Googlesheet API Service is straightforward but setting up ArrayLib Library will bring you some troubles. Save your troubles by [looking at this](https://sites.google.com/site/scriptsexamples/custom-methods/2d-arrays-library). Remember to switch your IDE to legacy editor for this.
 
@@ -119,10 +119,10 @@ Urls of these spreadsheets are directed to [sheet_urls.gs](sheet_urls.gs), simpl
   *Possible solutions:*
   - Hide both admin/faculty views, then judge which to make visible based on user's identity.
  
-* While selecting student's prelim/proposal/final-defense dates using ```datepicker``` class in [add_student.html](add_student.html), the timezone is recognized through the browser's current IP. This may not be a problem: Since most of the users are at Texas, so as these events that will be held. However, it could still cause some unwanted circumstances.
+* While selecting student's prelim/proposal/final-defense dates using ```datepicker``` class in [add_student.html](add_student.html), the timezone is recognized through the browser's current IP. This may not be a problem: Since most of the users are at Texas and sharing the same timezone, so as these events that will be held. However, it could still cause some unwanted circumstances.
 
   *Threatens:* 
-  - Timezone confusion. For example, If I select my final defense date while attending a conference in Taiwan, let's say ```7/31 00:00 Taiwan (UTC +8)```, it becomes ```7/30 10:00, Texas (UTC -6)``` for Texan people. However, in this case I definitely want to go back to College Station and have my final defense at ```7/31```, not ```7/30```.
+  - Timezone confusion. For example, If I select my final defense date while attending a conference in Taiwan, let's say ```7/31 00:00 Taiwan (UTC +8)```, which corresponds to ```7/30 10:00, Texas (UTC -6)``` for Texan people. However, in this case I definitely want to go back to College Station and hold my final defense on ```7/31```, not ```7/30```.
 
   *Possible solutions:* 
    The key is to make sure the users are aware of timezone issue.
@@ -133,13 +133,13 @@ Urls of these spreadsheets are directed to [sheet_urls.gs](sheet_urls.gs), simpl
 
 * Maybe add a wait bar at pages that spend couple of seconds loading, like add_student_review.html, student_info.html & student_search.html to indicate users that the pages are still loading and be patient.
 
-* If you have plenty of time and want to do some unit tests. [QUnitGS2](http://qunitgs2.com/) may be the most promising one among a bunch of options. However, this test outputs will be in html template format so you may need to add a callback function for it into the current router ```Route.path = function(param, callBack)``` in [Code.gs](Code.gs). And if you still got some time after this, ask prof. Walker how important and meaningful unit test is! 
+* If you have plenty of time and want to do some unit tests. [QUnitGS2](http://qunitgs2.com/) may be the most promising one among a bunch of options. However, this test outputs will be in html template format so you may need to add a callback function for it into the current router ```Route.path = function(param, callBack)``` in [Code.gs](Code.gs) and call it somewhere from the main page. If you still got some time after this, ask prof. Walker how important and meaningful unit test is! 
 
-## Author of this branch
+## Author
 
 Hsing-Yu Chen 
 
-### Contact
+### Contact Info
 
 Forgive my lossy code. If you find it hard to realize my code, or if you have any questions & feedbacks, feel free to write me an email!
 - [peterchen3301@tamu.edu](mailto:peterchen3301@tamu.edu)
