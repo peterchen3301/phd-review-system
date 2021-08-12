@@ -1,6 +1,10 @@
 # phd-review-system
 
-A dev branch of PhD review system for Department of Computer Science and Engineering, Texas A&amp;M University, College Station
+A dev branch of PhD review system for Department of Computer Science and Engineering, Texas A&M University, College Station
+
+## Link
+
+[Google Apps Script Editor](https://script.google.com/d/18_a8tWvuwCHwyubFC-spaKkhoZZ0UOM9q4jiHXjFNKwfZ8FQ98Om2rzi/edit?usp=sharing)
 
 ## How to migrate datasheets?
 
@@ -18,7 +22,7 @@ Urls of these datasheets are directed to [sheet_urls.gs](sheet_urls.gs), simply 
 
 * You'll have to import Googlesheet API Service ("Sheet") and ArrayLib Library to this project. Setting up Googlesheet API Service is straightforward but setting up ArrayLib Library will bring you some troubles. Save your troubles by [looking at this](https://sites.google.com/site/scriptsexamples/custom-methods/2d-arrays-library). Remember to switch your IDE to legacy editor for this.
 
-* You can manage your project through github using [Google App Script GitHub Assistant](https://chrome.google.com/webstore/detail/google-apps-script-github/lfjcgcmkmjjlieihflfhjopckgpelofo/related?hl=en) add-on. However, it has kinda limited functionality. For example, each log-in and each token is only available to link to the project through one particular device. If you switched to another computer, since there's no log-out option, you have to remove this add-on, reinstall it and re-generate a token for it to log-in. Also, I tried accessing to TAMU GitHub but failed so I suggest using [ordinary one](https://github.com/). If this stuff drives you crazy, try primitive way: copy then past. It works for sure. 
+* You can manage your project through GitHub using [Google App Script GitHub Assistant](https://chrome.google.com/webstore/detail/google-apps-script-github/lfjcgcmkmjjlieihflfhjopckgpelofo/related?hl=en) add-on. However, it has kinda limited functionality. For example, each log-in and each token is only available to link to the project through one particular device. If you switched to another computer, since there's no log-out option, you have to remove this add-on, reinstall it and re-generate a token for it to log-in. Also, I tried accessing to TAMU GitHub but failed so I suggest using [ordinary one](https://github.com/). If this stuff drives you crazy, try primitive way: copy then past. It works for sure. 
 
 * The file-uploading functions: ```uploadFileToDrive()```, ```uploadDLToDrive()``` & ```uploadIp_R_ToDrive()``` at [Code.gs](Code.gs) are miracles: I tried to debug and maintain them but gave it up after all, considering my limited intelligence and lifetime. Anyone manages to do this will earn my ultimate respect.
  
