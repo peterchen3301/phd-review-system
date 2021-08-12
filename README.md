@@ -6,15 +6,15 @@ A dev branch of PhD review system for Department of Computer Science and Enginee
 
 [Google Apps Script Editor](https://script.google.com/d/18_a8tWvuwCHwyubFC-spaKkhoZZ0UOM9q4jiHXjFNKwfZ8FQ98Om2rzi/edit?usp=sharing)
 
-## How to migrate datasheets?
+## How to migrate database?
 
-4 Google datasheets are used in this projects, which are:
+4 Google Spreadsheets are used in this projects, which are:
 * Account Sheet
 * Student Info Sheet
 * Student Review Sheet
 * Review Year Information Sheet
 
-Urls of these datasheets are directed to [sheet_urls.gs](sheet_urls.gs), simply modify them to your target datasheet urls to complete migration.
+Urls of these spreadsheets are directed to [sheet_urls.gs](sheet_urls.gs), simply modify them to your target spreadsheets urls to complete migration.
 
 ## Things I wish I knew beforehand
 
